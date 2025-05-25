@@ -85,7 +85,11 @@ export default function Gallery({ images }: GalleryProps) {
           {images.map((image, index) => (
             <div
               key={index}
-              ref={el => imageRefs.current[index] = el}
+              ref={(el) => {
+                if (el) {
+                  imageRefs.current[index] = el;
+                }
+              }}
               className="aspect-square overflow-hidden rounded-lg cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98] bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center border border-blue-100"
               onClick={() => openLightbox(image.src)}
             >
