@@ -1,3 +1,36 @@
+# 💒 Wedding Invitation - Adelita & Ansyah
+
+This is a beautiful and responsive wedding invitation website built with modern web technologies.
+
+## ✨ Features
+
+- 🎨 **Elegant Cover Design** with floral decorations and luxury typography
+- 🎵 **Background Music Player** with controls
+- ⏰ **Real-time Countdown Timer** to wedding day
+- 👫 **Couple Information** with elegant design
+- 📅 **Event Details** (Akad Nikah & Reception)
+- 🖼️ **Photo Gallery** with lightbox
+- 📍 **Location Map** integration
+- 📝 **RSVP Form** for guest confirmation
+- 💖 **Heart-shaped Loading Animation**
+- 📱 **Fully Responsive** for all devices
+
+## 🛠️ Tech Stack
+
+- ⚡ **Next.js 15** with Turbopack
+- 🎨 **Tailwind CSS** for styling
+- ✨ **GSAP** for smooth animations
+- 📝 **TypeScript** for type safety
+- 🔧 **ESLint** for code quality
+
+## 🎨 Design Features
+
+- **Baby Blue Theme** with elegant color palette
+- **Javanese Motifs** and floral patterns in background
+- **Luxury Button Effects** with shimmer and glow
+- **Mobile-First Responsive Design**
+- **Smooth Animations** and transitions
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
