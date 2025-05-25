@@ -9,14 +9,12 @@ interface CoverProps {
     bride: string;
     groom: string;
   };
-  weddingDate: string;
   onOpenInvitation: () => void;
   recipientName?: string;
 }
 
 export default function Cover({
   brideNames,
-  weddingDate,
   onOpenInvitation,
   recipientName = "Tamu Undangan"
 }: CoverProps) {

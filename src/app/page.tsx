@@ -126,7 +126,6 @@ export default function Home() {
             bride: weddingData.couple.bride.name,
             groom: weddingData.couple.groom.name
           }}
-          weddingDate={weddingData.date}
           onOpenInvitation={handleOpenInvitation}
           recipientName={recipientName}
         />
