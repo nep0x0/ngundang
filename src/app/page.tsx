@@ -16,7 +16,7 @@ import CountdownTimer from "@/components/CountdownTimer";
 
 import LocationMap from "@/components/LocationMap";
 import RSVP from "@/components/RSVP";
-import Footer from "@/components/Footer";
+
 import Bottom from "@/components/Bottom";
 import AudioPlayer from "@/components/AudioPlayer";
 import Loading from "@/components/Loading";
@@ -101,7 +101,6 @@ export default function Home() {
     },
 
     audio: "/audio/wedding-song.mp3",
-    footerMessage: "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.",
     separator: {
       imageSrc: "/images/wedding-photo.jpg",
       title: "Our Wedding",
@@ -247,12 +246,6 @@ export default function Home() {
 
         {/* 6. RSVP */}
         <RSVP />
-
-        <Footer
-          coupleNames={`${weddingData.couple.bride.name} & ${weddingData.couple.groom.name}`}
-          weddingDate={weddingData.date}
-          message={weddingData.footerMessage}
-        />
 
         {/* 7. Bottom */}
         <Bottom
