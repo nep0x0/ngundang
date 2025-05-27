@@ -85,3 +85,38 @@ h1, h2, h3, h4, h5, h6 {
 .animate-fadeInUp {
   animation: fadeInUp 0.8s ease-out forwards;
 }
+
+/* Mobile scroll fixes */
+@media (max-width: 768px) {
+  html {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+  }
+
+  body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+    position: relative;
+  }
+
+  .main-content {
+    position: relative;
+    z-index: 1;
+    background: white;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+
+  /* Ensure sections are visible */
+  section {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* iOS Safari viewport fix */
+@supports (-webkit-touch-callout: none) {
+  .mobile-vh {
+    height: -webkit-fill-available;
+  }
+}

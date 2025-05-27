@@ -25,58 +25,75 @@ export default function Separator({ imageSrc, title, subtitle }: SeparatorProps)
     const titleEl = titleRef.current;
     const subtitleEl = subtitleRef.current;
 
-    if (container && image) {
-      // Parallax effect for image
-      gsap.fromTo(image, 
-        { y: 50, scale: 1.1 },
-        {
-          y: -50,
-          scale: 1,
-          scrollTrigger: {
-            trigger: container,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 1
-          }
+    // Add delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      if (container && image) {
+        // Refresh ScrollTrigger
+        ScrollTrigger.refresh();
+
+        // Parallax effect for image (disabled on mobile for performance)
+        const isMobile = window.innerWidth < 768;
+        if (!isMobile) {
+          gsap.fromTo(image,
+            { y: 50, scale: 1.1 },
+            {
+              y: -50,
+              scale: 1,
+              scrollTrigger: {
+                trigger: container,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 1,
+                refreshPriority: -1
+              }
+            }
+          );
         }
-      );
 
-      // Fade in animation for text
-      if (titleEl) {
-        gsap.fromTo(titleEl,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            scrollTrigger: {
-              trigger: titleEl,
-              start: "top 80%",
-              end: "bottom 20%",
-              toggleActions: "play none none reverse"
+        // Fade in animation for text
+        if (titleEl) {
+          gsap.fromTo(titleEl,
+            { opacity: 0, y: 30 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 1,
+              scrollTrigger: {
+                trigger: titleEl,
+                start: "top 90%",
+                end: "bottom 10%",
+                toggleActions: "play none none reverse",
+                refreshPriority: -1
+              }
             }
-          }
-        );
-      }
+          );
+        }
 
-      if (subtitleEl) {
-        gsap.fromTo(subtitleEl,
-          { opacity: 0, y: 20 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            delay: 0.3,
-            scrollTrigger: {
-              trigger: subtitleEl,
-              start: "top 80%",
-              end: "bottom 20%",
-              toggleActions: "play none none reverse"
+        if (subtitleEl) {
+          gsap.fromTo(subtitleEl,
+            { opacity: 0, y: 20 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 1,
+              delay: 0.3,
+              scrollTrigger: {
+                trigger: subtitleEl,
+                start: "top 90%",
+                end: "bottom 10%",
+                toggleActions: "play none none reverse",
+                refreshPriority: -1
+              }
             }
-          }
-        );
+          );
+        }
       }
-    }
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
   }, []);
 
   return (
@@ -97,7 +114,7 @@ export default function Separator({ imageSrc, title, subtitle }: SeparatorProps)
       {/* Content */}
       <div className="relative z-10 text-center text-white px-6 sm:px-8">
         {title && (
-          <h2 
+          <h2
             ref={titleRef}
             className="text-4xl sm:text-5xl md:text-6xl font-serif font-light mb-4 sm:mb-6"
           >
@@ -105,7 +122,7 @@ export default function Separator({ imageSrc, title, subtitle }: SeparatorProps)
           </h2>
         )}
         {subtitle && (
-          <p 
+          <p
             ref={subtitleRef}
             className="text-lg sm:text-xl md:text-2xl font-light tracking-wide opacity-90"
           >

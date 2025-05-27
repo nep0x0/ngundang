@@ -28,49 +28,68 @@ export default function Story({ stories }: StoryProps) {
     const title = titleRef.current;
     const timeline = timelineRef.current;
 
-    if (container && title) {
-      // Title animation
-      gsap.fromTo(title,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          scrollTrigger: {
-            trigger: title,
-            start: "top 80%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse"
-          }
-        }
-      );
+    // Add delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      if (container && title) {
+        // Refresh ScrollTrigger
+        ScrollTrigger.refresh();
 
-      // Timeline items animation
-      const items = timeline?.querySelectorAll('.story-item');
-      if (items) {
-        items.forEach((item, index) => {
-          gsap.fromTo(item,
-            { opacity: 0, x: index % 2 === 0 ? -50 : 50 },
-            {
-              opacity: 1,
-              x: 0,
-              duration: 1,
-              delay: index * 0.2,
-              scrollTrigger: {
-                trigger: item,
-                start: "top 80%",
-                end: "bottom 20%",
-                toggleActions: "play none none reverse"
-              }
+        // Title animation
+        gsap.fromTo(title,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            scrollTrigger: {
+              trigger: title,
+              start: "top 85%",
+              end: "bottom 15%",
+              toggleActions: "play none none reverse",
+              refreshPriority: -1
             }
-          );
-        });
+          }
+        );
+
+        // Timeline items animation
+        const items = timeline?.querySelectorAll('.story-item');
+        if (items) {
+          items.forEach((item, index) => {
+            const isMobile = window.innerWidth < 768;
+            gsap.fromTo(item,
+              {
+                opacity: 0,
+                x: isMobile ? 0 : (index % 2 === 0 ? -50 : 50),
+                y: isMobile ? 30 : 0
+              },
+              {
+                opacity: 1,
+                x: 0,
+                y: 0,
+                duration: 1,
+                delay: index * 0.1,
+                scrollTrigger: {
+                  trigger: item,
+                  start: "top 85%",
+                  end: "bottom 15%",
+                  toggleActions: "play none none reverse",
+                  refreshPriority: -1
+                }
+              }
+            );
+          });
+        }
       }
-    }
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
   }, []);
 
   return (
-    <section 
+    <section
       ref={containerRef}
       className="py-20 sm:py-24 md:py-32 bg-gradient-to-b from-slate-50 to-blue-50 relative overflow-hidden"
     >
@@ -91,7 +110,7 @@ export default function Story({ stories }: StoryProps) {
       <div className="container mx-auto px-6 sm:px-8 max-w-6xl relative z-10">
         {/* Section Title */}
         <div className="text-center mb-16 sm:mb-20">
-          <h2 
+          <h2
             ref={titleRef}
             className="text-4xl sm:text-5xl md:text-6xl font-serif font-light text-slate-700 mb-6"
           >
@@ -112,11 +131,10 @@ export default function Story({ stories }: StoryProps) {
           {/* Timeline Items */}
           <div className="space-y-16 sm:space-y-20">
             {stories.map((story, index) => (
-              <div 
+              <div
                 key={index}
-                className={`story-item flex flex-col md:flex-row items-center gap-8 md:gap-12 ${
-                  index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-                }`}
+                className={`story-item flex flex-col md:flex-row items-center gap-8 md:gap-12 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                  }`}
               >
                 {/* Content */}
                 <div className="flex-1 text-center md:text-left">
@@ -155,7 +173,7 @@ export default function Story({ stories }: StoryProps) {
                       <div className="text-center">
                         <div className="w-16 h-16 bg-blue-400 rounded-full flex items-center justify-center mx-auto mb-4">
                           <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                           </svg>
                         </div>
                         <p className="text-blue-600 font-medium">{story.year}</p>

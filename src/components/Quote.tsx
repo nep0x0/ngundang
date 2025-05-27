@@ -24,43 +24,55 @@ export default function Quote({ quote, source, author }: QuoteProps) {
     const sourceEl = sourceRef.current;
     const decor = decorRef.current;
 
-    if (container) {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: container,
-          start: "top 70%",
-          end: "bottom 30%",
-          toggleActions: "play none none reverse"
+    // Add delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      if (container) {
+        // Refresh ScrollTrigger
+        ScrollTrigger.refresh();
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: container,
+            start: "top 80%",
+            end: "bottom 20%",
+            toggleActions: "play none none reverse",
+            refreshPriority: -1
+          }
+        });
+
+        if (decor) {
+          tl.fromTo(decor,
+            { opacity: 0, scale: 0.8 },
+            { opacity: 1, scale: 1, duration: 0.8 }
+          );
         }
-      });
 
-      if (decor) {
-        tl.fromTo(decor,
-          { opacity: 0, scale: 0.8 },
-          { opacity: 1, scale: 1, duration: 0.8 }
-        );
-      }
+        if (quoteEl) {
+          tl.fromTo(quoteEl,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 1 },
+            "-=0.5"
+          );
+        }
 
-      if (quoteEl) {
-        tl.fromTo(quoteEl,
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, duration: 1 },
-          "-=0.5"
-        );
+        if (sourceEl) {
+          tl.fromTo(sourceEl,
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.8 },
+            "-=0.3"
+          );
+        }
       }
+    }, 200);
 
-      if (sourceEl) {
-        tl.fromTo(sourceEl,
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.8 },
-          "-=0.3"
-        );
-      }
-    }
+    return () => {
+      clearTimeout(timer);
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
   }, []);
 
   return (
-    <section 
+    <section
       ref={containerRef}
       className="py-20 sm:py-24 md:py-32 bg-gradient-to-b from-blue-50 to-slate-50 relative overflow-hidden"
     >
@@ -80,13 +92,13 @@ export default function Quote({ quote, source, author }: QuoteProps) {
         <div ref={decorRef} className="mb-8 sm:mb-12">
           <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-lg">
             <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z"/>
+              <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z" />
             </svg>
           </div>
         </div>
 
         {/* Quote Text */}
-        <p 
+        <p
           ref={quoteRef}
           className="text-2xl sm:text-3xl md:text-4xl font-serif font-light text-slate-700 leading-relaxed mb-8 sm:mb-12 italic"
         >

@@ -150,12 +150,23 @@ export default function Home() {
   useEffect(() => {
     if (showCover) {
       document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
     } else {
       document.body.style.overflow = 'auto';
+      document.body.style.position = 'static';
+      document.body.style.width = 'auto';
+      document.body.style.height = 'auto';
+      // Force scroll to top when opening invitation
+      window.scrollTo(0, 0);
     }
 
     return () => {
       document.body.style.overflow = 'auto';
+      document.body.style.position = 'static';
+      document.body.style.width = 'auto';
+      document.body.style.height = 'auto';
     };
   }, [showCover]);
 
@@ -179,7 +190,13 @@ export default function Home() {
       )}
 
       {/* Main Content - hanya ditampilkan setelah cover dibuka */}
-      <div className={`transition-opacity duration-1000 w-full overflow-x-hidden ${!showCover ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      <div
+        className={`main-content transition-opacity duration-1000 w-full overflow-x-hidden min-h-screen ${!showCover ? 'opacity-100 relative z-10' : 'opacity-0 pointer-events-none absolute inset-0'}`}
+        style={{
+          visibility: !showCover ? 'visible' : 'hidden',
+          display: !showCover ? 'block' : 'none'
+        }}
+      >
         <Header
           brideNames={{
             bride: weddingData.couple.bride.name,
