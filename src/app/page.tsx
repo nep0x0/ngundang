@@ -6,7 +6,7 @@ import gsap from 'gsap';
 
 gsap.registerPlugin(ScrollTrigger);
 import Header from "@/components/Header";
-import Intro from "@/components/Intro";
+
 import Separator from "@/components/Separator";
 import Quote from "@/components/Quote";
 import CoupleInfo from "@/components/CoupleInfo";
@@ -101,7 +101,6 @@ export default function Home() {
     },
 
     audio: "/audio/wedding-song.mp3",
-    introMessage: "Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan pernikahan putra-putri kami. Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu kepada kedua mempelai.",
     footerMessage: "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.",
     separator: {
       imageSrc: "/images/wedding-photo.jpg",
@@ -213,8 +212,6 @@ export default function Home() {
           title={weddingData.separator.title}
           subtitle={weddingData.separator.subtitle}
         />
-
-        <Intro message={weddingData.introMessage} />
 
         {/* 2. Quote */}
         <Quote
