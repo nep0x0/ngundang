@@ -6,8 +6,7 @@ import gsap from 'gsap';
 
 gsap.registerPlugin(ScrollTrigger);
 import Header from "@/components/Header";
-
-
+import PhotoFrame from "@/components/PhotoFrame";
 import Quote from "@/components/Quote";
 import CoupleInfo from "@/components/CoupleInfo";
 import Story from "@/components/Story";
@@ -200,23 +199,29 @@ export default function Home() {
           weddingDate={weddingData.date}
         />
 
-        {/* 1. Quote */}
+        {/* 1. Photo Frame */}
+        <PhotoFrame
+          imageSrc="/images/swahaxadel-508.jpg"
+          alt="Adelita & Ansyah Wedding Photo"
+        />
+
+        {/* 2. Quote */}
         <Quote
           quote={weddingData.quote.text}
           source={weddingData.quote.source}
           author={weddingData.quote.author}
         />
 
-        {/* 2. Couple Profile */}
+        {/* 3. Couple Profile */}
         <CoupleInfo
           bride={weddingData.couple.bride}
           groom={weddingData.couple.groom}
         />
 
-        {/* 3. Story perjalanan mempelai */}
+        {/* 4. Story perjalanan mempelai */}
         <Story stories={weddingData.story} />
 
-        {/* 4. Wedding Detail */}
+        {/* 5. Wedding Detail */}
         <EventDetails
           akadNikah={weddingData.events.akadNikah}
           resepsi={weddingData.events.resepsi}
@@ -232,10 +237,10 @@ export default function Home() {
           googleMapsUrl={weddingData.location.googleMapsUrl}
         />
 
-        {/* 5. RSVP */}
+        {/* 6. RSVP */}
         <RSVP />
 
-        {/* 6. Bottom */}
+        {/* 7. Bottom */}
         <Bottom
           brideNames={{
             bride: weddingData.couple.bride.name,
