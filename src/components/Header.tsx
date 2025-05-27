@@ -67,63 +67,26 @@ export default function Header({ brideNames, weddingDate }: HeaderProps) {
           className="mb-8 sm:mb-12 flex justify-center"
           style={{ perspective: '1000px' }}
         >
-          <div className="relative w-64 h-80 sm:w-72 sm:h-96 md:w-80 md:h-[26rem] lg:w-96 lg:h-[30rem]">
-            {/* Arch Frame - Semicircle top + Rectangle bottom */}
-            <div className="absolute inset-0 border-2 border-blue-300 bg-transparent overflow-hidden">
-              {/* Top semicircle part */}
-              <div
-                className="absolute top-0 left-0 right-0 border-2 border-blue-300 border-b-0 bg-transparent"
-                style={{
-                  height: '50%',
-                  borderRadius: '50% 50% 0 0'
-                }}
-              ></div>
-
-              {/* Bottom rectangle part */}
-              <div
-                className="absolute bottom-0 left-0 right-0 border-2 border-blue-300 border-t-0 bg-transparent"
-                style={{
-                  height: '50%'
-                }}
-              ></div>
-
+          <div className="relative w-48 h-60 sm:w-56 sm:h-72 md:w-64 md:h-80">
+            {/* Simple Arch Frame */}
+            <div
+              className="absolute inset-0 border-2 border-blue-300 bg-transparent overflow-hidden"
+              style={{
+                borderRadius: '50% 50% 0 0'
+              }}
+            >
               {/* Photo Container */}
-              <div className="absolute inset-1 overflow-hidden">
-                {/* Top semicircle photo area */}
-                <div
-                  className="absolute top-0 left-0 right-0 overflow-hidden"
-                  style={{
-                    height: '50%',
-                    borderRadius: '50% 50% 0 0'
-                  }}
-                >
-                  <Image
-                    src="/images/swahaxadel-508.jpg"
-                    alt="Adelita & Ansyah Wedding Photo"
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-
-                {/* Bottom rectangle photo area */}
-                <div
-                  className="absolute bottom-0 left-0 right-0 overflow-hidden"
-                  style={{
-                    height: '50%'
-                  }}
-                >
-                  <Image
-                    src="/images/swahaxadel-508.jpg"
-                    alt="Adelita & Ansyah Wedding Photo"
-                    fill
-                    className="object-cover"
-                    priority
-                    style={{
-                      objectPosition: 'center bottom'
-                    }}
-                  />
-                </div>
+              <div className="absolute inset-1 overflow-hidden"
+                style={{
+                  borderRadius: '50% 50% 0 0'
+                }}>
+                <Image
+                  src="/images/swahaxadel-508.jpg"
+                  alt="Adelita & Ansyah Wedding Photo"
+                  fill
+                  className="object-cover"
+                  priority
+                />
               </div>
             </div>
           </div>
