@@ -13,7 +13,7 @@ import CoupleInfo from "@/components/CoupleInfo";
 import Story from "@/components/Story";
 import EventDetails from "@/components/EventDetails";
 import CountdownTimer from "@/components/CountdownTimer";
-import Gallery from "@/components/Gallery";
+
 import LocationMap from "@/components/LocationMap";
 import RSVP from "@/components/RSVP";
 import Footer from "@/components/Footer";
@@ -99,14 +99,7 @@ export default function Home() {
       locationAddress: "Jl. Anggrek No. 45, Jakarta Selatan",
       googleMapsUrl: "https://goo.gl/maps/1JmxYy9PBBt9tLmS6"
     },
-    gallery: [
-      { src: "/images/gallery1.jpg", alt: "Foto Prewedding 1" },
-      { src: "/images/gallery2.jpg", alt: "Foto Prewedding 2" },
-      { src: "/images/gallery3.jpg", alt: "Foto Prewedding 3" },
-      { src: "/images/gallery4.jpg", alt: "Foto Prewedding 4" },
-      { src: "/images/gallery5.jpg", alt: "Foto Prewedding 5" },
-      { src: "/images/gallery6.jpg", alt: "Foto Prewedding 6" }
-    ],
+
     audio: "/audio/wedding-song.mp3",
     introMessage: "Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan pernikahan putra-putri kami. Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu kepada kedua mempelai.",
     footerMessage: "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.",
@@ -246,8 +239,6 @@ export default function Home() {
         />
 
         <CountdownTimer targetDate="2024-06-15" />
-
-        <Gallery images={weddingData.gallery} />
 
         <LocationMap
           title={weddingData.location.title}
