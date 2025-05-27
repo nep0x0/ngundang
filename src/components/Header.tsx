@@ -67,18 +67,18 @@ export default function Header({ brideNames, weddingDate }: HeaderProps) {
           className="mb-8 sm:mb-12 flex justify-center"
           style={{ perspective: '1000px' }}
         >
-          <div className="relative w-48 h-60 sm:w-56 sm:h-72 md:w-64 md:h-80">
-            {/* Simple Arch Frame */}
+          <div className="relative w-72 h-96 sm:w-80 sm:h-[28rem] md:w-96 md:h-[32rem] lg:w-[26rem] lg:h-[36rem]">
+            {/* Large Arch Frame */}
             <div
-              className="absolute inset-0 border-2 border-blue-300 bg-transparent overflow-hidden"
+              className="absolute inset-0 border-3 border-blue-300 bg-transparent overflow-hidden"
               style={{
-                borderRadius: '50% 50% 0 0'
+                borderRadius: '40% 40% 0 0'
               }}
             >
               {/* Photo Container */}
               <div className="absolute inset-1 overflow-hidden"
                 style={{
-                  borderRadius: '50% 50% 0 0'
+                  borderRadius: '40% 40% 0 0'
                 }}>
                 <Image
                   src="/images/swahaxadel-508.jpg"
