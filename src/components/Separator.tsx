@@ -25,75 +25,59 @@ export default function Separator({ imageSrc, title, subtitle }: SeparatorProps)
     const titleEl = titleRef.current;
     const subtitleEl = subtitleRef.current;
 
-    // Add delay to ensure DOM is ready
-    const timer = setTimeout(() => {
-      if (container && image) {
-        // Refresh ScrollTrigger
-        ScrollTrigger.refresh();
-
-        // Parallax effect for image (disabled on mobile for performance)
-        const isMobile = window.innerWidth < 768;
-        if (!isMobile) {
-          gsap.fromTo(image,
-            { y: 50, scale: 1.1 },
-            {
-              y: -50,
-              scale: 1,
-              scrollTrigger: {
-                trigger: container,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: 1,
-                refreshPriority: -1
-              }
+    if (container) {
+      // Parallax effect for image (lighter on mobile)
+      const isMobile = window.innerWidth < 768;
+      if (image) {
+        gsap.fromTo(image,
+          { y: isMobile ? 20 : 50, scale: isMobile ? 1.05 : 1.1 },
+          {
+            y: isMobile ? -20 : -50,
+            scale: 1,
+            scrollTrigger: {
+              trigger: container,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: isMobile ? 0.5 : 1
             }
-          );
-        }
-
-        // Fade in animation for text
-        if (titleEl) {
-          gsap.fromTo(titleEl,
-            { opacity: 0, y: 30 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 1,
-              scrollTrigger: {
-                trigger: titleEl,
-                start: "top 90%",
-                end: "bottom 10%",
-                toggleActions: "play none none reverse",
-                refreshPriority: -1
-              }
-            }
-          );
-        }
-
-        if (subtitleEl) {
-          gsap.fromTo(subtitleEl,
-            { opacity: 0, y: 20 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 1,
-              delay: 0.3,
-              scrollTrigger: {
-                trigger: subtitleEl,
-                start: "top 90%",
-                end: "bottom 10%",
-                toggleActions: "play none none reverse",
-                refreshPriority: -1
-              }
-            }
-          );
-        }
+          }
+        );
       }
-    }, 100);
 
-    return () => {
-      clearTimeout(timer);
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
+      // Fade in animation for text
+      if (titleEl) {
+        gsap.fromTo(titleEl,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            scrollTrigger: {
+              trigger: titleEl,
+              start: "top 80%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
+
+      if (subtitleEl) {
+        gsap.fromTo(subtitleEl,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            delay: 0.3,
+            scrollTrigger: {
+              trigger: subtitleEl,
+              start: "top 80%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      }
+    }
   }, []);
 
   return (

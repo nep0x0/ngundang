@@ -28,45 +28,32 @@ export default function Bottom({ brideNames, weddingDate, thankYouMessage }: Bot
     const bunga1 = bunga1Ref.current;
     const bunga2 = bunga2Ref.current;
 
-    // Add delay to ensure DOM is ready
-    const timer = setTimeout(() => {
-      if (container) {
-        // Refresh ScrollTrigger
-        ScrollTrigger.refresh();
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: container,
-            start: "top 80%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse",
-            refreshPriority: -1
-          }
-        });
-
-        // Animate flowers
-        if (bunga1 && bunga2) {
-          tl.fromTo([bunga1, bunga2],
-            { opacity: 0, scale: 0.8, rotation: -10 },
-            { opacity: 1, scale: 1, rotation: 0, duration: 1.2, stagger: 0.2 }
-          );
+    if (container) {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
+          start: "top 70%",
+          toggleActions: "play none none reverse"
         }
+      });
 
-        // Animate content
-        if (content) {
-          tl.fromTo(content,
-            { opacity: 0, y: 30 },
-            { opacity: 1, y: 0, duration: 1 },
-            "-=0.8"
-          );
-        }
+      // Animate flowers
+      if (bunga1 && bunga2) {
+        tl.fromTo([bunga1, bunga2],
+          { opacity: 0, scale: 0.8, rotation: -10 },
+          { opacity: 1, scale: 1, rotation: 0, duration: 1.2, stagger: 0.2 }
+        );
       }
-    }, 400);
 
-    return () => {
-      clearTimeout(timer);
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
+      // Animate content
+      if (content) {
+        tl.fromTo(content,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 1 },
+          "-=0.8"
+        );
+      }
+    }
   }, []);
 
   return (

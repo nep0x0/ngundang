@@ -24,51 +24,38 @@ export default function Quote({ quote, source, author }: QuoteProps) {
     const sourceEl = sourceRef.current;
     const decor = decorRef.current;
 
-    // Add delay to ensure DOM is ready
-    const timer = setTimeout(() => {
-      if (container) {
-        // Refresh ScrollTrigger
-        ScrollTrigger.refresh();
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: container,
-            start: "top 80%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse",
-            refreshPriority: -1
-          }
-        });
-
-        if (decor) {
-          tl.fromTo(decor,
-            { opacity: 0, scale: 0.8 },
-            { opacity: 1, scale: 1, duration: 0.8 }
-          );
+    if (container) {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
+          start: "top 70%",
+          toggleActions: "play none none reverse"
         }
+      });
 
-        if (quoteEl) {
-          tl.fromTo(quoteEl,
-            { opacity: 0, y: 30 },
-            { opacity: 1, y: 0, duration: 1 },
-            "-=0.5"
-          );
-        }
-
-        if (sourceEl) {
-          tl.fromTo(sourceEl,
-            { opacity: 0, y: 20 },
-            { opacity: 1, y: 0, duration: 0.8 },
-            "-=0.3"
-          );
-        }
+      if (decor) {
+        tl.fromTo(decor,
+          { opacity: 0, scale: 0.8 },
+          { opacity: 1, scale: 1, duration: 0.8 }
+        );
       }
-    }, 200);
 
-    return () => {
-      clearTimeout(timer);
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
+      if (quoteEl) {
+        tl.fromTo(quoteEl,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 1 },
+          "-=0.5"
+        );
+      }
+
+      if (sourceEl) {
+        tl.fromTo(sourceEl,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.8 },
+          "-=0.3"
+        );
+      }
+    }
   }, []);
 
   return (

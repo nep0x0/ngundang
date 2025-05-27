@@ -28,64 +28,49 @@ export default function Story({ stories }: StoryProps) {
     const title = titleRef.current;
     const timeline = timelineRef.current;
 
-    // Add delay to ensure DOM is ready
-    const timer = setTimeout(() => {
-      if (container && title) {
-        // Refresh ScrollTrigger
-        ScrollTrigger.refresh();
-
-        // Title animation
-        gsap.fromTo(title,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            scrollTrigger: {
-              trigger: title,
-              start: "top 85%",
-              end: "bottom 15%",
-              toggleActions: "play none none reverse",
-              refreshPriority: -1
-            }
+    if (container && title) {
+      // Title animation
+      gsap.fromTo(title,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          scrollTrigger: {
+            trigger: title,
+            start: "top 80%",
+            toggleActions: "play none none reverse"
           }
-        );
-
-        // Timeline items animation
-        const items = timeline?.querySelectorAll('.story-item');
-        if (items) {
-          items.forEach((item, index) => {
-            const isMobile = window.innerWidth < 768;
-            gsap.fromTo(item,
-              {
-                opacity: 0,
-                x: isMobile ? 0 : (index % 2 === 0 ? -50 : 50),
-                y: isMobile ? 30 : 0
-              },
-              {
-                opacity: 1,
-                x: 0,
-                y: 0,
-                duration: 1,
-                delay: index * 0.1,
-                scrollTrigger: {
-                  trigger: item,
-                  start: "top 85%",
-                  end: "bottom 15%",
-                  toggleActions: "play none none reverse",
-                  refreshPriority: -1
-                }
-              }
-            );
-          });
         }
-      }
-    }, 300);
+      );
 
-    return () => {
-      clearTimeout(timer);
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
+      // Timeline items animation
+      const items = timeline?.querySelectorAll('.story-item');
+      if (items) {
+        items.forEach((item, index) => {
+          const isMobile = window.innerWidth < 768;
+          gsap.fromTo(item,
+            {
+              opacity: 0,
+              x: isMobile ? 0 : (index % 2 === 0 ? -50 : 50),
+              y: isMobile ? 30 : 0
+            },
+            {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              duration: 1,
+              delay: index * 0.2,
+              scrollTrigger: {
+                trigger: item,
+                start: "top 80%",
+                toggleActions: "play none none reverse"
+              }
+            }
+          );
+        });
+      }
+    }
   }, []);
 
   return (

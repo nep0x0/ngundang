@@ -1,6 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import gsap from 'gsap';
+
+gsap.registerPlugin(ScrollTrigger);
 import Header from "@/components/Header";
 import Intro from "@/components/Intro";
 import Separator from "@/components/Separator";
@@ -42,6 +46,11 @@ export default function Home() {
     setShowCover(false);
     // Memulai musik otomatis setelah user berinteraksi dengan halaman
     document.body.style.overflow = 'auto'; // Mengaktifkan scroll
+
+    // Refresh ScrollTrigger setelah content muncul
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
   };
 
   // Data untuk undangan pernikahan
