@@ -61,32 +61,49 @@ export default function Header({ brideNames, weddingDate }: HeaderProps) {
       <div className="absolute inset-0 bg-white/30"></div>
       <div className="relative z-10 text-gray-800 w-full max-w-4xl mx-auto px-3 sm:px-4 py-10">
 
-        {/* Photo Frame */}
+        {/* Photo Frame - Arch Style */}
         <div
           ref={photoRef}
           className="mb-8 sm:mb-12 flex justify-center"
           style={{ perspective: '1000px' }}
         >
-          <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64">
-            {/* Main Frame */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-slate-200 via-slate-100 to-white shadow-2xl border-4 border-white">
+          <div className="relative w-48 h-60 sm:w-56 sm:h-72 md:w-64 md:h-80">
+            {/* Main Arch Frame */}
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-200 via-slate-100 to-white shadow-2xl border-4 border-white"
+              style={{
+                borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
+                clipPath: 'ellipse(50% 60% at 50% 40%)'
+              }}>
+
               {/* Inner Shadow Ring */}
-              <div className="absolute inset-2 rounded-full shadow-inner bg-gradient-to-br from-slate-50 to-white"></div>
+              <div className="absolute inset-2 shadow-inner bg-gradient-to-br from-slate-50 to-white"
+                style={{
+                  borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
+                  clipPath: 'ellipse(50% 60% at 50% 40%)'
+                }}></div>
 
-              {/* Window Panes - Cross Pattern */}
-              <div className="absolute inset-3 rounded-full overflow-hidden">
-                {/* Vertical Divider */}
-                <div className="absolute left-1/2 top-2 bottom-2 w-1 bg-gradient-to-b from-slate-300 via-slate-200 to-slate-300 transform -translate-x-1/2 shadow-sm"></div>
+              {/* Decorative Arch Elements */}
+              <div className="absolute inset-3 overflow-hidden"
+                style={{
+                  borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
+                  clipPath: 'ellipse(50% 60% at 50% 40%)'
+                }}>
 
-                {/* Horizontal Divider */}
-                <div className="absolute top-1/2 left-2 right-2 h-1 bg-gradient-to-r from-slate-300 via-slate-200 to-slate-300 transform -translate-y-1/2 shadow-sm"></div>
+                {/* Arch Keystone */}
+                <div className="absolute top-2 left-1/2 w-4 h-6 bg-gradient-to-b from-blue-400 to-blue-600 transform -translate-x-1/2 shadow-md border border-white"
+                  style={{ borderRadius: '50% 50% 0 0' }}></div>
 
-                {/* Center Medallion */}
-                <div className="absolute top-1/2 left-1/2 w-3 h-3 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full transform -translate-x-1/2 -translate-y-1/2 shadow-md border border-white"></div>
+                {/* Side Pillars */}
+                <div className="absolute top-6 left-3 w-2 h-8 bg-gradient-to-b from-slate-300 to-slate-400 shadow-sm"></div>
+                <div className="absolute top-6 right-3 w-2 h-8 bg-gradient-to-b from-slate-300 to-slate-400 shadow-sm"></div>
               </div>
 
               {/* Photo Container */}
-              <div className="absolute inset-4 rounded-full overflow-hidden shadow-lg">
+              <div className="absolute inset-4 overflow-hidden shadow-lg"
+                style={{
+                  borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
+                  clipPath: 'ellipse(50% 60% at 50% 40%)'
+                }}>
                 <Image
                   src="/images/swahaxadel-508.jpg"
                   alt="Adelita & Ansyah Wedding Photo"
@@ -99,14 +116,22 @@ export default function Header({ brideNames, weddingDate }: HeaderProps) {
               </div>
 
               {/* Decorative Corner Elements */}
-              <div className="absolute -top-1 -left-1 w-4 h-4 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-md border border-white"></div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-md border border-white"></div>
-              <div className="absolute -bottom-1 -left-1 w-4 h-4 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-md border border-white"></div>
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-md border border-white"></div>
+              <div className="absolute top-0 left-4 w-3 h-3 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-md border border-white"></div>
+              <div className="absolute top-0 right-4 w-3 h-3 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-md border border-white"></div>
+              <div className="absolute bottom-2 left-1/2 w-4 h-2 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 shadow-md border border-white"
+                style={{ borderRadius: '0 0 50% 50%' }}></div>
             </div>
 
-            {/* Outer Decorative Ring */}
-            <div className="absolute -inset-2 rounded-full border-2 border-blue-200/50"></div>
+            {/* Outer Decorative Border */}
+            <div className="absolute -inset-2 border-2 border-blue-200/50"
+              style={{
+                borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
+                clipPath: 'ellipse(52% 62% at 50% 40%)'
+              }}></div>
+
+            {/* Base Platform */}
+            <div className="absolute -bottom-1 left-1/2 w-32 h-3 bg-gradient-to-r from-slate-200 via-white to-slate-200 transform -translate-x-1/2 shadow-lg border border-slate-300"
+              style={{ borderRadius: '50px' }}></div>
           </div>
         </div>
 
