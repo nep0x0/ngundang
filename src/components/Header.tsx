@@ -56,9 +56,8 @@ export default function Header({ brideNames, weddingDate }: HeaderProps) {
   return (
     <div
       ref={headerRef}
-      className="relative min-h-[100svh] w-full flex flex-col items-center justify-center text-center px-0 bg-gradient-to-b from-blue-200/70 to-blue-300/50 overflow-x-hidden"
+      className="relative min-h-[100svh] w-full flex flex-col items-center justify-center text-center px-0 bg-white overflow-x-hidden"
     >
-      <div className="absolute inset-0 bg-white/30"></div>
       <div className="relative z-10 text-gray-800 w-full max-w-4xl mx-auto px-3 sm:px-4 py-10">
 
         {/* Photo Frame - Arch Style */}
@@ -70,7 +69,7 @@ export default function Header({ brideNames, weddingDate }: HeaderProps) {
           <div className="relative w-72 h-96 sm:w-80 sm:h-[28rem] md:w-96 md:h-[32rem] lg:w-[26rem] lg:h-[36rem]">
             {/* Large Arch Frame */}
             <div
-              className="absolute inset-0 border-3 border-blue-300 bg-transparent overflow-hidden"
+              className="absolute inset-0 border-3 border-blue-200 bg-transparent overflow-hidden"
               style={{
                 borderRadius: '40% 40% 0 0'
               }}
