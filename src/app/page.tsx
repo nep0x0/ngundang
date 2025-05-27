@@ -7,7 +7,7 @@ import gsap from 'gsap';
 gsap.registerPlugin(ScrollTrigger);
 import Header from "@/components/Header";
 
-import Separator from "@/components/Separator";
+
 import Quote from "@/components/Quote";
 import CoupleInfo from "@/components/CoupleInfo";
 import Story from "@/components/Story";
@@ -101,11 +101,6 @@ export default function Home() {
     },
 
     audio: "/audio/wedding-song.mp3",
-    separator: {
-      imageSrc: "/images/wedding-photo.jpg",
-      title: "Our Wedding",
-      subtitle: "A celebration of love"
-    },
     quote: {
       text: "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya, dan dijadikan-Nya diantaramu rasa kasih dan sayang.",
       source: "QS. Ar-Rum: 21",
@@ -205,30 +200,23 @@ export default function Home() {
           weddingDate={weddingData.date}
         />
 
-        {/* 1. Separator - Pembuka undangan foto */}
-        <Separator
-          imageSrc={weddingData.separator.imageSrc}
-          title={weddingData.separator.title}
-          subtitle={weddingData.separator.subtitle}
-        />
-
-        {/* 2. Quote */}
+        {/* 1. Quote */}
         <Quote
           quote={weddingData.quote.text}
           source={weddingData.quote.source}
           author={weddingData.quote.author}
         />
 
-        {/* 3. Couple Profile */}
+        {/* 2. Couple Profile */}
         <CoupleInfo
           bride={weddingData.couple.bride}
           groom={weddingData.couple.groom}
         />
 
-        {/* 4. Story perjalanan mempelai */}
+        {/* 3. Story perjalanan mempelai */}
         <Story stories={weddingData.story} />
 
-        {/* 5. Wedding Detail */}
+        {/* 4. Wedding Detail */}
         <EventDetails
           akadNikah={weddingData.events.akadNikah}
           resepsi={weddingData.events.resepsi}
@@ -244,10 +232,10 @@ export default function Home() {
           googleMapsUrl={weddingData.location.googleMapsUrl}
         />
 
-        {/* 6. RSVP */}
+        {/* 5. RSVP */}
         <RSVP />
 
-        {/* 7. Bottom */}
+        {/* 6. Bottom */}
         <Bottom
           brideNames={{
             bride: weddingData.couple.bride.name,
