@@ -68,41 +68,17 @@ export default function Header({ brideNames, weddingDate }: HeaderProps) {
           style={{ perspective: '1000px' }}
         >
           <div className="relative w-48 h-60 sm:w-56 sm:h-72 md:w-64 md:h-80">
-            {/* Main Arch Frame */}
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-200 via-slate-100 to-white shadow-2xl border-4 border-white"
+            {/* Simple Arch Frame */}
+            <div
+              className="absolute inset-0 border-2 border-blue-300 bg-transparent overflow-hidden"
               style={{
-                borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
-                clipPath: 'ellipse(50% 60% at 50% 40%)'
-              }}>
-
-              {/* Inner Shadow Ring */}
-              <div className="absolute inset-2 shadow-inner bg-gradient-to-br from-slate-50 to-white"
-                style={{
-                  borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
-                  clipPath: 'ellipse(50% 60% at 50% 40%)'
-                }}></div>
-
-              {/* Decorative Arch Elements */}
-              <div className="absolute inset-3 overflow-hidden"
-                style={{
-                  borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
-                  clipPath: 'ellipse(50% 60% at 50% 40%)'
-                }}>
-
-                {/* Arch Keystone */}
-                <div className="absolute top-2 left-1/2 w-4 h-6 bg-gradient-to-b from-blue-400 to-blue-600 transform -translate-x-1/2 shadow-md border border-white"
-                  style={{ borderRadius: '50% 50% 0 0' }}></div>
-
-                {/* Side Pillars */}
-                <div className="absolute top-6 left-3 w-2 h-8 bg-gradient-to-b from-slate-300 to-slate-400 shadow-sm"></div>
-                <div className="absolute top-6 right-3 w-2 h-8 bg-gradient-to-b from-slate-300 to-slate-400 shadow-sm"></div>
-              </div>
-
+                borderRadius: '50% 50% 0 0'
+              }}
+            >
               {/* Photo Container */}
-              <div className="absolute inset-4 overflow-hidden shadow-lg"
+              <div className="absolute inset-1 overflow-hidden"
                 style={{
-                  borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
-                  clipPath: 'ellipse(50% 60% at 50% 40%)'
+                  borderRadius: '50% 50% 0 0'
                 }}>
                 <Image
                   src="/images/swahaxadel-508.jpg"
@@ -111,27 +87,8 @@ export default function Header({ brideNames, weddingDate }: HeaderProps) {
                   className="object-cover"
                   priority
                 />
-                {/* Photo Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/10"></div>
               </div>
-
-              {/* Decorative Corner Elements */}
-              <div className="absolute top-0 left-4 w-3 h-3 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-md border border-white"></div>
-              <div className="absolute top-0 right-4 w-3 h-3 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-md border border-white"></div>
-              <div className="absolute bottom-2 left-1/2 w-4 h-2 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 shadow-md border border-white"
-                style={{ borderRadius: '0 0 50% 50%' }}></div>
             </div>
-
-            {/* Outer Decorative Border */}
-            <div className="absolute -inset-2 border-2 border-blue-200/50"
-              style={{
-                borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%',
-                clipPath: 'ellipse(52% 62% at 50% 40%)'
-              }}></div>
-
-            {/* Base Platform */}
-            <div className="absolute -bottom-1 left-1/2 w-32 h-3 bg-gradient-to-r from-slate-200 via-white to-slate-200 transform -translate-x-1/2 shadow-lg border border-slate-300"
-              style={{ borderRadius: '50px' }}></div>
           </div>
         </div>
 
