@@ -9,21 +9,22 @@ interface HeaderProps {
     bride: string;
     groom: string;
   };
+  // weddingDate: string;
 }
 
 export default function Header({ brideNames }: HeaderProps) {
   const headerRef = useRef<HTMLDivElement>(null);
   const photoRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const dateRef = useRef<HTMLParagraphElement>(null);
+  // const dateRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     const header = headerRef.current;
     const photo = photoRef.current;
     const title = titleRef.current;
-    const date = dateRef.current;
+    // const date = dateRef.current;
 
-    if (header && photo && title && date) {
+    if (header && photo && title) {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
       tl.fromTo(
@@ -43,12 +44,6 @@ export default function Header({ brideNames }: HeaderProps) {
           { y: 0, opacity: 1, duration: 1 },
           '-=0.8'
         )
-        .fromTo(
-          date,
-          { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.7 },
-          '-=0.5'
-        );
     }
   }, []);
 
