@@ -66,10 +66,10 @@ export default function Header({ brideNames, weddingDate }: HeaderProps) {
           className="mb-8 sm:mb-12 flex justify-center"
           style={{ perspective: '1000px' }}
         >
-          <div className="relative w-72 h-96 sm:w-80 sm:h-[28rem] md:w-96 md:h-[32rem] lg:w-[26rem] lg:h-[36rem]">
+          <div className="relative w-80 h-[28rem] sm:w-96 sm:h-[36rem] md:w-[28rem] md:h-[40rem] lg:w-[32rem] lg:h-[44rem]">
             {/* Large Arch Frame */}
             <div
-              className="absolute inset-0 border-3 border-blue-200 bg-transparent overflow-hidden"
+              className="absolute inset-0 border-4 border-blue-300 bg-white shadow-lg overflow-hidden"
               style={{
                 borderRadius: '40% 40% 0 0'
               }}
