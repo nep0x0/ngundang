@@ -9,22 +9,22 @@ interface HeaderProps {
     bride: string;
     groom: string;
   };
-  // weddingDate dihapus
+  weddingDate: string;
 }
 
-export default function Header({ brideNames }: HeaderProps) {
+export default function Header({ brideNames, weddingDate }: HeaderProps) {
   const headerRef = useRef<HTMLDivElement>(null);
   const photoRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
-  // dateRef dihapus
+  const dateRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     const header = headerRef.current;
     const photo = photoRef.current;
     const title = titleRef.current;
-    // dateRef dihapus
+    const date = dateRef.current;
 
-    if (header && photo && title) {
+    if (header && photo && title && date) {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
       tl.fromTo(
@@ -43,11 +43,18 @@ export default function Header({ brideNames }: HeaderProps) {
           { y: 50, opacity: 0 },
           { y: 0, opacity: 1, duration: 1 },
           '-=0.8'
+        )
+        .fromTo(
+          date,
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7 },
+          '-=0.5'
         );
     }
   }, []);
 
   return (
+
     <div
       ref={headerRef}
       className="relative min-h-[100svh] w-full flex flex-col items-center justify-center text-center px-0 bg-white overflow-x-hidden"
@@ -93,13 +100,16 @@ export default function Header({ brideNames }: HeaderProps) {
           </div>
         </div>
 
-        {/* Names */}
-        <h1
-          ref={titleRef}
-          className="text-3xl sm:text-4xl md:text-6xl font-serif mb-4 md:mb-6 leading-tight text-blue-700"
-        >
-          {brideNames.bride} <span className="font-light text-blue-500">&</span> {brideNames.groom}
-        </h1>
+        {/* Names and Date */}
+        < h1 ref={titleRef} className="text-3xl sm:text-4xl md:text-6xl font-serif mb-4 md:mb-6 leading-tight text-blue-700" >
+          {brideNames.bride} <span className="font-light text-blue-500" >&</span > {brideNames.groom}
+        </h1 >
+        {false && (
+          <p ref={dateRef}>
+            {weddingDate}
+          </p>
+        )}
+
       </div>
     </div>
   );
