@@ -9,10 +9,9 @@ interface HeaderProps {
     bride: string;
     groom: string;
   };
-  weddingDate: string;
 }
 
-export default function Header({ brideNames, weddingDate }: HeaderProps) {
+export default function Header({ brideNames }: HeaderProps) {
   const headerRef = useRef<HTMLDivElement>(null);
   const photoRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
