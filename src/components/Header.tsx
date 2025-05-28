@@ -54,16 +54,16 @@ export default function Header({ brideNames, weddingDate }: HeaderProps) {
   }, []);
 
   return (
+
     <div
       ref={headerRef}
       className="relative min-h-[100svh] w-full flex flex-col items-center justify-center text-center px-0 bg-white overflow-x-hidden"
     >
       <div className="relative z-10 text-gray-800 w-full max-w-4xl mx-auto px-3 sm:px-4 py-10">
-
         {/* Photo Frame - Arch Style */}
         <div
           ref={photoRef}
-          className="mb-8 sm:mb-12 flex justify-center"
+          className="mb-16 sm:mb-20 flex justify-center"
           style={{ perspective: '1000px' }}
         >
           <div className="relative w-80 h-[28rem] sm:w-96 sm:h-[36rem] md:w-[28rem] md:h-[40rem] lg:w-[32rem] lg:h-[44rem]">
@@ -75,21 +75,35 @@ export default function Header({ brideNames, weddingDate }: HeaderProps) {
                   src="/images/swahaxadel-508.jpg"
                   alt="Adelita & Ansyah Wedding Photo"
                   fill
-                  className="object-cover"
+                  className="object-cover scale-150 -translate-x-5"
                   priority
                 />
               </div>
             </div>
           </div>
+          {/* Flower decorations */}
+          <div className="absolute bottom-[-4rem] left-[1%] w-[180px] h-[180px]">
+            <Image
+              src="/images/bunga5.png"
+              alt="Dekorasi bunga kiri"
+              fill
+              className="object-contain"
+            />
+          </div>
+          <div className="absolute bottom-[-4rem] right-[1%] w-[180px] h-[180px]">
+            <Image
+              src="/images/bunga5.png"
+              alt="Dekorasi bunga kanan"
+              fill
+              className="object-contain scale-x-[-1]"
+            />
+          </div>
         </div>
 
         {/* Names and Date */}
-        <h1 ref={titleRef} className="text-3xl sm:text-4xl md:text-6xl font-serif mb-4 md:mb-6 leading-tight text-blue-700">
-          {brideNames.bride} <span className="font-light text-blue-500">&</span> {brideNames.groom}
-        </h1>
-        <p ref={dateRef} className="text-lg sm:text-xl md:text-2xl font-light text-blue-600">
-          {weddingDate}
-        </p>
+        < h1 ref={titleRef} className="text-3xl sm:text-4xl md:text-6xl font-serif mb-4 md:mb-6 leading-tight text-blue-700" >
+          {brideNames.bride} <span className="font-light text-blue-500" >&</span > {brideNames.groom}
+        </h1 >
       </div>
     </div>
   );
