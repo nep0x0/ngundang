@@ -26,21 +26,47 @@ export default function AdminPage() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [guestsData, rsvpsData, statsData] = await Promise.all([
-        guestService.getAll(),
-        rsvpService.getAll(),
-        statsService.getGuestStats()
-      ]);
+      console.log('🔍 Testing database connection...');
+
+      // Test guests table first
+      const guestsData = await guestService.getAll();
+      console.log('✅ Guests loaded:', guestsData.length);
       setGuests(guestsData);
+
+      // Test rsvps table
+      const rsvpsData = await rsvpService.getAll();
+      console.log('✅ RSVPs loaded:', rsvpsData.length);
       setRSVPs(rsvpsData);
+
+      // Test stats
+      const statsData = await statsService.getGuestStats();
+      console.log('✅ Stats loaded:', statsData);
       setStats(statsData);
-    } catch (error) {
-      console.error('Error loading data:', error);
+
+    } catch (error: any) {
+      console.error('❌ Database error details:', error);
+
+      // More detailed error handling
+      let errorMessage = 'Database connection failed. ';
+
+      if (error.code === '42P01') {
+        errorMessage += 'Tables do not exist. Please run the SQL setup script in Supabase.';
+      } else if (error.code === '42703') {
+        errorMessage += 'Column "from_side" missing. Please run the update script.';
+      } else if (error.message?.includes('JWT')) {
+        errorMessage += 'Authentication failed. Check your Supabase API key.';
+      } else if (error.message?.includes('fetch')) {
+        errorMessage += 'Network error. Check your internet connection and Supabase URL.';
+      } else {
+        errorMessage += `Error: ${error.message || 'Unknown error'}`;
+      }
+
       // Fallback: set empty arrays to prevent UI issues
       setGuests([]);
       setRSVPs([]);
       setStats(null);
-      alert('Database belum tersedia. Silakan setup Supabase terlebih dahulu. Lihat file supabase_setup.sql');
+
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
