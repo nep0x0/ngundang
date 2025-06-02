@@ -45,6 +45,10 @@ export default function Home() {
     // Memulai musik otomatis setelah user berinteraksi dengan halaman
     document.body.style.overflow = 'auto'; // Mengaktifkan scroll
 
+    // Trigger custom event untuk memulai audio
+    const audioStartEvent = new CustomEvent('startAudio');
+    window.dispatchEvent(audioStartEvent);
+
     // Refresh ScrollTrigger setelah content muncul
     setTimeout(() => {
       ScrollTrigger.refresh();
