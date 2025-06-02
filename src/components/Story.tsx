@@ -129,9 +129,10 @@ export default function Story({ stories }: StoryProps) {
                         src={story.image}
                         alt={story.title}
                         fill
-                        className="object-cover"
+                        className={`${index === 1 ? 'object-cover object-top' : 'object-cover'}`}
                         sizes="(max-width: 768px) 100vw, 50vw"
                         priority={index < 2}
+                        style={index === 1 ? { objectPosition: '50% 20%' } : {}}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                     </div>
