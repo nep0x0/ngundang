@@ -96,7 +96,7 @@ export default function AdminPage() {
     try {
       setIsSubmitting(true);
       const baseUrl = window.location.origin;
-      const invitationLink = generateInvitationLink(formData.name, baseUrl);
+      const invitationLink = generateInvitationLink(formData.name, formData.partner || undefined, baseUrl);
       const whatsappMessage = generateWhatsAppMessage(formData.name, formData.partner || undefined, invitationLink);
 
       const newGuest = await guestService.create({

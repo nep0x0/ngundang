@@ -154,15 +154,16 @@ export const statsService = {
 }
 
 // Helper function to generate invitation link
-export function generateInvitationLink(guestName: string, baseUrl: string = 'https://yourwebsite.com'): string {
-  const encodedName = encodeURIComponent(guestName)
+export function generateInvitationLink(guestName: string, partnerName?: string, baseUrl: string = 'https://yourwebsite.com'): string {
+  const fullName = partnerName ? `${guestName} dan ${partnerName}` : guestName
+  const encodedName = encodeURIComponent(fullName)
   return `${baseUrl}/?to=${encodedName}`
 }
 
 // Helper function to generate WhatsApp message
 export function generateWhatsAppMessage(guestName: string, partnerName?: string, invitationLink?: string): string {
   const partner = partnerName ? ` dan ${partnerName}` : ''
-  const link = invitationLink || generateInvitationLink(guestName)
+  const link = invitationLink || generateInvitationLink(guestName, partnerName)
 
   return `Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i ${guestName}${partner} untuk menghadiri acara kami.
 
