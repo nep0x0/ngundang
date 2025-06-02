@@ -6,7 +6,16 @@ import { guestService, rsvpService, statsService, generateInvitationLink, genera
 export default function AdminPage() {
   const [guests, setGuests] = useState<Guest[]>([]);
   const [rsvps, setRSVPs] = useState<RSVP[]>([]);
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<{
+    totalGuests: number;
+    adelGuests: number;
+    ekoGuests: number;
+    totalRSVPs: number;
+    attending: number;
+    notAttending: number;
+    totalAttendingCount: number;
+    responseRate: number;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [databaseReady, setDatabaseReady] = useState(false);
   const [activeTab, setActiveTab] = useState<'guests' | 'rsvps' | 'stats'>('guests');
@@ -48,22 +57,24 @@ export default function AdminPage() {
       setDatabaseReady(true);
       console.log('✅ Database is ready!');
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Database error details:', error);
 
       // More detailed error handling
       let errorMessage = 'Database connection failed. ';
 
-      if (error.code === '42P01') {
+      const err = error as { code?: string; message?: string };
+
+      if (err.code === '42P01') {
         errorMessage += 'Tables do not exist. Please run the SQL setup script in Supabase.';
-      } else if (error.code === '42703') {
+      } else if (err.code === '42703') {
         errorMessage += 'Column "from_side" missing. Please run the update script.';
-      } else if (error.message?.includes('JWT')) {
+      } else if (err.message?.includes('JWT')) {
         errorMessage += 'Authentication failed. Check your Supabase API key.';
-      } else if (error.message?.includes('fetch')) {
+      } else if (err.message?.includes('fetch')) {
         errorMessage += 'Network error. Check your internet connection and Supabase URL.';
       } else {
-        errorMessage += `Error: ${error.message || 'Unknown error'}`;
+        errorMessage += `Error: ${err.message || 'Unknown error'}`;
       }
 
       // Fallback: set empty arrays to prevent UI issues
@@ -518,7 +529,7 @@ export default function AdminPage() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Guest Distribution</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-pink-600">Adel's Guests</span>
+                    <span className="text-sm text-pink-600">Adel&apos;s Guests</span>
                     <span className="font-semibold">{stats.adelGuests}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
@@ -528,7 +539,7 @@ export default function AdminPage() {
                     ></div>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-blue-600">Eko's Guests</span>
+                    <span className="text-sm text-blue-600">Eko&apos;s Guests</span>
                     <span className="font-semibold">{stats.ekoGuests}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">

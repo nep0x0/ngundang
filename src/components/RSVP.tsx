@@ -165,7 +165,7 @@ export default function RSVP() {
             </h3>
             <div className="bg-white rounded-2xl shadow-lg p-6 max-h-96 overflow-y-auto">
               <div className="space-y-4">
-                {rsvps.map((rsvp, index) => (
+                {rsvps.map((rsvp) => (
                   <div key={rsvp.id} className="flex items-start space-x-3">
                     <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
                       {rsvp.guest_name.charAt(0).toUpperCase()}
@@ -181,7 +181,7 @@ export default function RSVP() {
                         Akan hadir ({rsvp.guest_count} orang)
                       </p>
                       {rsvp.message && (
-                        <p className="text-sm text-gray-700 italic">"{rsvp.message}"</p>
+                        <p className="text-sm text-gray-700 italic">&quot;{rsvp.message}&quot;</p>
                       )}
                     </div>
                   </div>
