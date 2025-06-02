@@ -8,6 +8,7 @@ export default function AdminPage() {
   const [rsvps, setRSVPs] = useState<RSVP[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [databaseReady, setDatabaseReady] = useState(false);
   const [activeTab, setActiveTab] = useState<'guests' | 'rsvps' | 'stats'>('guests');
 
   // Form state
@@ -43,6 +44,10 @@ export default function AdminPage() {
       console.log('✅ Stats loaded:', statsData);
       setStats(statsData);
 
+      // If we reach here, database is ready
+      setDatabaseReady(true);
+      console.log('✅ Database is ready!');
+
     } catch (error: any) {
       console.error('❌ Database error details:', error);
 
@@ -65,6 +70,7 @@ export default function AdminPage() {
       setGuests([]);
       setRSVPs([]);
       setStats(null);
+      setDatabaseReady(false);
 
       alert(errorMessage);
     } finally {
@@ -135,10 +141,8 @@ export default function AdminPage() {
     );
   }
 
-  // Show setup instructions if no data and likely database not setup
-  const showSetupInstructions = guests.length === 0 && rsvps.length === 0;
-
-  if (showSetupInstructions) {
+  // Show setup instructions only if database connection failed
+  if (!databaseReady && !loading) {
     return (
       <div className="min-h-screen bg-gray-100">
         <div className="container mx-auto px-4 py-8">
