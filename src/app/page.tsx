@@ -30,9 +30,16 @@ export default function Home() {
   useEffect(() => {
     // Mendapatkan nama penerima dari URL query parameter
     const searchParams = new URLSearchParams(window.location.search);
-    const toParam = searchParams.get('to');
+    const toParam = searchParams.get('to') || searchParams.get('nama') || searchParams.get('guest');
+
     if (toParam) {
-      setRecipientName(decodeURIComponent(toParam));
+      // Decode dan bersihkan nama
+      let cleanName = decodeURIComponent(toParam);
+      // Hapus karakter yang tidak diinginkan
+      cleanName = cleanName.replace(/[<>]/g, '');
+      // Kapitalisasi nama dengan benar
+      cleanName = cleanName.replace(/\b\w/g, l => l.toUpperCase());
+      setRecipientName(cleanName);
     }
   }, []);
 
