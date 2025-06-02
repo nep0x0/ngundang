@@ -11,6 +11,7 @@ export interface Guest {
   name: string
   partner?: string
   phone?: string
+  from_side: 'adel' | 'eko'
   invitation_link: string
   whatsapp_message: string
   created_at: string
@@ -83,7 +84,7 @@ export const rsvpService = {
       .from('rsvps')
       .select('*')
       .order('created_at', { ascending: false })
-    
+
     if (error) throw error
     return data || []
   },
@@ -95,7 +96,7 @@ export const rsvpService = {
       .insert([rsvp])
       .select()
       .single()
-    
+
     if (error) throw error
     return data
   },
@@ -107,9 +108,48 @@ export const rsvpService = {
       .select('*')
       .eq('guest_name', guestName)
       .single()
-    
+
     if (error && error.code !== 'PGRST116') throw error
     return data
+  }
+}
+
+// Statistics service
+export const statsService = {
+  // Get guest statistics
+  async getGuestStats() {
+    const { data: guests, error: guestError } = await supabase
+      .from('guests')
+      .select('from_side')
+
+    if (guestError) throw guestError
+
+    const { data: rsvps, error: rsvpError } = await supabase
+      .from('rsvps')
+      .select('attendance, guest_count')
+
+    if (rsvpError) throw rsvpError
+
+    const totalGuests = guests?.length || 0
+    const adelGuests = guests?.filter(g => g.from_side === 'adel').length || 0
+    const ekoGuests = guests?.filter(g => g.from_side === 'eko').length || 0
+
+    const totalRSVPs = rsvps?.length || 0
+    const attending = rsvps?.filter(r => r.attendance === 'hadir').length || 0
+    const notAttending = rsvps?.filter(r => r.attendance === 'tidak_hadir').length || 0
+    const totalAttendingCount = rsvps?.filter(r => r.attendance === 'hadir')
+      .reduce((sum, r) => sum + (r.guest_count || 1), 0) || 0
+
+    return {
+      totalGuests,
+      adelGuests,
+      ekoGuests,
+      totalRSVPs,
+      attending,
+      notAttending,
+      totalAttendingCount,
+      responseRate: totalGuests > 0 ? Math.round((totalRSVPs / totalGuests) * 100) : 0
+    }
   }
 }
 

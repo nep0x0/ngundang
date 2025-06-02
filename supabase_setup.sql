@@ -1,12 +1,22 @@
 -- Wedding Invitation Database Setup for Supabase
 -- Run this SQL in your Supabase SQL Editor
 
+-- Add from_side column to existing guests table (if it doesn't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns
+                   WHERE table_name = 'guests' AND column_name = 'from_side') THEN
+        ALTER TABLE guests ADD COLUMN from_side TEXT NOT NULL CHECK (from_side IN ('adel', 'eko')) DEFAULT 'adel';
+    END IF;
+END $$;
+
 -- Create guests table
 CREATE TABLE IF NOT EXISTS guests (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     name TEXT NOT NULL,
     partner TEXT,
     phone TEXT,
+    from_side TEXT NOT NULL CHECK (from_side IN ('adel', 'eko')) DEFAULT 'adel',
     invitation_link TEXT NOT NULL,
     whatsapp_message TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
