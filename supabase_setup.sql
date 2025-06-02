@@ -45,15 +45,27 @@ CREATE INDEX IF NOT EXISTS idx_rsvps_created_at ON rsvps(created_at);
 ALTER TABLE guests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE rsvps ENABLE ROW LEVEL SECURITY;
 
--- Create policies for guests table
--- Allow all operations for now (you can restrict this later)
-CREATE POLICY "Allow all operations on guests" ON guests
-    FOR ALL USING (true);
+-- Create policies for guests table (only if they don't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies
+        WHERE tablename = 'guests' AND policyname = 'Allow all operations on guests'
+    ) THEN
+        CREATE POLICY "Allow all operations on guests" ON guests FOR ALL USING (true);
+    END IF;
+END $$;
 
--- Create policies for rsvps table
--- Allow all operations for now (you can restrict this later)
-CREATE POLICY "Allow all operations on rsvps" ON rsvps
-    FOR ALL USING (true);
+-- Create policies for rsvps table (only if they don't exist)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies
+        WHERE tablename = 'rsvps' AND policyname = 'Allow all operations on rsvps'
+    ) THEN
+        CREATE POLICY "Allow all operations on rsvps" ON rsvps FOR ALL USING (true);
+    END IF;
+END $$;
 
 -- Create function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
