@@ -136,9 +136,33 @@ export default function AdminPage() {
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    alert('Copied to clipboard!');
+  const copyToClipboard = async (text: string, type: string = 'text') => {
+    try {
+      console.log(`🔍 Copying ${type}:`, text.substring(0, 100) + '...');
+
+      if (navigator.clipboard && window.isSecureContext) {
+        // Modern clipboard API
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for older browsers or non-HTTPS
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        textArea.remove();
+      }
+
+      alert(`✅ ${type} copied to clipboard!`);
+      console.log(`✅ Successfully copied ${type}`);
+    } catch (error) {
+      console.error('❌ Copy failed:', error);
+      alert('❌ Failed to copy. Please try again.');
+    }
   };
 
   if (loading) {
@@ -378,7 +402,11 @@ export default function AdminPage() {
                         <td className="px-3 lg:px-6 py-4 text-sm font-medium">
                           <div className="flex flex-col lg:flex-row lg:space-x-2 space-y-1 lg:space-y-0">
                             <button
-                              onClick={() => copyToClipboard(guest.whatsapp_message)}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                copyToClipboard(guest.whatsapp_message, 'WhatsApp Message');
+                              }}
                               className="text-green-600 hover:text-green-900 text-xs lg:text-sm"
                             >
                               Copy Message

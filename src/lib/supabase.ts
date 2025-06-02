@@ -161,9 +161,9 @@ export function generateInvitationLink(guestName: string, baseUrl: string = 'htt
 
 // Helper function to generate WhatsApp message
 export function generateWhatsAppMessage(guestName: string, partnerName?: string, invitationLink?: string): string {
-  const partner = partnerName ? ` beserta ${partnerName}` : ''
+  const partner = partnerName ? ` dan ${partnerName}` : ''
   const link = invitationLink || generateInvitationLink(guestName)
-  
+
   return `Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i ${guestName}${partner} untuk menghadiri acara kami.
 
 *Berikut link undangan kami*, untuk info lengkap dari acara bisa kunjungi :
