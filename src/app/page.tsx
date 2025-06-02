@@ -62,10 +62,10 @@ export default function Home() {
         name: "Adelita",
         fullName: "Adelita",
         photo: "/images/mempelai-wanita.jpg",
-        description: "Putri dari keluarga yang berbahagia"
+        description: "Putri Kedua Dari Bapak Andi Kuswanto (Alm) & Ibu Yulita Anggraini"
       },
       groom: {
-        name: "Niansyah",
+        name: "Ansyah",
         fullName: "Niansyah Eko Putra, S.Kom",
         photo: "/images/mempelai-pria.jpg",
         description: "Putra pertama dari Bapak M.Syarkawi, A.Md dan Ibu Jatmi Asmarani, A.Md"
