@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import Image from 'next/image';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -92,22 +93,23 @@ export default function CoupleInfo({ bride, groom }: CoupleInfoProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-center w-full">
           <div ref={brideRef} className="text-center">
-            <div className="w-36 h-36 sm:w-40 sm:h-40 md:w-48 md:h-48 mx-auto mb-4 sm:mb-6 overflow-hidden rounded-full bg-blue-200 flex items-center justify-center">
-              <span className="text-3xl sm:text-4xl font-serif text-blue-600">{bride.name.charAt(0)}</span>
+            <div className="w-36 h-36 sm:w-40 sm:h-40 md:w-48 md:h-48 mx-auto mb-4 sm:mb-6 overflow-hidden rounded-full bg-blue-200 relative shadow-lg border-4 border-white">
+              {bride.photo ? (
+                <Image
+                  src={bride.photo}
+                  alt={bride.name}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="text-3xl sm:text-4xl font-serif text-blue-600">{bride.name.charAt(0)}</span>
+                </div>
+              )}
             </div>
             <h3 className="text-xl sm:text-2xl font-serif mb-1 sm:mb-2 text-blue-700">{bride.name}</h3>
             <p className="text-base sm:text-lg text-blue-600 mb-2 sm:mb-4">{bride.fullName}</p>
             <p className="text-sm sm:text-base text-blue-500">{bride.description}</p>
-            {bride.socialMedia?.instagram && (
-              <a
-                href={`https://instagram.com/${bride.socialMedia.instagram}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block mt-3 sm:mt-4 text-blue-500 hover:text-blue-700 text-sm sm:text-base"
-              >
-                @{bride.socialMedia.instagram}
-              </a>
-            )}
           </div>
 
           {/* Divider untuk mobile */}
@@ -121,22 +123,23 @@ export default function CoupleInfo({ bride, groom }: CoupleInfoProps) {
           </div>
 
           <div ref={groomRef} className="text-center md:col-start-2">
-            <div className="w-36 h-36 sm:w-40 sm:h-40 md:w-48 md:h-48 mx-auto mb-4 sm:mb-6 overflow-hidden rounded-full bg-blue-200 flex items-center justify-center">
-              <span className="text-3xl sm:text-4xl font-serif text-blue-600">{groom.name.charAt(0)}</span>
+            <div className="w-36 h-36 sm:w-40 sm:h-40 md:w-48 md:h-48 mx-auto mb-4 sm:mb-6 overflow-hidden rounded-full bg-blue-200 relative shadow-lg border-4 border-white">
+              {groom.photo ? (
+                <Image
+                  src={groom.photo}
+                  alt={groom.name}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="text-3xl sm:text-4xl font-serif text-blue-600">{groom.name.charAt(0)}</span>
+                </div>
+              )}
             </div>
             <h3 className="text-xl sm:text-2xl font-serif mb-1 sm:mb-2 text-blue-700">{groom.name}</h3>
             <p className="text-base sm:text-lg text-blue-600 mb-2 sm:mb-4">{groom.fullName}</p>
             <p className="text-sm sm:text-base text-blue-500">{groom.description}</p>
-            {groom.socialMedia?.instagram && (
-              <a
-                href={`https://instagram.com/${groom.socialMedia.instagram}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block mt-3 sm:mt-4 text-blue-500 hover:text-blue-700 text-sm sm:text-base"
-              >
-                @{groom.socialMedia.instagram}
-              </a>
-            )}
           </div>
         </div>
       </div>

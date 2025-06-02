@@ -1,7 +1,24 @@
-# Audio Implementation - Wedding Invitation
+# Wedding Invitation - Adelita & Niansyah
 
 ## Overview
-The wedding invitation now includes a fully functional audio player that automatically plays the wedding song (`public/audio/wedding-song.mp3`) when the user opens the invitation.
+This is a complete wedding invitation website for **Adelita** and **Niansyah Eko Putra, S.Kom** with auto-playing background music functionality.
+
+## Wedding Details
+- **Bride**: Adelita
+- **Groom**: Niansyah Eko Putra, S.Kom (Putra pertama dari Bapak M.Syarkawi, A.Md dan Ibu Jatmi Asmarani, A.Md)
+- **Wedding Date**: Jumat, 19 Desember 2025
+- **Akad Nikah**: 08:00 - 11:00 WIB
+- **Resepsi**: 13:30 - 16:00 WIB
+- **Location**: Rumah Mbah Adelita, Jl. Melati Indah No. 25, RT 03/RW 05, Kelurahan Sumber Rejeki, Kecamatan Bahagia, Kota Sejahtera
+
+## Love Story Timeline
+- **2023**: Pertemuan Pertama - Bertemu dan saling mengenal
+- **2024**: Menjalin Hubungan Serius - Memutuskan untuk bersama
+- **2025**: Lamaran - Dengan restu kedua orang tua
+- **2025**: Pernikahan - 19 Desember 2025
+
+## Audio Implementation
+The wedding invitation includes a fully functional audio player that automatically plays the wedding song (`public/audio/wedding-song.mp3`) when the user opens the invitation.
 
 ## Features Implemented
 

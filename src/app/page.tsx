@@ -60,45 +60,39 @@ export default function Home() {
     couple: {
       bride: {
         name: "Adelita",
-        fullName: "Adelita Putri Maharani, S.Pd",
-        photo: "/images/bride.jpg",
-        description: "Putri pertama dari Bapak Hendra Wijaya dan Ibu Siti Rahayu",
-        socialMedia: {
-          instagram: "adelita_putri"
-        }
+        fullName: "Adelita",
+        photo: "/images/mempelai-wanita.jpg",
+        description: "Putri dari keluarga yang berbahagia"
       },
       groom: {
-        name: "Ansyah",
-        fullName: "Ansyah Rizky Pratama, S.T",
-        photo: "/images/groom.jpg",
-        description: "Putra kedua dari Bapak Joko Susanto dan Ibu Wati Handayani",
-        socialMedia: {
-          instagram: "ansyah_rizky"
-        }
+        name: "Niansyah",
+        fullName: "Niansyah Eko Putra, S.Kom",
+        photo: "/images/mempelai-pria.jpg",
+        description: "Putra pertama dari Bapak M.Syarkawi, A.Md dan Ibu Jatmi Asmarani, A.Md"
       }
     },
-    date: "Sabtu, 15 Juni 2024",
+    date: "Jumat, 19 Desember 2025",
     events: {
       akadNikah: {
         title: "Akad Nikah",
-        date: "Sabtu, 15 Juni 2024",
-        time: "08:00 - 10:00 WIB",
-        location: "Masjid Al-Hikmah",
-        address: "Jl. Kenanga No. 123, Jakarta Selatan"
+        date: "Jumat, 19 Desember 2025",
+        time: "08:00 - 11:00 WIB",
+        location: "Rumah Mbah Adelita",
+        address: "Jl. Melati Indah No. 25, RT 03/RW 05, Kelurahan Sumber Rejeki, Kecamatan Bahagia, Kota Sejahtera"
       },
       resepsi: {
         title: "Resepsi",
-        date: "Sabtu, 15 Juni 2024",
-        time: "11:00 - 14:00 WIB",
-        location: "Gedung Serbaguna Anggrek",
-        address: "Jl. Anggrek No. 45, Jakarta Selatan"
+        date: "Jumat, 19 Desember 2025",
+        time: "13:30 - 16:00 WIB",
+        location: "Rumah Mbah Adelita",
+        address: "Jl. Melati Indah No. 25, RT 03/RW 05, Kelurahan Sumber Rejeki, Kecamatan Bahagia, Kota Sejahtera"
       }
     },
     location: {
       title: "Lokasi Acara",
       mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.2904388242364!2d106.82687507418235!3d-6.226305993770337!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3f03a962d85%3A0x2e7c2c43a9d9f9d1!2sMonumen%20Nasional!5e0!3m2!1sid!2sid!4v1682329193229!5m2!1sid!2sid",
-      locationName: "Gedung Serbaguna Anggrek",
-      locationAddress: "Jl. Anggrek No. 45, Jakarta Selatan",
+      locationName: "Rumah Mbah Adelita",
+      locationAddress: "Jl. Melati Indah No. 25, RT 03/RW 05, Kelurahan Sumber Rejeki, Kecamatan Bahagia, Kota Sejahtera",
       googleMapsUrl: "https://goo.gl/maps/1JmxYy9PBBt9tLmS6"
     },
 
@@ -110,34 +104,28 @@ export default function Home() {
     },
     story: [
       {
-        year: "2020",
+        year: "2023",
         title: "Pertemuan Pertama",
-        description: "Kami bertemu pertama kali di kampus saat mengikuti kegiatan organisasi mahasiswa. Saat itu, kami hanya berteman biasa dan saling mengenal sebagai teman satu fakultas.",
+        description: "Kami bertemu dan saling mengenal untuk pertama kalinya. Pertemuan yang sederhana namun menjadi awal dari perjalanan cinta yang indah ini.",
         image: "/images/story1.jpg"
       },
       {
-        year: "2021",
-        title: "Mulai Dekat",
-        description: "Seiring berjalannya waktu, kami mulai sering mengobrol dan berbagi cerita. Dari teman biasa, kami mulai merasa nyaman satu sama lain dan sering menghabiskan waktu bersama.",
+        year: "2024",
+        title: "Menjalin Hubungan Serius",
+        description: "Seiring berjalannya waktu, kami memutuskan untuk menjalin hubungan yang lebih serius. Kami saling mendukung dan merencanakan masa depan bersama dengan penuh kasih sayang.",
         image: "/images/story2.jpg"
       },
       {
-        year: "2022",
-        title: "Menjalin Hubungan",
-        description: "Akhirnya kami memutuskan untuk menjalin hubungan yang lebih serius. Kami saling mendukung dalam menyelesaikan studi dan merencanakan masa depan bersama.",
+        year: "2025",
+        title: "Lamaran",
+        description: "Dengan restu kedua orang tua dan keluarga besar, kami melaksanakan acara lamaran sebagai langkah awal menuju jenjang pernikahan yang sakral.",
         image: "/images/story3.jpg"
       },
       {
-        year: "2023",
-        title: "Lamaran",
-        description: "Setelah lulus kuliah dan memiliki pekerjaan yang stabil, kami memutuskan untuk melanjutkan hubungan ke jenjang yang lebih serius dengan acara lamaran yang dihadiri kedua keluarga.",
-        image: "/images/story4.jpg"
-      },
-      {
-        year: "2024",
+        year: "2025",
         title: "Pernikahan",
-        description: "Dan akhirnya, kami akan menikah! Terima kasih untuk semua doa dan dukungan dari keluarga dan teman-teman. Kami sangat bahagia bisa memulai hidup baru bersama.",
-        image: "/images/story5.jpg"
+        description: "Dan akhirnya, kami akan menikah pada 19 Desember 2025! Terima kasih untuk semua doa dan dukungan dari keluarga dan teman-teman. Kami sangat bahagia bisa memulai hidup baru bersama.",
+        image: "/images/story4.jpg"
       }
     ],
     thankYouMessage: "Terima kasih atas doa dan restu yang telah diberikan untuk pernikahan kami. Kehadiran dan dukungan Anda sangat berarti bagi kami dalam memulai babak baru kehidupan ini."
@@ -224,7 +212,7 @@ export default function Home() {
           resepsi={weddingData.events.resepsi}
         />
 
-        <CountdownTimer targetDate="2024-06-15" />
+        <CountdownTimer targetDate="2025-12-19" />
 
         <LocationMap
           title={weddingData.location.title}
