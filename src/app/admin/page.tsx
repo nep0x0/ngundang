@@ -136,6 +136,34 @@ export default function AdminPage() {
     }
   };
 
+  const regenerateLinks = async () => {
+    if (!confirm('Regenerate semua invitation links dan WhatsApp messages? Ini akan update semua data existing.')) return;
+
+    try {
+      setLoading(true);
+      const baseUrl = window.location.origin;
+
+      for (const guest of guests) {
+        const newInvitationLink = generateInvitationLink(guest.name, guest.partner || undefined, baseUrl);
+        const newWhatsAppMessage = generateWhatsAppMessage(guest.name, guest.partner || undefined, newInvitationLink);
+
+        await guestService.update(guest.id, {
+          invitation_link: newInvitationLink,
+          whatsapp_message: newWhatsAppMessage
+        });
+      }
+
+      // Reload data to show updates
+      await loadData();
+      alert('✅ Semua links dan messages berhasil di-regenerate!');
+    } catch (error) {
+      console.error('Error regenerating links:', error);
+      alert('❌ Error regenerating links. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const copyToClipboard = async (text: string, type: string = 'text') => {
     try {
       console.log(`🔍 Copying ${type}:`, text.substring(0, 100) + '...');
@@ -346,8 +374,15 @@ export default function AdminPage() {
 
             {/* Guests List */}
             <div className="bg-white rounded-lg shadow">
-              <div className="px-4 lg:px-6 py-4 border-b border-gray-200">
+              <div className="px-4 lg:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                 <h2 className="text-lg lg:text-xl font-semibold">Guest List</h2>
+                <button
+                  onClick={regenerateLinks}
+                  disabled={loading || guests.length === 0}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 text-sm"
+                >
+                  🔄 Regenerate Links
+                </button>
               </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
