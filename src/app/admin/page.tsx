@@ -378,12 +378,6 @@ export default function AdminPage() {
                         <td className="px-3 lg:px-6 py-4 text-sm font-medium">
                           <div className="flex flex-col lg:flex-row lg:space-x-2 space-y-1 lg:space-y-0">
                             <button
-                              onClick={() => copyToClipboard(guest.invitation_link)}
-                              className="text-blue-600 hover:text-blue-900 text-xs lg:text-sm"
-                            >
-                              Copy Link
-                            </button>
-                            <button
                               onClick={() => copyToClipboard(guest.whatsapp_message)}
                               className="text-green-600 hover:text-green-900 text-xs lg:text-sm"
                             >
