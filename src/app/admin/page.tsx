@@ -32,7 +32,10 @@ export default function AdminPage() {
       setRSVPs(rsvpsData);
     } catch (error) {
       console.error('Error loading data:', error);
-      alert('Error loading data. Please check console.');
+      // Fallback: set empty arrays to prevent UI issues
+      setGuests([]);
+      setRSVPs([]);
+      alert('Database belum tersedia. Silakan setup Supabase terlebih dahulu. Lihat file supabase_setup.sql');
     } finally {
       setLoading(false);
     }
@@ -61,7 +64,7 @@ export default function AdminPage() {
       alert('Tamu berhasil ditambahkan!');
     } catch (error) {
       console.error('Error adding guest:', error);
-      alert('Error adding guest. Please try again.');
+      alert('Database belum tersedia. Silakan setup Supabase terlebih dahulu. Lihat file supabase_setup.sql untuk instruksi setup.');
     } finally {
       setIsSubmitting(false);
     }
@@ -91,6 +94,64 @@ export default function AdminPage() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show setup instructions if no data and likely database not setup
+  const showSetupInstructions = guests.length === 0 && rsvps.length === 0;
+
+  if (showSetupInstructions) {
+    return (
+      <div className="min-h-screen bg-gray-100">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-lg shadow-lg p-8">
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                  </svg>
+                </div>
+                <h1 className="text-3xl font-bold text-gray-800 mb-4">Database Setup Required</h1>
+                <p className="text-gray-600 mb-8">
+                  Untuk menggunakan admin panel, Anda perlu setup database Supabase terlebih dahulu.
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                  <h2 className="text-xl font-semibold text-blue-800 mb-4">📋 Langkah Setup:</h2>
+                  <ol className="list-decimal list-inside space-y-2 text-blue-700">
+                    <li>Login ke <a href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer" className="underline">Supabase Dashboard</a></li>
+                    <li>Buka project Anda</li>
+                    <li>Go to <strong>SQL Editor</strong></li>
+                    <li>Copy-paste isi file <code className="bg-blue-100 px-2 py-1 rounded">supabase_setup.sql</code></li>
+                    <li>Run SQL script</li>
+                    <li>Refresh halaman ini</li>
+                  </ol>
+                </div>
+
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">📁 File yang Diperlukan:</h3>
+                  <ul className="space-y-2 text-gray-600">
+                    <li>• <code className="bg-gray-100 px-2 py-1 rounded">supabase_setup.sql</code> - Database schema</li>
+                    <li>• <code className="bg-gray-100 px-2 py-1 rounded">ADMIN_SYSTEM_GUIDE.md</code> - Dokumentasi lengkap</li>
+                  </ul>
+                </div>
+
+                <div className="text-center">
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    🔄 Refresh Setelah Setup
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
