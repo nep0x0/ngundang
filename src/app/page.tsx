@@ -77,23 +77,23 @@ export default function Home() {
         title: "Akad Nikah",
         date: "Jumat, 19 Desember 2025",
         time: "08:00 - 11:00 WIB",
-        location: "Rumah Mbah Adelita",
-        address: "Jl. Melati Indah No. 25, RT 03/RW 05, Kelurahan Sumber Rejeki, Kecamatan Bahagia, Kota Sejahtera"
+        location: "Kediaman Mempelai Wanita",
+        address: "Jl. Dr. Sumbiyono RT 11 NO. 35 Kelurahan Jelutung Kecamatan Jelutung, Kota Jambi"
       },
       resepsi: {
         title: "Resepsi",
         date: "Jumat, 19 Desember 2025",
         time: "13:30 - 16:00 WIB",
-        location: "Rumah Mbah Adelita",
-        address: "Jl. Melati Indah No. 25, RT 03/RW 05, Kelurahan Sumber Rejeki, Kecamatan Bahagia, Kota Sejahtera"
+        location: "Kediaman Mempelai Wanita",
+        address: "Jl. Dr. Sumbiyono RT 11 NO. 35 Kelurahan Jelutung Kecamatan Jelutung, Kota Jambi"
       }
     },
     location: {
       title: "Lokasi Acara",
-      mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.2904388242364!2d106.82687507418235!3d-6.226305993770337!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3f03a962d85%3A0x2e7c2c43a9d9f9d1!2sMonumen%20Nasional!5e0!3m2!1sid!2sid!4v1682329193229!5m2!1sid!2sid",
-      locationName: "Rumah Mbah Adelita",
-      locationAddress: "Jl. Melati Indah No. 25, RT 03/RW 05, Kelurahan Sumber Rejeki, Kecamatan Bahagia, Kota Sejahtera",
-      googleMapsUrl: "https://goo.gl/maps/1JmxYy9PBBt9tLmS6"
+      mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.6234567890123!2d103.6184471!3d-1.6147901!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMcKwMzYnNTMuMCJTIDEwM8KwMzcnMDYuNCJF!5e0!3m2!1sid!2sid!4v1682329193229!5m2!1sid!2sid",
+      locationName: "Kediaman Mempelai Wanita",
+      locationAddress: "Jl. Dr. Sumbiyono RT 11 NO. 35 Kelurahan Jelutung Kecamatan Jelutung, Kota Jambi",
+      googleMapsUrl: "https://www.google.com/maps/place/1%C2%B036'53.0%22S+103%C2%B037'06.4%22E/@-1.6147901,103.6184471,20z/data=!4m4!3m3!8m2!3d-1.6147192!4d103.6184381?entry=ttu&g_ep=EgoyMDI1MDUyOC4wIKXMDSoASAFQAw%3D%3D"
     },
 
     audio: "/audio/wedding-song.mp3",
@@ -120,12 +120,6 @@ export default function Home() {
         title: "Lamaran",
         description: "Dengan restu kedua orang tua dan keluarga besar, kami melaksanakan acara lamaran sebagai langkah awal menuju jenjang pernikahan yang sakral.",
         image: "/images/story3.jpg"
-      },
-      {
-        year: "2025",
-        title: "Pernikahan",
-        description: "Dan akhirnya, kami akan menikah pada 19 Desember 2025! Terima kasih untuk semua doa dan dukungan dari keluarga dan teman-teman. Kami sangat bahagia bisa memulai hidup baru bersama.",
-        image: "/images/story4.jpg"
       }
     ],
     thankYouMessage: "Terima kasih atas doa dan restu yang telah diberikan untuk pernikahan kami. Kehadiran dan dukungan Anda sangat berarti bagi kami dalam memulai babak baru kehidupan ini."

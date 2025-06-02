@@ -118,43 +118,25 @@ export default function Story({ stories }: StoryProps) {
             {stories.map((story, index) => (
               <div
                 key={index}
-                className={`story-item flex flex-col md:flex-row items-center gap-8 md:gap-12 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                className={`story-item flex flex-col md:flex-row items-center gap-6 md:gap-12 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
                   }`}
               >
-                {/* Content */}
-                <div className="flex-1 text-center md:text-left">
-                  <div className={`${index % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>
-                    <div className="inline-block bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
-                      {story.year}
-                    </div>
-                    <h3 className="text-2xl sm:text-3xl font-serif font-light text-slate-700 mb-4">
-                      {story.title}
-                    </h3>
-                    <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-                      {story.description}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Timeline Dot */}
-                <div className="hidden md:block relative">
-                  <div className="w-4 h-4 bg-blue-500 rounded-full border-4 border-white shadow-lg"></div>
-                </div>
-
-                {/* Image */}
-                <div className="flex-1">
+                {/* Image - Tampil pertama di mobile */}
+                <div className="w-full md:flex-1 order-1 md:order-none">
                   {story.image ? (
-                    <div className="relative w-full h-64 sm:h-80 rounded-2xl overflow-hidden shadow-xl">
+                    <div className="relative w-full h-64 sm:h-72 md:h-80 rounded-2xl overflow-hidden shadow-xl mx-auto max-w-sm md:max-w-none">
                       <Image
                         src={story.image}
                         alt={story.title}
                         fill
                         className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        priority={index < 2}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                     </div>
                   ) : (
-                    <div className="w-full h-64 sm:h-80 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center shadow-xl">
+                    <div className="w-full h-64 sm:h-72 md:h-80 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center shadow-xl mx-auto max-w-sm md:max-w-none">
                       <div className="text-center">
                         <div className="w-16 h-16 bg-blue-400 rounded-full flex items-center justify-center mx-auto mb-4">
                           <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -165,6 +147,26 @@ export default function Story({ stories }: StoryProps) {
                       </div>
                     </div>
                   )}
+                </div>
+
+                {/* Timeline Dot */}
+                <div className="hidden md:block relative order-2">
+                  <div className="w-4 h-4 bg-blue-500 rounded-full border-4 border-white shadow-lg"></div>
+                </div>
+
+                {/* Content - Tampil kedua di mobile */}
+                <div className="w-full md:flex-1 text-center md:text-left order-3 md:order-none">
+                  <div className={`${index % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>
+                    <div className="inline-block bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium mb-4">
+                      {story.year}
+                    </div>
+                    <h3 className="text-2xl sm:text-3xl font-serif font-light text-slate-700 mb-4">
+                      {story.title}
+                    </h3>
+                    <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-lg mx-auto md:mx-0">
+                      {story.description}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
