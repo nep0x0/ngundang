@@ -372,21 +372,37 @@ export const weddingInfoService = {
     const { data, error } = await supabase
       .from('wedding_info')
       .select('*')
-      .single()
+      .limit(1)
 
-    if (error) throw error
-    return data
+    if (error) {
+      console.error('Error fetching wedding info:', error)
+      throw error
+    }
+
+    if (!data || data.length === 0) {
+      throw new Error('No wedding info found')
+    }
+
+    return data[0]
   },
 
   // Update wedding info
   async updateWeddingInfo(weddingInfo: Partial<WeddingInfo>): Promise<WeddingInfo> {
+    // First get the existing record ID
+    const existing = await this.getWeddingInfo()
+
     const { data, error } = await supabase
       .from('wedding_info')
       .update(weddingInfo)
+      .eq('id', existing.id)
       .select()
       .single()
 
-    if (error) throw error
+    if (error) {
+      console.error('Error updating wedding info:', error)
+      throw error
+    }
+
     return data
   },
 

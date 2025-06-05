@@ -80,12 +80,16 @@ export default function AdminPage() {
   // Load wedding info from database
   const loadWeddingInfo = async () => {
     try {
+      console.log('🔍 Loading wedding info...');
       const info = await weddingInfoService.getWeddingInfo();
+      console.log('✅ Wedding info loaded:', info);
       setWeddingInfo(info);
     } catch (error) {
-      console.error('Error loading wedding info:', error);
+      console.error('❌ Error loading wedding info:', error);
+
       // If no wedding info exists, create default
       try {
+        console.log('🔧 Creating default wedding info...');
         const defaultInfo = await weddingInfoService.createWeddingInfo({
           bride_name: 'Adelita',
           groom_name: 'Ansyah',
@@ -105,9 +109,11 @@ export default function AdminPage() {
           bride_child_order: 'Putri Kedua',
           groom_child_order: 'Putra Pertama'
         });
+        console.log('✅ Default wedding info created:', defaultInfo);
         setWeddingInfo(defaultInfo);
       } catch (createError) {
-        console.error('Error creating default wedding info:', createError);
+        console.error('❌ Error creating default wedding info:', createError);
+        alert('Database connection failed. Please check Supabase setup.');
       }
     }
   };
@@ -422,16 +428,24 @@ export default function AdminPage() {
 
   // Wedding Info Functions
   const handleUpdateWeddingInfo = async (updatedInfo: Partial<WeddingInfo>) => {
-    if (!weddingInfo) return;
+    if (!weddingInfo) {
+      console.error('❌ No wedding info loaded');
+      return;
+    }
 
     setWeddingInfoLoading(true);
     try {
+      console.log('🔄 Updating wedding info:', updatedInfo);
       const updated = await weddingInfoService.updateWeddingInfo(updatedInfo);
+      console.log('✅ Wedding info updated:', updated);
       setWeddingInfo(updated);
       alert('Wedding information updated successfully!');
     } catch (error) {
-      console.error('Error updating wedding info:', error);
-      alert('Error updating wedding information. Please try again.');
+      console.error('❌ Error updating wedding info:', error);
+
+      // More detailed error message
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`Error updating wedding information: ${errorMessage}`);
     } finally {
       setWeddingInfoLoading(false);
     }
