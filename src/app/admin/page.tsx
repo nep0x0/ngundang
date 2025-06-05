@@ -385,29 +385,29 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <div className="container mx-auto px-4 py-6">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full mb-4 shadow-lg">
-            <span className="text-2xl">💍</span>
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-r from-rose-200 to-pink-200 rounded-2xl mb-4 shadow-sm">
+            <span className="text-xl">💍</span>
           </div>
-          <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-2xl lg:text-3xl font-semibold text-slate-700 mb-2">
             Wedding Admin
           </h1>
-          <p className="text-gray-600 text-sm lg:text-base">Adelita & Ansyah Wedding Management</p>
+          <p className="text-slate-500 text-sm lg:text-base">Adelita & Ansyah Wedding Management</p>
         </div>
 
-        {/* Modern Tab Navigation */}
+        {/* Soft Tab Navigation */}
         <div className="mb-8">
-          <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-2 shadow-lg border border-white/20">
-            <nav className="flex space-x-2 overflow-x-auto">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-1.5 shadow-sm border border-slate-200/50">
+            <nav className="flex space-x-1 overflow-x-auto">
               <button
                 onClick={() => setActiveTab('guests')}
-                className={`flex items-center space-x-2 px-4 py-3 rounded-xl font-medium text-sm whitespace-nowrap transition-all duration-200 ${
+                className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-medium text-sm whitespace-nowrap transition-all duration-300 ${
                   activeTab === 'guests'
-                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg transform scale-105'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                    ? 'bg-rose-100 text-rose-700 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-700 hover:bg-slate-50'
                 }`}
               >
                 <span>👥</span>
@@ -415,10 +415,10 @@ export default function AdminPage() {
               </button>
               <button
                 onClick={() => setActiveTab('rsvps')}
-                className={`flex items-center space-x-2 px-4 py-3 rounded-xl font-medium text-sm whitespace-nowrap transition-all duration-200 ${
+                className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-medium text-sm whitespace-nowrap transition-all duration-300 ${
                   activeTab === 'rsvps'
-                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg transform scale-105'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                    ? 'bg-blue-100 text-blue-700 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-700 hover:bg-slate-50'
                 }`}
               >
                 <span>💌</span>
@@ -426,10 +426,10 @@ export default function AdminPage() {
               </button>
               <button
                 onClick={() => setActiveTab('stats')}
-                className={`flex items-center space-x-2 px-4 py-3 rounded-xl font-medium text-sm whitespace-nowrap transition-all duration-200 ${
+                className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-medium text-sm whitespace-nowrap transition-all duration-300 ${
                   activeTab === 'stats'
-                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg transform scale-105'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                    ? 'bg-emerald-100 text-emerald-700 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-700 hover:bg-slate-50'
                 }`}
               >
                 <span>📊</span>
@@ -437,10 +437,10 @@ export default function AdminPage() {
               </button>
               <button
                 onClick={() => setActiveTab('budget')}
-                className={`flex items-center space-x-2 px-4 py-3 rounded-xl font-medium text-sm whitespace-nowrap transition-all duration-200 ${
+                className={`flex items-center space-x-2 px-4 py-2.5 rounded-2xl font-medium text-sm whitespace-nowrap transition-all duration-300 ${
                   activeTab === 'budget'
-                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg transform scale-105'
-                    : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                    ? 'bg-amber-100 text-amber-700 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-700 hover:bg-slate-50'
                 }`}
               >
                 <span>💰</span>
@@ -453,60 +453,60 @@ export default function AdminPage() {
         {activeTab === 'guests' && (
           <div className="space-y-6">
             {/* Add Guest Form */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 lg:p-8 border border-white/20">
+            <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-sm p-6 lg:p-8 border border-slate-200/50">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-lg">✨</span>
+                <div className="w-10 h-10 bg-rose-100 rounded-2xl flex items-center justify-center">
+                  <span className="text-rose-600 text-lg">✨</span>
                 </div>
-                <h2 className="text-xl lg:text-2xl font-bold text-gray-800">Add New Guest</h2>
+                <h2 className="text-xl lg:text-2xl font-semibold text-slate-700">Add New Guest</h2>
               </div>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
                   <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-gray-700">
+                    <label className="block text-sm font-medium text-slate-600">
                       👤 Nama Tamu *
                     </label>
                     <input
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/50 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-pink-400 focus:bg-white transition-all duration-200 text-sm placeholder-gray-400"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm placeholder-slate-400"
                       placeholder="Budi Santoso"
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-gray-700">
+                    <label className="block text-sm font-medium text-slate-600">
                       💕 Pasangan
                     </label>
                     <input
                       type="text"
                       value={formData.partner}
                       onChange={(e) => setFormData({ ...formData, partner: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/50 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-pink-400 focus:bg-white transition-all duration-200 text-sm placeholder-gray-400"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm placeholder-slate-400"
                       placeholder="Siti Rahayu"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-gray-700">
+                    <label className="block text-sm font-medium text-slate-600">
                       📱 Phone
                     </label>
                     <input
                       type="text"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/50 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-pink-400 focus:bg-white transition-all duration-200 text-sm placeholder-gray-400"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm placeholder-slate-400"
                       placeholder="081234567890"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-gray-700">
+                    <label className="block text-sm font-medium text-slate-600">
                       🎭 Tamu dari *
                     </label>
                     <select
                       value={formData.from_side}
                       onChange={(e) => setFormData({ ...formData, from_side: e.target.value as 'adel' | 'eko' })}
-                      className="w-full px-4 py-3 bg-white/50 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-pink-400 focus:bg-white transition-all duration-200 text-sm"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm"
                       required
                     >
                       <option value="adel">👰 Adel</option>
@@ -517,7 +517,7 @@ export default function AdminPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full lg:w-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-3 rounded-2xl hover:from-pink-600 hover:to-purple-700 disabled:opacity-50 font-semibold text-sm lg:text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                  className="w-full lg:w-auto bg-rose-500 text-white px-8 py-3 rounded-2xl hover:bg-rose-600 disabled:opacity-50 font-medium text-sm lg:text-base shadow-sm hover:shadow-md transition-all duration-300"
                 >
                   {isSubmitting ? '✨ Adding...' : '✨ Add Guest'}
                 </button>
@@ -525,18 +525,18 @@ export default function AdminPage() {
             </div>
 
             {/* Guests List */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20">
-              <div className="px-6 py-6 border-b border-gray-100 flex justify-between items-center">
+            <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-sm border border-slate-200/50">
+              <div className="px-6 py-6 border-b border-slate-100 flex justify-between items-center">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-full flex items-center justify-center">
-                    <span className="text-white text-lg">👥</span>
+                  <div className="w-10 h-10 bg-blue-100 rounded-2xl flex items-center justify-center">
+                    <span className="text-blue-600 text-lg">👥</span>
                   </div>
-                  <h2 className="text-xl lg:text-2xl font-bold text-gray-800">Guest List</h2>
+                  <h2 className="text-xl lg:text-2xl font-semibold text-slate-700">Guest List</h2>
                 </div>
                 <button
                   onClick={regenerateLinks}
                   disabled={loading || guests.length === 0}
-                  className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-4 py-2 rounded-xl hover:from-blue-600 hover:to-cyan-700 disabled:opacity-50 text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                  className="bg-blue-500 text-white px-4 py-2 rounded-2xl hover:bg-blue-600 disabled:opacity-50 text-sm font-medium shadow-sm hover:shadow-md transition-all duration-300"
                 >
                   🔄 Regenerate Links
                 </button>
@@ -553,21 +553,21 @@ export default function AdminPage() {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {guests.map((guest) => (
-                      <div key={guest.id} className="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-5 border border-gray-100 hover:shadow-lg transition-all duration-200 hover:scale-105">
+                      <div key={guest.id} className="bg-white rounded-2xl p-5 border border-slate-100 hover:shadow-md transition-all duration-300 hover:border-slate-200">
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex-1">
-                            <h3 className="font-bold text-gray-800 text-lg">{guest.name}</h3>
+                            <h3 className="font-semibold text-slate-800 text-lg">{guest.name}</h3>
                             {guest.partner && (
-                              <p className="text-gray-600 text-sm">💕 {guest.partner}</p>
+                              <p className="text-slate-600 text-sm">💕 {guest.partner}</p>
                             )}
                             {guest.phone && (
-                              <p className="text-gray-500 text-xs mt-1">📱 {guest.phone}</p>
+                              <p className="text-slate-500 text-xs mt-1">📱 {guest.phone}</p>
                             )}
                           </div>
-                          <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${
+                          <span className={`inline-flex px-3 py-1 text-xs font-medium rounded-full ${
                             guest.from_side === 'adel'
-                              ? 'bg-gradient-to-r from-pink-100 to-pink-200 text-pink-800'
-                              : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800'
+                              ? 'bg-rose-100 text-rose-700'
+                              : 'bg-blue-100 text-blue-700'
                           }`}>
                             {guest.from_side === 'adel' ? '👰 Adel' : '🤵 Eko'}
                           </span>
@@ -580,13 +580,13 @@ export default function AdminPage() {
                               e.stopPropagation();
                               copyToClipboard(guest.whatsapp_message, 'WhatsApp Message');
                             }}
-                            className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-2 rounded-xl text-xs font-semibold hover:from-green-600 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105 shadow-md"
+                            className="flex-1 bg-emerald-500 text-white px-3 py-2 rounded-xl text-xs font-medium hover:bg-emerald-600 transition-all duration-300 shadow-sm"
                           >
                             💬 Copy Message
                           </button>
                           <button
                             onClick={() => handleDelete(guest.id)}
-                            className="bg-gradient-to-r from-red-500 to-pink-600 text-white px-3 py-2 rounded-xl text-xs font-semibold hover:from-red-600 hover:to-pink-700 transition-all duration-200 transform hover:scale-105 shadow-md"
+                            className="bg-rose-500 text-white px-3 py-2 rounded-xl text-xs font-medium hover:bg-rose-600 transition-all duration-300 shadow-sm"
                           >
                             🗑️
                           </button>
@@ -752,10 +752,15 @@ export default function AdminPage() {
           <div className="space-y-6">
             {/* Budget Header */}
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-800">Wedding Budget Planner</h2>
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-amber-100 rounded-2xl flex items-center justify-center">
+                  <span className="text-amber-600 text-lg">💰</span>
+                </div>
+                <h2 className="text-2xl font-semibold text-slate-700">Wedding Budget Planner</h2>
+              </div>
               <button
                 onClick={() => setShowAddMonthModal(true)}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm"
+                className="bg-amber-500 text-white px-4 py-2 rounded-2xl hover:bg-amber-600 text-sm font-medium shadow-sm transition-all duration-300"
               >
                 + Tambah Bulan
               </button>
@@ -763,53 +768,63 @@ export default function AdminPage() {
 
             {/* Budget Overview */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
+              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-3xl shadow-sm p-6 border border-emerald-200/50">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">💰</span>
+                    <div className="w-12 h-12 bg-emerald-200 rounded-2xl flex items-center justify-center">
+                      <span className="text-emerald-700 text-lg">💰</span>
                     </div>
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-500">Total Pendapatan</p>
-                    <p className="text-2xl font-semibold text-gray-900">
+                    <p className="text-sm font-medium text-emerald-700">Total Pendapatan</p>
+                    <p className="text-2xl font-semibold text-emerald-800">
                       Rp {monthlyBudgets.reduce((sum, month) => sum + month.total_income, 0).toLocaleString()}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
+              <div className="bg-gradient-to-br from-rose-50 to-rose-100 rounded-3xl shadow-sm p-6 border border-rose-200/50">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">💸</span>
+                    <div className="w-12 h-12 bg-rose-200 rounded-2xl flex items-center justify-center">
+                      <span className="text-rose-700 text-lg">💸</span>
                     </div>
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-500">Total Pengeluaran</p>
-                    <p className="text-2xl font-semibold text-gray-900">
+                    <p className="text-sm font-medium text-rose-700">Total Pengeluaran</p>
+                    <p className="text-2xl font-semibold text-rose-800">
                       Rp {monthlyBudgets.reduce((sum, month) => sum + month.total_expense, 0).toLocaleString()}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
+              <div className={`rounded-3xl shadow-sm p-6 border ${
+                monthlyBudgets.reduce((sum, month) => sum + month.balance, 0) >= 0
+                  ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200/50'
+                  : 'bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200/50'
+              }`}>
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
                       monthlyBudgets.reduce((sum, month) => sum + month.balance, 0) >= 0
-                        ? 'bg-green-500' : 'bg-red-500'
+                        ? 'bg-blue-200' : 'bg-orange-200'
                     }`}>
-                      <span className="text-white text-sm font-bold">💚</span>
+                      <span className={`text-lg ${
+                        monthlyBudgets.reduce((sum, month) => sum + month.balance, 0) >= 0
+                          ? 'text-blue-700' : 'text-orange-700'
+                      }`}>💚</span>
                     </div>
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-500">Saldo</p>
+                    <p className={`text-sm font-medium ${
+                      monthlyBudgets.reduce((sum, month) => sum + month.balance, 0) >= 0
+                        ? 'text-blue-700' : 'text-orange-700'
+                    }`}>Saldo</p>
                     <p className={`text-2xl font-semibold ${
                       monthlyBudgets.reduce((sum, month) => sum + month.balance, 0) >= 0
-                        ? 'text-green-600' : 'text-red-600'
+                        ? 'text-blue-800' : 'text-orange-800'
                     }`}>
                       Rp {monthlyBudgets.reduce((sum, month) => sum + month.balance, 0).toLocaleString()}
                     </p>
@@ -820,102 +835,135 @@ export default function AdminPage() {
 
             {/* Monthly Budget Cards */}
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {monthlyBudgets.map((month) => (
-                <div key={month.id} className="bg-white rounded-lg shadow">
-                  <div className="px-6 py-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold">📅 {month.month_name}</h3>
-                  </div>
+              {monthlyBudgets.map((month, index) => {
+                const cardColors = [
+                  'from-violet-50 to-violet-100 border-violet-200/50',
+                  'from-cyan-50 to-cyan-100 border-cyan-200/50',
+                  'from-pink-50 to-pink-100 border-pink-200/50',
+                  'from-amber-50 to-amber-100 border-amber-200/50',
+                  'from-lime-50 to-lime-100 border-lime-200/50',
+                  'from-indigo-50 to-indigo-100 border-indigo-200/50'
+                ];
+                const headerColors = [
+                  'bg-violet-200 text-violet-700',
+                  'bg-cyan-200 text-cyan-700',
+                  'bg-pink-200 text-pink-700',
+                  'bg-amber-200 text-amber-700',
+                  'bg-lime-200 text-lime-700',
+                  'bg-indigo-200 text-indigo-700'
+                ];
+                const buttonColors = [
+                  'bg-violet-100 text-violet-600 hover:bg-violet-200',
+                  'bg-cyan-100 text-cyan-600 hover:bg-cyan-200',
+                  'bg-pink-100 text-pink-600 hover:bg-pink-200',
+                  'bg-amber-100 text-amber-600 hover:bg-amber-200',
+                  'bg-lime-100 text-lime-600 hover:bg-lime-200',
+                  'bg-indigo-100 text-indigo-600 hover:bg-indigo-200'
+                ];
+                const colorIndex = index % cardColors.length;
 
-                  <div className="p-6">
-                    {/* Income Section */}
-                    <div className="mb-6">
-                      <div className="flex justify-between items-center mb-3">
-                        <h4 className="font-medium text-green-600">💰 Pendapatan</h4>
-                        <button
-                          onClick={() => {
-                            setSelectedMonth(month.id);
-                            setShowIncomeModal(true);
-                          }}
-                          className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded hover:bg-green-200"
-                        >
-                          + Tambah
-                        </button>
+                return (
+                  <div key={month.id} className={`bg-gradient-to-br ${cardColors[colorIndex]} rounded-3xl shadow-sm border`}>
+                    <div className="px-6 py-4 border-b border-white/50">
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-10 h-10 ${headerColors[colorIndex]} rounded-2xl flex items-center justify-center`}>
+                          <span className="text-lg">📅</span>
+                        </div>
+                        <h3 className="text-lg font-semibold text-slate-700">{month.month_name}</h3>
                       </div>
-                      <div className="space-y-2">
-                        {month.income_items.map((item) => (
-                          <div key={item.id} className="flex justify-between items-center text-sm">
-                            <div className="flex items-center">
-                              <span className={`mr-2 ${
-                                item.status === 'received' ? '✅' :
-                                item.status === 'pending' ? '⏳' : '❌'
-                              }`}></span>
-                              <span>{item.source}</span>
+                    </div>
+
+                    <div className="p-6">
+                      {/* Income Section */}
+                      <div className="mb-6">
+                        <div className="flex justify-between items-center mb-3">
+                          <h4 className="font-medium text-emerald-700">💰 Pendapatan</h4>
+                          <button
+                            onClick={() => {
+                              setSelectedMonth(month.id);
+                              setShowIncomeModal(true);
+                            }}
+                            className={`text-xs ${buttonColors[colorIndex]} px-3 py-1.5 rounded-xl font-medium transition-all duration-300`}
+                          >
+                            + Tambah
+                          </button>
+                        </div>
+                        <div className="space-y-2">
+                          {month.income_items.map((item) => (
+                            <div key={item.id} className="flex justify-between items-center text-sm bg-white/50 rounded-xl p-3">
+                              <div className="flex items-center">
+                                <span className={`mr-2 ${
+                                  item.status === 'received' ? '✅' :
+                                  item.status === 'pending' ? '⏳' : '❌'
+                                }`}></span>
+                                <span className="text-slate-700">{item.source}</span>
+                              </div>
+                              <span className="font-medium text-slate-800">Rp {item.amount.toLocaleString()}</span>
                             </div>
-                            <span className="font-medium">Rp {item.amount.toLocaleString()}</span>
+                          ))}
+                        </div>
+                        <div className="border-t border-white/50 pt-3 mt-3">
+                          <div className="flex justify-between font-semibold text-emerald-700">
+                            <span>Total:</span>
+                            <span>Rp {month.total_income.toLocaleString()}</span>
                           </div>
-                        ))}
+                        </div>
                       </div>
-                      <div className="border-t pt-2 mt-2">
-                        <div className="flex justify-between font-medium text-green-600">
-                          <span>Total:</span>
-                          <span>Rp {month.total_income.toLocaleString()}</span>
+
+                      {/* Expense Section */}
+                      <div className="mb-6">
+                        <div className="flex justify-between items-center mb-3">
+                          <h4 className="font-medium text-rose-700">💸 Pengeluaran</h4>
+                          <button
+                            onClick={() => {
+                              setSelectedMonth(month.id);
+                              setShowExpenseModal(true);
+                            }}
+                            className={`text-xs ${buttonColors[colorIndex]} px-3 py-1.5 rounded-xl font-medium transition-all duration-300`}
+                          >
+                            + Tambah
+                          </button>
+                        </div>
+                        <div className="space-y-2">
+                          {month.expense_items.map((item) => (
+                            <div key={item.id} className="flex justify-between items-center text-sm bg-white/50 rounded-xl p-3">
+                              <div className="flex items-center">
+                                <span className={`mr-2 ${
+                                  item.status === 'paid' ? '✅' :
+                                  item.status === 'pending' ? '⏳' : '❌'
+                                }`}></span>
+                                <span className="text-slate-700">{item.item_name}</span>
+                              </div>
+                              <span className="font-medium text-slate-800">Rp {item.estimated_cost.toLocaleString()}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="border-t border-white/50 pt-3 mt-3">
+                          <div className="flex justify-between font-semibold text-rose-700">
+                            <span>Total:</span>
+                            <span>Rp {month.total_expense.toLocaleString()}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Balance */}
+                      <div className={`p-4 rounded-2xl ${
+                        month.balance >= 0 ? 'bg-emerald-100/50 border border-emerald-200' : 'bg-rose-100/50 border border-rose-200'
+                      }`}>
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium text-slate-700">Saldo:</span>
+                          <span className={`font-semibold ${month.balance >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                            {month.balance >= 0 ? '+' : ''}Rp {month.balance.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="text-xs mt-1 text-slate-600">
+                          {month.balance >= 0 ? '💚 Surplus' : '🔴 Deficit'}
                         </div>
                       </div>
                     </div>
-
-                    {/* Expense Section */}
-                    <div className="mb-6">
-                      <div className="flex justify-between items-center mb-3">
-                        <h4 className="font-medium text-red-600">💸 Pengeluaran</h4>
-                        <button
-                          onClick={() => {
-                            setSelectedMonth(month.id);
-                            setShowExpenseModal(true);
-                          }}
-                          className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded hover:bg-red-200"
-                        >
-                          + Tambah
-                        </button>
-                      </div>
-                      <div className="space-y-2">
-                        {month.expense_items.map((item) => (
-                          <div key={item.id} className="flex justify-between items-center text-sm">
-                            <div className="flex items-center">
-                              <span className={`mr-2 ${
-                                item.status === 'paid' ? '✅' :
-                                item.status === 'pending' ? '⏳' : '❌'
-                              }`}></span>
-                              <span>{item.item_name}</span>
-                            </div>
-                            <span className="font-medium">Rp {item.estimated_cost.toLocaleString()}</span>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="border-t pt-2 mt-2">
-                        <div className="flex justify-between font-medium text-red-600">
-                          <span>Total:</span>
-                          <span>Rp {month.total_expense.toLocaleString()}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Balance */}
-                    <div className={`p-3 rounded-lg ${
-                      month.balance >= 0 ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
-                    }`}>
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">Saldo:</span>
-                        <span className={`font-bold ${month.balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {month.balance >= 0 ? '+' : ''}Rp {month.balance.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="text-xs mt-1">
-                        {month.balance >= 0 ? '💚 Surplus' : '🔴 Deficit'}
-                      </div>
-                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
