@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { guestService, rsvpService, statsService, budgetService, weddingInfoService, generateInvitationLink, generateWhatsAppMessage, Guest, RSVP, MonthlyBudget, IncomeItem, ExpenseItem, WeddingInfo } from '@/lib/supabase';
 
 export default function AdminPage() {
@@ -566,7 +567,7 @@ export default function AdminPage() {
       }`}>
         {/* Sidebar Header */}
         <div className="flex items-center justify-between h-16 px-6 border-b border-slate-200/50">
-          <a
+          <Link
             href="/"
             className="flex items-center space-x-3 hover:bg-slate-50 rounded-xl p-2 -m-2 transition-colors group"
             title="Lihat Undangan"
@@ -578,7 +579,7 @@ export default function AdminPage() {
               <h1 className="text-lg font-semibold text-slate-700 group-hover:text-rose-600 transition-colors">Wedding Admin</h1>
               <p className="text-xs text-slate-500 group-hover:text-rose-500 transition-colors">Adelita & Ansyah</p>
             </div>
-          </a>
+          </Link>
           <button
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"
@@ -696,7 +697,7 @@ export default function AdminPage() {
           >
             <span className="text-slate-600">☰</span>
           </button>
-          <a
+          <Link
             href="/"
             className="flex items-center space-x-2 hover:bg-slate-50 rounded-xl p-2 -m-2 transition-colors group"
             title="Lihat Undangan"
@@ -705,7 +706,7 @@ export default function AdminPage() {
               <span className="text-sm">💍</span>
             </div>
             <span className="font-semibold text-slate-700 group-hover:text-rose-600 transition-colors">Wedding Admin</span>
-          </a>
+          </Link>
           <div className="w-10"></div>
         </div>
 
@@ -1720,7 +1721,7 @@ export default function AdminPage() {
                           />
                           <div>
                             <div className="text-sm font-medium text-slate-700">🚫 No Maps</div>
-                            <div className="text-xs text-slate-500">Don't show maps</div>
+                            <div className="text-xs text-slate-500">Don&apos;t show maps</div>
                           </div>
                         </label>
                       </div>

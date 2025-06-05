@@ -19,10 +19,7 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
-  // Experimental features for better compatibility
-  experimental: {
-    esmExternals: 'loose',
-  },
+  // Removed experimental.esmExternals as recommended by Next.js
 };
 
 export default nextConfig;
