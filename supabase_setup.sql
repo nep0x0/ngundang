@@ -260,44 +260,63 @@ CREATE TRIGGER update_expense_items_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION update_budget_updated_at_column();
 
--- Create wedding_info table for basic wedding information
+-- Create wedding_info table for comprehensive wedding information
 CREATE TABLE IF NOT EXISTS wedding_info (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    bride_name TEXT NOT NULL DEFAULT 'Adelita',
-    groom_name TEXT NOT NULL DEFAULT 'Ansyah',
+
+    -- Couple Information (Full names, nicknames, initials)
+    bride_full_name TEXT NOT NULL DEFAULT 'Adelita Sari Kuswanto',
+    bride_nickname TEXT NOT NULL DEFAULT 'Adelita',
     bride_initial TEXT NOT NULL DEFAULT 'A',
+    groom_full_name TEXT NOT NULL DEFAULT 'Ansyah Eko Santoso',
+    groom_nickname TEXT NOT NULL DEFAULT 'Ansyah',
     groom_initial TEXT NOT NULL DEFAULT 'A',
-    wedding_date DATE NOT NULL DEFAULT '2025-02-15',
+
+    -- Akad Event Details
+    akad_date DATE NOT NULL DEFAULT '2025-02-15',
     akad_time TIME NOT NULL DEFAULT '08:00',
+    akad_venue_name TEXT NOT NULL DEFAULT 'Masjid Al-Ikhlas',
+    akad_venue_address TEXT NOT NULL DEFAULT 'Jl. Masjid No. 45, Jakarta Selatan',
+    akad_maps_lat DECIMAL(10,8) DEFAULT -6.2088,
+    akad_maps_lng DECIMAL(11,8) DEFAULT 106.8456,
+
+    -- Resepsi Event Details
+    resepsi_date DATE NOT NULL DEFAULT '2025-02-15',
     resepsi_time TIME NOT NULL DEFAULT '11:00',
-    venue_name TEXT NOT NULL DEFAULT 'Gedung Serbaguna',
-    venue_address TEXT NOT NULL DEFAULT 'Jl. Raya No. 123, Jakarta',
-    venue_maps_lat DECIMAL(10,8) DEFAULT -6.2088,
-    venue_maps_lng DECIMAL(11,8) DEFAULT 106.8456,
+    resepsi_venue_name TEXT NOT NULL DEFAULT 'Gedung Serbaguna',
+    resepsi_venue_address TEXT NOT NULL DEFAULT 'Jl. Raya No. 123, Jakarta Selatan',
+    resepsi_maps_lat DECIMAL(10,8) DEFAULT -6.2100,
+    resepsi_maps_lng DECIMAL(11,8) DEFAULT 106.8500,
+
+    -- Bride Family Information
     bride_father TEXT NOT NULL DEFAULT 'Bapak Andi Kuswanto (Alm)',
     bride_mother TEXT NOT NULL DEFAULT 'Ibu Yulita Anggraini',
+    bride_child_order TEXT NOT NULL DEFAULT 'Putri Kedua',
+
+    -- Groom Family Information
     groom_father TEXT NOT NULL DEFAULT 'Bapak Ahmad Santoso',
     groom_mother TEXT NOT NULL DEFAULT 'Ibu Siti Rahayu',
-    bride_child_order TEXT NOT NULL DEFAULT 'Putri Kedua',
     groom_child_order TEXT NOT NULL DEFAULT 'Putra Pertama',
+
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Insert default wedding info
 INSERT INTO wedding_info (
-    bride_name, groom_name, bride_initial, groom_initial,
-    wedding_date, akad_time, resepsi_time,
-    venue_name, venue_address, venue_maps_lat, venue_maps_lng,
-    bride_father, bride_mother, groom_father, groom_mother,
-    bride_child_order, groom_child_order
+    bride_full_name, bride_nickname, bride_initial,
+    groom_full_name, groom_nickname, groom_initial,
+    akad_date, akad_time, akad_venue_name, akad_venue_address, akad_maps_lat, akad_maps_lng,
+    resepsi_date, resepsi_time, resepsi_venue_name, resepsi_venue_address, resepsi_maps_lat, resepsi_maps_lng,
+    bride_father, bride_mother, bride_child_order,
+    groom_father, groom_mother, groom_child_order
 ) VALUES (
-    'Adelita', 'Ansyah', 'A', 'A',
-    '2025-02-15', '08:00', '11:00',
-    'Gedung Serbaguna', 'Jl. Raya No. 123, Jakarta', -6.2088, 106.8456,
-    'Bapak Andi Kuswanto (Alm)', 'Ibu Yulita Anggraini',
-    'Bapak Ahmad Santoso', 'Ibu Siti Rahayu',
-    'Putri Kedua', 'Putra Pertama'
+    'Adelita Sari Kuswanto', 'Adelita', 'A',
+    'Ansyah Eko Santoso', 'Ansyah', 'A',
+    '2025-02-15', '08:00', 'Masjid Al-Ikhlas', 'Jl. Masjid No. 45, Jakarta Selatan', -6.2088, 106.8456,
+    '2025-02-15', '11:00', 'Gedung Serbaguna', 'Jl. Raya No. 123, Jakarta Selatan', -6.2100, 106.8500,
+    'Bapak Andi Kuswanto (Alm)', 'Ibu Yulita Anggraini', 'Putri Kedua',
+    'Bapak Ahmad Santoso', 'Ibu Siti Rahayu', 'Putra Pertama'
 ) ON CONFLICT (id) DO NOTHING;
 
 -- Enable Row Level Security

@@ -196,23 +196,41 @@ export interface ExpenseItem {
 // Wedding Info Types
 export interface WeddingInfo {
   id: string
-  bride_name: string
-  groom_name: string
+
+  // Couple Information
+  bride_full_name: string
+  bride_nickname: string
   bride_initial: string
+  groom_full_name: string
+  groom_nickname: string
   groom_initial: string
-  wedding_date: string
+
+  // Akad Event Details
+  akad_date: string
   akad_time: string
+  akad_venue_name: string
+  akad_venue_address: string
+  akad_maps_lat: number
+  akad_maps_lng: number
+
+  // Resepsi Event Details
+  resepsi_date: string
   resepsi_time: string
-  venue_name: string
-  venue_address: string
-  venue_maps_lat: number
-  venue_maps_lng: number
+  resepsi_venue_name: string
+  resepsi_venue_address: string
+  resepsi_maps_lat: number
+  resepsi_maps_lng: number
+
+  // Bride Family Information
   bride_father: string
   bride_mother: string
+  bride_child_order: string
+
+  // Groom Family Information
   groom_father: string
   groom_mother: string
-  bride_child_order: string
   groom_child_order: string
+
   created_at: string
   updated_at: string
 }
