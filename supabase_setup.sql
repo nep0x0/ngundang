@@ -298,6 +298,11 @@ CREATE TABLE IF NOT EXISTS wedding_info (
     groom_mother TEXT NOT NULL DEFAULT 'Ibu Siti Rahayu',
     groom_child_order TEXT NOT NULL DEFAULT 'Putra Pertama',
 
+    -- Maps Configuration
+    maps_display_option TEXT NOT NULL DEFAULT 'both', -- 'akad', 'resepsi', 'both', 'none'
+    akad_maps_url TEXT DEFAULT 'https://maps.google.com/maps?q=-6.2088,106.8456',
+    resepsi_maps_url TEXT DEFAULT 'https://maps.google.com/maps?q=-6.2100,106.8500',
+
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -309,14 +314,16 @@ INSERT INTO wedding_info (
     akad_date, akad_time, akad_venue_name, akad_venue_address, akad_maps_lat, akad_maps_lng,
     resepsi_date, resepsi_time, resepsi_venue_name, resepsi_venue_address, resepsi_maps_lat, resepsi_maps_lng,
     bride_father, bride_mother, bride_child_order,
-    groom_father, groom_mother, groom_child_order
+    groom_father, groom_mother, groom_child_order,
+    maps_display_option, akad_maps_url, resepsi_maps_url
 ) VALUES (
     'Adelita Sari Kuswanto', 'Adelita', 'A',
     'Ansyah Eko Santoso', 'Ansyah', 'A',
     '2025-02-15', '08:00', 'Masjid Al-Ikhlas', 'Jl. Masjid No. 45, Jakarta Selatan', -6.2088, 106.8456,
     '2025-02-15', '11:00', 'Gedung Serbaguna', 'Jl. Raya No. 123, Jakarta Selatan', -6.2100, 106.8500,
     'Bapak Andi Kuswanto (Alm)', 'Ibu Yulita Anggraini', 'Putri Kedua',
-    'Bapak Ahmad Santoso', 'Ibu Siti Rahayu', 'Putra Pertama'
+    'Bapak Ahmad Santoso', 'Ibu Siti Rahayu', 'Putra Pertama',
+    'both', 'https://maps.google.com/maps?q=-6.2088,106.8456', 'https://maps.google.com/maps?q=-6.2100,106.8500'
 ) ON CONFLICT (id) DO NOTHING;
 
 -- Enable Row Level Security

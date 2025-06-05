@@ -231,6 +231,11 @@ export interface WeddingInfo {
   groom_mother: string
   groom_child_order: string
 
+  // Maps Configuration
+  maps_display_option: 'akad' | 'resepsi' | 'both' | 'none'
+  akad_maps_url: string
+  resepsi_maps_url: string
+
   created_at: string
   updated_at: string
 }

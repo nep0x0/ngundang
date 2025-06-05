@@ -113,7 +113,10 @@ export default function AdminPage() {
           bride_child_order: 'Putri Kedua',
           groom_father: 'Bapak Ahmad Santoso',
           groom_mother: 'Ibu Siti Rahayu',
-          groom_child_order: 'Putra Pertama'
+          groom_child_order: 'Putra Pertama',
+          maps_display_option: 'both' as const,
+          akad_maps_url: 'https://maps.google.com/maps?q=-6.2088,106.8456',
+          resepsi_maps_url: 'https://maps.google.com/maps?q=-6.2100,106.8500'
         });
         console.log('✅ Default wedding info created:', defaultInfo);
         setWeddingInfo(defaultInfo);
@@ -1698,6 +1701,162 @@ export default function AdminPage() {
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
                         placeholder="Ibu [Name]"
                       />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Maps Configuration Card */}
+                <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm p-6 border border-slate-200/50 lg:col-span-2 xl:col-span-3">
+                  <h3 className="text-lg font-semibold text-slate-700 mb-4 flex items-center space-x-2">
+                    <span>🗺️</span>
+                    <span>Maps Configuration</span>
+                  </h3>
+                  <div className="space-y-6">
+                    {/* Maps Display Option */}
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 mb-3">Display Maps in Invitation:</label>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <label className="flex items-center space-x-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors">
+                          <input
+                            type="radio"
+                            name="maps_display_option"
+                            value="akad"
+                            checked={weddingInfo.maps_display_option === 'akad'}
+                            onChange={(e) => handleUpdateWeddingInfo({ maps_display_option: e.target.value as 'akad' | 'resepsi' | 'both' | 'none' })}
+                            className="text-purple-600 focus:ring-purple-500"
+                          />
+                          <div>
+                            <div className="text-sm font-medium text-slate-700">🕌 Akad Only</div>
+                            <div className="text-xs text-slate-500">Show akad maps only</div>
+                          </div>
+                        </label>
+
+                        <label className="flex items-center space-x-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors">
+                          <input
+                            type="radio"
+                            name="maps_display_option"
+                            value="resepsi"
+                            checked={weddingInfo.maps_display_option === 'resepsi'}
+                            onChange={(e) => handleUpdateWeddingInfo({ maps_display_option: e.target.value as 'akad' | 'resepsi' | 'both' | 'none' })}
+                            className="text-purple-600 focus:ring-purple-500"
+                          />
+                          <div>
+                            <div className="text-sm font-medium text-slate-700">🎉 Resepsi Only</div>
+                            <div className="text-xs text-slate-500">Show resepsi maps only</div>
+                          </div>
+                        </label>
+
+                        <label className="flex items-center space-x-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors">
+                          <input
+                            type="radio"
+                            name="maps_display_option"
+                            value="both"
+                            checked={weddingInfo.maps_display_option === 'both'}
+                            onChange={(e) => handleUpdateWeddingInfo({ maps_display_option: e.target.value as 'akad' | 'resepsi' | 'both' | 'none' })}
+                            className="text-purple-600 focus:ring-purple-500"
+                          />
+                          <div>
+                            <div className="text-sm font-medium text-slate-700">🗺️ Both Maps</div>
+                            <div className="text-xs text-slate-500">Show both maps</div>
+                          </div>
+                        </label>
+
+                        <label className="flex items-center space-x-3 p-3 border border-slate-200 rounded-xl hover:bg-slate-50 cursor-pointer transition-colors">
+                          <input
+                            type="radio"
+                            name="maps_display_option"
+                            value="none"
+                            checked={weddingInfo.maps_display_option === 'none'}
+                            onChange={(e) => handleUpdateWeddingInfo({ maps_display_option: e.target.value as 'akad' | 'resepsi' | 'both' | 'none' })}
+                            className="text-purple-600 focus:ring-purple-500"
+                          />
+                          <div>
+                            <div className="text-sm font-medium text-slate-700">🚫 No Maps</div>
+                            <div className="text-xs text-slate-500">Don't show maps</div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Maps URLs */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* Akad Maps URL */}
+                      <div className={`space-y-3 ${weddingInfo.maps_display_option === 'resepsi' ? 'opacity-50' : ''}`}>
+                        <div className="flex items-center justify-between">
+                          <label className="block text-sm font-medium text-slate-600">🕌 Akad Maps URL</label>
+                          {weddingInfo.akad_maps_url && (
+                            <button
+                              onClick={() => window.open(weddingInfo.akad_maps_url, '_blank')}
+                              className="text-xs bg-blue-500 text-white px-2 py-1 rounded-lg hover:bg-blue-600 transition-colors"
+                            >
+                              📍 Test
+                            </button>
+                          )}
+                        </div>
+                        <input
+                          type="url"
+                          value={weddingInfo.akad_maps_url}
+                          onChange={(e) => handleUpdateWeddingInfo({ akad_maps_url: e.target.value })}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                          placeholder="https://maps.google.com/maps?q=..."
+                          disabled={weddingInfo.maps_display_option === 'resepsi'}
+                        />
+                        <p className="text-xs text-slate-500">
+                          Copy Google Maps link for akad venue
+                        </p>
+                      </div>
+
+                      {/* Resepsi Maps URL */}
+                      <div className={`space-y-3 ${weddingInfo.maps_display_option === 'akad' ? 'opacity-50' : ''}`}>
+                        <div className="flex items-center justify-between">
+                          <label className="block text-sm font-medium text-slate-600">🎉 Resepsi Maps URL</label>
+                          {weddingInfo.resepsi_maps_url && (
+                            <button
+                              onClick={() => window.open(weddingInfo.resepsi_maps_url, '_blank')}
+                              className="text-xs bg-blue-500 text-white px-2 py-1 rounded-lg hover:bg-blue-600 transition-colors"
+                            >
+                              📍 Test
+                            </button>
+                          )}
+                        </div>
+                        <input
+                          type="url"
+                          value={weddingInfo.resepsi_maps_url}
+                          onChange={(e) => handleUpdateWeddingInfo({ resepsi_maps_url: e.target.value })}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                          placeholder="https://maps.google.com/maps?q=..."
+                          disabled={weddingInfo.maps_display_option === 'akad'}
+                        />
+                        <p className="text-xs text-slate-500">
+                          Copy Google Maps link for resepsi venue
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Preview Section */}
+                    <div className="bg-slate-50 rounded-xl p-4">
+                      <h4 className="text-sm font-medium text-slate-700 mb-3">📱 Preview in Invitation:</h4>
+                      <div className="space-y-2">
+                        {weddingInfo.maps_display_option === 'none' && (
+                          <p className="text-sm text-slate-500 italic">No maps will be displayed in invitation</p>
+                        )}
+                        {weddingInfo.maps_display_option === 'akad' && (
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm bg-blue-100 text-blue-700 px-2 py-1 rounded-lg">🗺️ Lihat Lokasi Akad</span>
+                          </div>
+                        )}
+                        {weddingInfo.maps_display_option === 'resepsi' && (
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm bg-green-100 text-green-700 px-2 py-1 rounded-lg">🗺️ Lihat Lokasi Resepsi</span>
+                          </div>
+                        )}
+                        {weddingInfo.maps_display_option === 'both' && (
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm bg-blue-100 text-blue-700 px-2 py-1 rounded-lg">🗺️ Lihat Lokasi Akad</span>
+                            <span className="text-sm bg-green-100 text-green-700 px-2 py-1 rounded-lg">🗺️ Lihat Lokasi Resepsi</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
