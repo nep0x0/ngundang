@@ -146,6 +146,62 @@ export default function AdminPage() {
     }
   };
 
+  // Delete Functions
+  const handleDeleteIncome = async (incomeId: string, monthlyBudgetId: string, source: string) => {
+    if (confirm(`Apakah Anda yakin ingin menghapus pendapatan "${source}"?`)) {
+      try {
+        await budgetService.deleteIncomeItem(incomeId, monthlyBudgetId);
+        await loadBudgetData();
+        alert('Pendapatan berhasil dihapus!');
+      } catch (error) {
+        console.error('Error deleting income:', error);
+        alert('Error menghapus pendapatan. Silakan coba lagi.');
+      }
+    }
+  };
+
+  const handleDeleteExpense = async (expenseId: string, monthlyBudgetId: string, itemName: string) => {
+    if (confirm(`Apakah Anda yakin ingin menghapus pengeluaran "${itemName}"?`)) {
+      try {
+        await budgetService.deleteExpenseItem(expenseId, monthlyBudgetId);
+        await loadBudgetData();
+        alert('Pengeluaran berhasil dihapus!');
+      } catch (error) {
+        console.error('Error deleting expense:', error);
+        alert('Error menghapus pengeluaran. Silakan coba lagi.');
+      }
+    }
+  };
+
+  const handleDeleteMonth = async (monthId: string, monthName: string) => {
+    try {
+      // Get month details with item counts
+      const monthDetails = await budgetService.getMonthlyBudgetWithCounts(monthId);
+
+      let confirmMessage = `Apakah Anda yakin ingin menghapus bulan "${monthName}"?`;
+
+      if (monthDetails.totalItems > 0) {
+        confirmMessage += `\n\nBulan ini memiliki:\n`;
+        if (monthDetails.incomeCount > 0) {
+          confirmMessage += `• ${monthDetails.incomeCount} item pendapatan\n`;
+        }
+        if (monthDetails.expenseCount > 0) {
+          confirmMessage += `• ${monthDetails.expenseCount} item pengeluaran\n`;
+        }
+        confirmMessage += `\nSemua item di dalam bulan ini akan ikut terhapus!`;
+      }
+
+      if (confirm(confirmMessage)) {
+        await budgetService.deleteMonthlyBudget(monthId);
+        await loadBudgetData();
+        alert('Bulan berhasil dihapus!');
+      }
+    } catch (error) {
+      console.error('Error deleting month:', error);
+      alert('Error menghapus bulan. Silakan coba lagi.');
+    }
+  };
+
   // Load budget data from database
   const loadBudgetData = async () => {
     try {
@@ -865,11 +921,20 @@ export default function AdminPage() {
                 return (
                   <div key={month.id} className={`bg-gradient-to-br ${cardColors[colorIndex]} rounded-3xl shadow-sm border`}>
                     <div className="px-6 py-4 border-b border-white/50">
-                      <div className="flex items-center space-x-3">
-                        <div className={`w-10 h-10 ${headerColors[colorIndex]} rounded-2xl flex items-center justify-center`}>
-                          <span className="text-lg">📅</span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className={`w-10 h-10 ${headerColors[colorIndex]} rounded-2xl flex items-center justify-center`}>
+                            <span className="text-lg">📅</span>
+                          </div>
+                          <h3 className="text-lg font-semibold text-slate-700">{month.month_name}</h3>
                         </div>
-                        <h3 className="text-lg font-semibold text-slate-700">{month.month_name}</h3>
+                        <button
+                          onClick={() => handleDeleteMonth(month.id, month.month_name)}
+                          className="w-8 h-8 bg-rose-100 hover:bg-rose-200 rounded-xl flex items-center justify-center transition-all duration-300 group"
+                          title="Hapus Bulan"
+                        >
+                          <span className="text-rose-600 group-hover:text-rose-700 text-sm">🗑️</span>
+                        </button>
                       </div>
                     </div>
 
@@ -890,15 +955,24 @@ export default function AdminPage() {
                         </div>
                         <div className="space-y-2">
                           {month.income_items.map((item) => (
-                            <div key={item.id} className="flex justify-between items-center text-sm bg-white/50 rounded-xl p-3">
-                              <div className="flex items-center">
+                            <div key={item.id} className="flex justify-between items-center text-sm bg-white/50 rounded-xl p-3 group">
+                              <div className="flex items-center flex-1">
                                 <span className={`mr-2 ${
                                   item.status === 'received' ? '✅' :
                                   item.status === 'pending' ? '⏳' : '❌'
                                 }`}></span>
-                                <span className="text-slate-700">{item.source}</span>
+                                <span className="text-slate-700 flex-1">{item.source}</span>
                               </div>
-                              <span className="font-medium text-slate-800">Rp {item.amount.toLocaleString()}</span>
+                              <div className="flex items-center space-x-2">
+                                <span className="font-medium text-slate-800">Rp {item.amount.toLocaleString()}</span>
+                                <button
+                                  onClick={() => handleDeleteIncome(item.id, month.id, item.source)}
+                                  className="w-6 h-6 bg-rose-100 hover:bg-rose-200 rounded-lg flex items-center justify-center transition-all duration-300 opacity-0 group-hover:opacity-100"
+                                  title="Hapus Pendapatan"
+                                >
+                                  <span className="text-rose-600 text-xs">🗑️</span>
+                                </button>
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -926,15 +1000,24 @@ export default function AdminPage() {
                         </div>
                         <div className="space-y-2">
                           {month.expense_items.map((item) => (
-                            <div key={item.id} className="flex justify-between items-center text-sm bg-white/50 rounded-xl p-3">
-                              <div className="flex items-center">
+                            <div key={item.id} className="flex justify-between items-center text-sm bg-white/50 rounded-xl p-3 group">
+                              <div className="flex items-center flex-1">
                                 <span className={`mr-2 ${
                                   item.status === 'paid' ? '✅' :
                                   item.status === 'pending' ? '⏳' : '❌'
                                 }`}></span>
-                                <span className="text-slate-700">{item.item_name}</span>
+                                <span className="text-slate-700 flex-1">{item.item_name}</span>
                               </div>
-                              <span className="font-medium text-slate-800">Rp {item.estimated_cost.toLocaleString()}</span>
+                              <div className="flex items-center space-x-2">
+                                <span className="font-medium text-slate-800">Rp {item.estimated_cost.toLocaleString()}</span>
+                                <button
+                                  onClick={() => handleDeleteExpense(item.id, month.id, item.item_name)}
+                                  className="w-6 h-6 bg-rose-100 hover:bg-rose-200 rounded-lg flex items-center justify-center transition-all duration-300 opacity-0 group-hover:opacity-100"
+                                  title="Hapus Pengeluaran"
+                                >
+                                  <span className="text-rose-600 text-xs">🗑️</span>
+                                </button>
+                              </div>
                             </div>
                           ))}
                         </div>

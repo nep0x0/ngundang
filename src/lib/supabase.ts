@@ -310,6 +310,34 @@ export const budgetService = {
 
     if (error) throw error
     await this.updateBudgetTotals(monthlyBudgetId)
+  },
+
+  // Delete monthly budget (will cascade delete all income and expense items)
+  async deleteMonthlyBudget(id: string) {
+    const { error } = await supabase
+      .from('monthly_budgets')
+      .delete()
+      .eq('id', id)
+
+    if (error) throw error
+  },
+
+  // Get monthly budget with item counts for confirmation
+  async getMonthlyBudgetWithCounts(id: string) {
+    const [budgetResult, incomeResult, expenseResult] = await Promise.all([
+      supabase.from('monthly_budgets').select('*').eq('id', id).single(),
+      supabase.from('income_items').select('id').eq('monthly_budget_id', id),
+      supabase.from('expense_items').select('id').eq('monthly_budget_id', id)
+    ])
+
+    if (budgetResult.error) throw budgetResult.error
+
+    return {
+      budget: budgetResult.data,
+      incomeCount: incomeResult.data?.length || 0,
+      expenseCount: expenseResult.data?.length || 0,
+      totalItems: (incomeResult.data?.length || 0) + (expenseResult.data?.length || 0)
+    }
   }
 }
 
