@@ -100,7 +100,7 @@ export default function AdminPage() {
   const handleAddIncome = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const newIncome = await budgetService.addIncomeItem({
+      await budgetService.addIncomeItem({
         monthly_budget_id: selectedMonth,
         source: incomeForm.source,
         amount: parseFloat(incomeForm.amount),
@@ -123,7 +123,7 @@ export default function AdminPage() {
   const handleAddExpense = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const newExpense = await budgetService.addExpenseItem({
+      await budgetService.addExpenseItem({
         monthly_budget_id: selectedMonth,
         item_name: expenseForm.item_name,
         category: expenseForm.category,
@@ -502,7 +502,7 @@ export default function AdminPage() {
               <button
                 key={item.id}
                 onClick={() => {
-                  setActiveTab(item.id as any);
+                  setActiveTab(item.id as 'guests' | 'rsvps' | 'stats' | 'budget');
                   setSidebarOpen(false);
                 }}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl font-medium text-sm transition-all duration-300 ${
