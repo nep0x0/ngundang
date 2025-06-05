@@ -714,8 +714,14 @@ export default function AdminPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {guests.map((guest) => (
-                        <tr key={guest.id} className="hover:bg-slate-50 transition-colors">
+                      {guests.map((guest, index) => (
+                        <tr
+                          key={guest.id}
+                          className={`transition-colors hover:bg-rose-50 ${
+                            index % 2 === 0 ? 'bg-white' : 'bg-rose-25'
+                          }`}
+                          style={index % 2 !== 0 ? { backgroundColor: '#fef7f7' } : {}}
+                        >
                           <td className="px-4 py-3">
                             <div>
                               <div className="font-medium text-slate-800">{guest.name}</div>
