@@ -554,6 +554,10 @@ export default function AdminPage() {
     { id: 'wedding', icon: '💍', label: 'Wedding Info', count: null, color: 'purple' }
   ];
 
+  const externalMenuItems = [
+    { id: 'view-invitation', icon: '🌐', label: 'Lihat Undangan', href: '/', color: 'indigo' }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex">
       {/* Sidebar */}
@@ -562,15 +566,19 @@ export default function AdminPage() {
       }`}>
         {/* Sidebar Header */}
         <div className="flex items-center justify-between h-16 px-6 border-b border-slate-200/50">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-rose-200 to-pink-200 rounded-2xl flex items-center justify-center">
+          <a
+            href="/"
+            className="flex items-center space-x-3 hover:bg-slate-50 rounded-xl p-2 -m-2 transition-colors group"
+            title="Lihat Undangan"
+          >
+            <div className="w-10 h-10 bg-gradient-to-r from-rose-200 to-pink-200 rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform">
               <span className="text-lg">💍</span>
             </div>
             <div>
-              <h1 className="text-lg font-semibold text-slate-700">Wedding Admin</h1>
-              <p className="text-xs text-slate-500">Adelita & Ansyah</p>
+              <h1 className="text-lg font-semibold text-slate-700 group-hover:text-rose-600 transition-colors">Wedding Admin</h1>
+              <p className="text-xs text-slate-500 group-hover:text-rose-500 transition-colors">Adelita & Ansyah</p>
             </div>
-          </div>
+          </a>
           <button
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors"
@@ -589,6 +597,7 @@ export default function AdminPage() {
                 case 'emerald': return 'bg-emerald-100 text-emerald-700 shadow-sm';
                 case 'amber': return 'bg-amber-100 text-amber-700 shadow-sm';
                 case 'purple': return 'bg-purple-100 text-purple-700 shadow-sm';
+                case 'indigo': return 'bg-indigo-100 text-indigo-700 shadow-sm';
                 default: return 'bg-slate-100 text-slate-700 shadow-sm';
               }
             };
@@ -631,6 +640,33 @@ export default function AdminPage() {
               </button>
             );
           })}
+
+          {/* Divider */}
+          <div className="my-4 border-t border-slate-200"></div>
+
+          {/* External Links */}
+          {externalMenuItems.map((item) => {
+            const getHoverClasses = (color: string) => {
+              switch (color) {
+                case 'indigo': return 'hover:bg-indigo-50 hover:text-indigo-700';
+                default: return 'hover:bg-slate-50 hover:text-slate-700';
+              }
+            };
+
+            return (
+              <a
+                key={item.id}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl font-medium text-sm transition-all duration-300 text-slate-600 ${getHoverClasses(item.color)}`}
+              >
+                <span className="text-lg">{item.icon}</span>
+                <span className="flex-1 text-left">{item.label}</span>
+                <span className="text-xs text-slate-400">↗</span>
+              </a>
+            );
+          })}
         </nav>
 
         {/* Sidebar Footer */}
@@ -660,12 +696,16 @@ export default function AdminPage() {
           >
             <span className="text-slate-600">☰</span>
           </button>
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-rose-200 to-pink-200 rounded-xl flex items-center justify-center">
+          <a
+            href="/"
+            className="flex items-center space-x-2 hover:bg-slate-50 rounded-xl p-2 -m-2 transition-colors group"
+            title="Lihat Undangan"
+          >
+            <div className="w-8 h-8 bg-gradient-to-r from-rose-200 to-pink-200 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform">
               <span className="text-sm">💍</span>
             </div>
-            <span className="font-semibold text-slate-700">Wedding Admin</span>
-          </div>
+            <span className="font-semibold text-slate-700 group-hover:text-rose-600 transition-colors">Wedding Admin</span>
+          </a>
           <div className="w-10"></div>
         </div>
 
