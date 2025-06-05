@@ -100,12 +100,12 @@ export default function AdminPage() {
           akad_time: '08:00',
           akad_venue_name: 'Masjid Al-Ikhlas',
           akad_venue_address: 'Jl. Masjid No. 45, Jakarta Selatan',
-          akad_maps_url: 'https://maps.google.com/maps?q=-6.2088,106.8456',
+          akad_maps_url: 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3988.2339995101497!2d103.61586317496634!3d-1.61471919837025!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMcKwMzYnNTMuMCJTIDEwM8KwMzcnMDYuNCJF!5e0!3m2!1sid!2sid!4v1749149637257!5m2!1sid!2sid',
           resepsi_date: '2025-02-15',
           resepsi_time: '11:00',
           resepsi_venue_name: 'Gedung Serbaguna',
           resepsi_venue_address: 'Jl. Raya No. 123, Jakarta Selatan',
-          resepsi_maps_url: 'https://maps.google.com/maps?q=-6.2100,106.8500',
+          resepsi_maps_url: 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3988.2339995101497!2d103.61586317496634!3d-1.61471919837025!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMcKwMzYnNTMuMCJTIDEwM8KwMzcnMDYuNCJF!5e0!3m2!1sid!2sid!4v1749149637258!5m2!1sid!2sid',
           bride_father: 'Bapak Andi Kuswanto (Alm)',
           bride_mother: 'Ibu Yulita Anggraini',
           bride_child_order: 'Putri Kedua',
@@ -1538,8 +1538,11 @@ export default function AdminPage() {
                           value={weddingInfo.akad_maps_url}
                           onChange={(e) => handleUpdateWeddingInfo({ akad_maps_url: e.target.value })}
                           className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
-                          placeholder="https://maps.google.com/maps?q=..."
+                          placeholder="https://www.google.com/maps/embed?pb=..."
                         />
+                        <p className="text-xs text-slate-500 mt-1">
+                          Gunakan Google Maps embed URL (Share → Embed → Copy HTML → ambil src URL)
+                        </p>
                       </div>
                     </div>
 
@@ -1606,8 +1609,11 @@ export default function AdminPage() {
                           value={weddingInfo.resepsi_maps_url}
                           onChange={(e) => handleUpdateWeddingInfo({ resepsi_maps_url: e.target.value })}
                           className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
-                          placeholder="https://maps.google.com/maps?q=..."
+                          placeholder="https://www.google.com/maps/embed?pb=..."
                         />
+                        <p className="text-xs text-slate-500 mt-1">
+                          Gunakan Google Maps embed URL (Share → Embed → Copy HTML → ambil src URL)
+                        </p>
                       </div>
                     </div>
 

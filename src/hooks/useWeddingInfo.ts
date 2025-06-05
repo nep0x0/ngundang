@@ -54,9 +54,14 @@ export const formatFamilyDescription = (
   return `${childOrder} dari ${father} & ${mother}`;
 };
 
-// Convert Google Maps URL to embeddable iframe URL
+// Check if URL is already an embed URL, if not try to convert
 export const convertToEmbedUrl = (googleMapsUrl: string): string => {
   if (!googleMapsUrl) return '';
+
+  // If it's already an embed URL, return as is
+  if (googleMapsUrl.includes('google.com/maps/embed')) {
+    return googleMapsUrl;
+  }
 
   try {
     // Extract coordinates from various Google Maps URL formats
@@ -77,33 +82,24 @@ export const convertToEmbedUrl = (googleMapsUrl: string): string => {
       lng = coordMatch2[2];
     }
 
-    // Format 3: https://maps.app.goo.gl/... (shortened URL - fallback to search)
-    if (googleMapsUrl.includes('maps.app.goo.gl') || googleMapsUrl.includes('goo.gl/maps')) {
-      // For shortened URLs, we'll use the URL as a search query
-      const encodedUrl = encodeURIComponent(googleMapsUrl);
-      return `https://www.google.com/maps/embed/v1/search?key=YOUR_API_KEY&q=${encodedUrl}`;
+    // Format 3: Extract from place URLs
+    const placeMatch = googleMapsUrl.match(/!3d(-?\d+\.?\d*)!4d(-?\d+\.?\d*)/);
+    if (placeMatch) {
+      lat = placeMatch[1];
+      lng = placeMatch[2];
     }
 
     if (lat && lng) {
-      // Use coordinates for embed
-      return `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.0!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z${lat},${lng}!5e0!3m2!1sen!2sid!4v1682329193229!5m2!1sen!2sid`;
+      // Generate embed URL with coordinates
+      return `https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3988.0!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2z${encodeURIComponent(lat + ',' + lng)}!5e0!3m2!1sid!2sid!4v${Date.now()}!5m2!1sid!2sid`;
     }
 
-    // Fallback: try to extract place name for search
-    const placeMatch = googleMapsUrl.match(/place\/([^\/]+)/);
-    if (placeMatch) {
-      const placeName = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
-      const encodedPlace = encodeURIComponent(placeName);
-      return `https://www.google.com/maps/embed/v1/search?key=YOUR_API_KEY&q=${encodedPlace}`;
-    }
-
-    // Last resort: use a default embed with search
-    return `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.0!2d106.8456!3d-6.2088!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zLTYuMjA4OCwxMDYuODQ1Ng!5e0!3m2!1sen!2sid!4v1682329193229!5m2!1sen!2sid`;
+    // If no coordinates found, return original URL (might work in some cases)
+    return googleMapsUrl;
 
   } catch (error) {
     console.error('Error converting Google Maps URL:', error);
-    // Return a default embed URL
-    return `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.0!2d106.8456!3d-6.2088!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zLTYuMjA4OCwxMDYuODQ1Ng!5e0!3m2!1sen!2sid!4v1682329193229!5m2!1sen!2sid`;
+    return googleMapsUrl;
   }
 };
 

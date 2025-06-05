@@ -277,14 +277,14 @@ CREATE TABLE IF NOT EXISTS wedding_info (
     akad_time TIME NOT NULL DEFAULT '08:00',
     akad_venue_name TEXT NOT NULL DEFAULT 'Masjid Al-Ikhlas',
     akad_venue_address TEXT NOT NULL DEFAULT 'Jl. Masjid No. 45, Jakarta Selatan',
-    akad_maps_url TEXT DEFAULT 'https://maps.google.com/maps?q=-6.2088,106.8456',
+    akad_maps_url TEXT DEFAULT 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3988.2339995101497!2d103.61586317496634!3d-1.61471919837025!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMcKwMzYnNTMuMCJTIDEwM8KwMzcnMDYuNCJF!5e0!3m2!1sid!2sid!4v1749149637257!5m2!1sid!2sid',
 
     -- Resepsi Event Details
     resepsi_date DATE NOT NULL DEFAULT '2025-02-15',
     resepsi_time TIME NOT NULL DEFAULT '11:00',
     resepsi_venue_name TEXT NOT NULL DEFAULT 'Gedung Serbaguna',
     resepsi_venue_address TEXT NOT NULL DEFAULT 'Jl. Raya No. 123, Jakarta Selatan',
-    resepsi_maps_url TEXT DEFAULT 'https://maps.google.com/maps?q=-6.2100,106.8500',
+    resepsi_maps_url TEXT DEFAULT 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3988.2339995101497!2d103.61586317496634!3d-1.61471919837025!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMcKwMzYnNTMuMCJTIDEwM8KwMzcnMDYuNCJF!5e0!3m2!1sid!2sid!4v1749149637258!5m2!1sid!2sid',
 
     -- Bride Family Information
     bride_father TEXT NOT NULL DEFAULT 'Bapak Andi Kuswanto (Alm)',
@@ -315,8 +315,8 @@ INSERT INTO wedding_info (
 ) VALUES (
     'Adelita Sari Kuswanto', 'Adelita', 'A',
     'Ansyah Eko Santoso', 'Ansyah', 'A',
-    '2025-02-15', '08:00', 'Masjid Al-Ikhlas', 'Jl. Masjid No. 45, Jakarta Selatan', 'https://maps.google.com/maps?q=-6.2088,106.8456',
-    '2025-02-15', '11:00', 'Gedung Serbaguna', 'Jl. Raya No. 123, Jakarta Selatan', 'https://maps.google.com/maps?q=-6.2100,106.8500',
+    '2025-02-15', '08:00', 'Masjid Al-Ikhlas', 'Jl. Masjid No. 45, Jakarta Selatan', 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3988.2339995101497!2d103.61586317496634!3d-1.61471919837025!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMcKwMzYnNTMuMCJTIDEwM8KwMzcnMDYuNCJF!5e0!3m2!1sid!2sid!4v1749149637257!5m2!1sid!2sid',
+    '2025-02-15', '11:00', 'Gedung Serbaguna', 'Jl. Raya No. 123, Jakarta Selatan', 'https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3988.2339995101497!2d103.61586317496634!3d-1.61471919837025!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMcKwMzYnNTMuMCJTIDEwM8KwMzcnMDYuNCJF!5e0!3m2!1sid!2sid!4v1749149637258!5m2!1sid!2sid',
     'Bapak Andi Kuswanto (Alm)', 'Ibu Yulita Anggraini', 'Putri Kedua',
     'Bapak Ahmad Santoso', 'Ibu Siti Rahayu', 'Putra Pertama',
     'both'
