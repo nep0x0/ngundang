@@ -61,6 +61,9 @@ export default function AdminPage() {
     year: new Date().getFullYear()
   });
 
+  // Sidebar state
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   useEffect(() => {
     loadData();
     loadBudgetData();
@@ -439,8 +442,6 @@ export default function AdminPage() {
       </div>
     );
   }
-
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const menuItems = [
     { id: 'guests', icon: '👥', label: 'Guests', count: guests.length, color: 'rose' },
