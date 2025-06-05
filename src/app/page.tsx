@@ -19,6 +19,7 @@ import Bottom from "@/components/Bottom";
 import AudioPlayer from "@/components/AudioPlayer";
 import Loading from "@/components/Loading";
 import Cover from "@/components/Cover";
+import { useWeddingInfo, formatWeddingDate, formatTime, formatFamilyDescription, getDisplayMaps } from '@/hooks/useWeddingInfo';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -26,6 +27,9 @@ export default function Home() {
 
   // Mendapatkan nama penerima dari URL query parameter (jika ada)
   const [recipientName, setRecipientName] = useState<string>("Tamu Undangan");
+
+  // Fetch wedding info from database
+  const { weddingInfo, loading: weddingLoading, error: weddingError } = useWeddingInfo();
 
   useEffect(() => {
     // Mendapatkan nama penerima dari URL query parameter
@@ -62,8 +66,77 @@ export default function Home() {
     }, 100);
   };
 
-  // Data untuk undangan pernikahan
-  const weddingData = {
+  // Generate dynamic wedding data from database or fallback to static
+  const weddingData = weddingInfo ? {
+    couple: {
+      bride: {
+        name: weddingInfo.bride_nickname,
+        fullName: weddingInfo.bride_full_name,
+        photo: "/images/mempelai-wanita.jpg",
+        description: formatFamilyDescription(
+          weddingInfo.bride_child_order,
+          weddingInfo.bride_father,
+          weddingInfo.bride_mother
+        )
+      },
+      groom: {
+        name: weddingInfo.groom_nickname,
+        fullName: weddingInfo.groom_full_name,
+        photo: "/images/mempelai-pria.jpg",
+        description: formatFamilyDescription(
+          weddingInfo.groom_child_order,
+          weddingInfo.groom_father,
+          weddingInfo.groom_mother
+        )
+      }
+    },
+    date: formatWeddingDate(weddingInfo.akad_date),
+    events: {
+      akadNikah: {
+        title: "Akad Nikah",
+        date: formatWeddingDate(weddingInfo.akad_date),
+        time: formatTime(weddingInfo.akad_time),
+        location: weddingInfo.akad_venue_name,
+        address: weddingInfo.akad_venue_address
+      },
+      resepsi: {
+        title: "Resepsi",
+        date: formatWeddingDate(weddingInfo.resepsi_date),
+        time: formatTime(weddingInfo.resepsi_time),
+        location: weddingInfo.resepsi_venue_name,
+        address: weddingInfo.resepsi_venue_address
+      }
+    },
+    location: getDisplayMaps(weddingInfo),
+    audio: "/audio/wedding-song.mp3",
+    quote: {
+      text: "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya, dan dijadikan-Nya diantaramu rasa kasih dan sayang.",
+      source: "QS. Ar-Rum: 21",
+      author: "Al-Quran"
+    },
+    story: [
+      {
+        year: "2023",
+        title: "Pertemuan Pertama",
+        description: "Kami bertemu dan saling mengenal untuk pertama kalinya. Pertemuan yang sederhana namun menjadi awal dari perjalanan cinta yang indah ini.",
+        image: "/images/story1.jpg"
+      },
+      {
+        year: "2024",
+        title: "Menjalin Hubungan Serius",
+        description: "Seiring berjalannya waktu, kami memutuskan untuk menjalin hubungan yang lebih serius. Kami saling mendukung dan merencanakan masa depan bersama dengan penuh kasih sayang.",
+        image: "/images/story2.jpg"
+      },
+      {
+        year: "2025",
+        title: "Lamaran",
+        description: "Dengan restu kedua orang tua dan keluarga besar, kami melaksanakan acara lamaran sebagai langkah awal menuju jenjang pernikahan yang sakral.",
+        image: "/images/story3.jpg"
+      }
+    ],
+    thankYouMessage: "Terima kasih atas doa dan restu yang telah diberikan untuk pernikahan kami. Kehadiran dan dukungan Anda sangat berarti bagi kami dalam memulai babak baru kehidupan ini."
+  } : {
+    // Fallback static data jika database belum loaded
     couple: {
       bride: {
         name: "Adelita",
@@ -96,13 +169,11 @@ export default function Home() {
       }
     },
     location: {
-      title: "Lokasi Acara",
-      mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.6234567890123!2d103.6184471!3d-1.6147901!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMcKwMzYnNTMuMCJTIDEwM8KwMzcnMDYuNCJF!5e0!3m2!1sid!2sid!4v1682329193229!5m2!1sid!2sid",
-      locationName: "Kediaman Mempelai Wanita",
-      locationAddress: "Jl. Dr. Sumbiyono RT 11 NO. 35 Kelurahan Jelutung Kecamatan Jelutung, Kota Jambi",
-      googleMapsUrl: "https://www.google.com/maps/place/1%C2%B036'53.0%22S+103%C2%B037'06.4%22E/@-1.6147901,103.6184471,20z/data=!4m4!3m3!8m2!3d-1.6147192!4d103.6184381?entry=ttu&g_ep=EgoyMDI1MDUyOC4wIKXMDSoASAFQAw%3D%3D"
+      showAkad: true,
+      showResepsi: false,
+      akadUrl: "https://www.google.com/maps/place/1%C2%B036'53.0%22S+103%C2%B037'06.4%22E/@-1.6147901,103.6184471,20z/data=!4m4!3m3!8m2!3d-1.6147192!4d103.6184381?entry=ttu&g_ep=EgoyMDI1MDUyOC4wIKXMDSoASAFQAw%3D%3D",
+      resepsiUrl: null
     },
-
     audio: "/audio/wedding-song.mp3",
     quote: {
       text: "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu isteri-isteri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya, dan dijadikan-Nya diantaramu rasa kasih dan sayang.",
@@ -159,8 +230,24 @@ export default function Home() {
   return (
     <div className="font-sans w-full overflow-x-hidden">
       {/* Loading Screen */}
-      {isLoading && (
+      {(isLoading || weddingLoading) && (
         <Loading onLoadingComplete={handleLoadingComplete} />
+      )}
+
+      {/* Error State */}
+      {weddingError && !weddingLoading && (
+        <div className="fixed inset-0 bg-red-50 flex items-center justify-center z-50">
+          <div className="text-center p-6">
+            <h2 className="text-xl font-semibold text-red-600 mb-2">Error Loading Wedding Info</h2>
+            <p className="text-red-500 mb-4">{weddingError}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+            >
+              Reload Page
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Cover Screen */}
@@ -213,15 +300,28 @@ export default function Home() {
           resepsi={weddingData.events.resepsi}
         />
 
-        <CountdownTimer targetDate="2025-12-19" />
+        <CountdownTimer targetDate={weddingInfo?.akad_date || "2025-12-19"} />
 
-        <LocationMap
-          title={weddingData.location.title}
-          mapEmbedUrl={weddingData.location.mapEmbedUrl}
-          locationName={weddingData.location.locationName}
-          locationAddress={weddingData.location.locationAddress}
-          googleMapsUrl={weddingData.location.googleMapsUrl}
-        />
+        {/* Dynamic Location Maps based on configuration */}
+        {weddingData.location.showAkad && (
+          <LocationMap
+            title="Lokasi Akad Nikah"
+            mapEmbedUrl={weddingData.location.akadUrl || ""}
+            locationName={weddingData.events.akadNikah.location}
+            locationAddress={weddingData.events.akadNikah.address}
+            googleMapsUrl={weddingData.location.akadUrl || ""}
+          />
+        )}
+
+        {weddingData.location.showResepsi && (
+          <LocationMap
+            title="Lokasi Resepsi"
+            mapEmbedUrl={weddingData.location.resepsiUrl || ""}
+            locationName={weddingData.events.resepsi.location}
+            locationAddress={weddingData.events.resepsi.address}
+            googleMapsUrl={weddingData.location.resepsiUrl || ""}
+          />
+        )}
 
         {/* 5. RSVP */}
         <RSVP />
