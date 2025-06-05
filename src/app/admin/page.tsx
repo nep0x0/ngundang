@@ -385,53 +385,66 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto px-4 py-4 lg:py-8">
-        <h1 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-6 lg:mb-8">Admin Panel - Wedding Invitation</h1>
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50">
+      <div className="container mx-auto px-4 py-6">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full mb-4 shadow-lg">
+            <span className="text-2xl">💍</span>
+          </div>
+          <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            Wedding Admin
+          </h1>
+          <p className="text-gray-600 text-sm lg:text-base">Adelita & Ansyah Wedding Management</p>
+        </div>
 
-        {/* Tabs */}
-        <div className="mb-6">
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-4 lg:space-x-8 overflow-x-auto">
+        {/* Modern Tab Navigation */}
+        <div className="mb-8">
+          <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-2 shadow-lg border border-white/20">
+            <nav className="flex space-x-2 overflow-x-auto">
               <button
                 onClick={() => setActiveTab('guests')}
-                className={`py-2 px-1 border-b-2 font-medium text-xs lg:text-sm whitespace-nowrap ${
+                className={`flex items-center space-x-2 px-4 py-3 rounded-xl font-medium text-sm whitespace-nowrap transition-all duration-200 ${
                   activeTab === 'guests'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg transform scale-105'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
                 }`}
               >
-                Manage Guests ({guests.length})
+                <span>👥</span>
+                <span>Guests ({guests.length})</span>
               </button>
               <button
                 onClick={() => setActiveTab('rsvps')}
-                className={`py-2 px-1 border-b-2 font-medium text-xs lg:text-sm whitespace-nowrap ${
+                className={`flex items-center space-x-2 px-4 py-3 rounded-xl font-medium text-sm whitespace-nowrap transition-all duration-200 ${
                   activeTab === 'rsvps'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg transform scale-105'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
                 }`}
               >
-                View RSVPs ({rsvps.length})
+                <span>💌</span>
+                <span>RSVPs ({rsvps.length})</span>
               </button>
               <button
                 onClick={() => setActiveTab('stats')}
-                className={`py-2 px-1 border-b-2 font-medium text-xs lg:text-sm whitespace-nowrap ${
+                className={`flex items-center space-x-2 px-4 py-3 rounded-xl font-medium text-sm whitespace-nowrap transition-all duration-200 ${
                   activeTab === 'stats'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg transform scale-105'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
                 }`}
               >
-                Statistics
+                <span>📊</span>
+                <span>Statistics</span>
               </button>
               <button
                 onClick={() => setActiveTab('budget')}
-                className={`py-2 px-1 border-b-2 font-medium text-xs lg:text-sm whitespace-nowrap ${
+                className={`flex items-center space-x-2 px-4 py-3 rounded-xl font-medium text-sm whitespace-nowrap transition-all duration-200 ${
                   activeTab === 'budget'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg transform scale-105'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
                 }`}
               >
-                Budget Planner
+                <span>💰</span>
+                <span>Budget</span>
               </button>
             </nav>
           </div>
@@ -440,158 +453,148 @@ export default function AdminPage() {
         {activeTab === 'guests' && (
           <div className="space-y-6">
             {/* Add Guest Form */}
-            <div className="bg-white rounded-lg shadow p-4 lg:p-6">
-              <h2 className="text-lg lg:text-xl font-semibold mb-4">Add New Guest</h2>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Nama Tamu *
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 lg:p-8 border border-white/20">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <span className="text-white text-lg">✨</span>
+                </div>
+                <h2 className="text-xl lg:text-2xl font-bold text-gray-800">Add New Guest</h2>
+              </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-gray-700">
+                      👤 Nama Tamu *
                     </label>
                     <input
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="w-full px-4 py-3 bg-white/50 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-pink-400 focus:bg-white transition-all duration-200 text-sm placeholder-gray-400"
                       placeholder="Budi Santoso"
                       required
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Pasangan (Optional)
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-gray-700">
+                      💕 Pasangan
                     </label>
                     <input
                       type="text"
                       value={formData.partner}
                       onChange={(e) => setFormData({ ...formData, partner: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="w-full px-4 py-3 bg-white/50 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-pink-400 focus:bg-white transition-all duration-200 text-sm placeholder-gray-400"
                       placeholder="Siti Rahayu"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone (Optional)
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-gray-700">
+                      📱 Phone
                     </label>
                     <input
                       type="text"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="w-full px-4 py-3 bg-white/50 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-pink-400 focus:bg-white transition-all duration-200 text-sm placeholder-gray-400"
                       placeholder="081234567890"
                     />
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Tamu dari *
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-gray-700">
+                      🎭 Tamu dari *
                     </label>
                     <select
                       value={formData.from_side}
                       onChange={(e) => setFormData({ ...formData, from_side: e.target.value as 'adel' | 'eko' })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                      className="w-full px-4 py-3 bg-white/50 border-2 border-gray-200 rounded-2xl focus:outline-none focus:border-pink-400 focus:bg-white transition-all duration-200 text-sm"
                       required
                     >
-                      <option value="adel">Adel</option>
-                      <option value="eko">Eko</option>
+                      <option value="adel">👰 Adel</option>
+                      <option value="eko">🤵 Eko</option>
                     </select>
                   </div>
                 </div>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full lg:w-auto bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 text-sm lg:text-base"
+                  className="w-full lg:w-auto bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-3 rounded-2xl hover:from-pink-600 hover:to-purple-700 disabled:opacity-50 font-semibold text-sm lg:text-base shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                 >
-                  {isSubmitting ? 'Adding...' : 'Add Guest'}
+                  {isSubmitting ? '✨ Adding...' : '✨ Add Guest'}
                 </button>
               </form>
             </div>
 
             {/* Guests List */}
-            <div className="bg-white rounded-lg shadow">
-              <div className="px-4 lg:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h2 className="text-lg lg:text-xl font-semibold">Guest List</h2>
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20">
+              <div className="px-6 py-6 border-b border-gray-100 flex justify-between items-center">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-full flex items-center justify-center">
+                    <span className="text-white text-lg">👥</span>
+                  </div>
+                  <h2 className="text-xl lg:text-2xl font-bold text-gray-800">Guest List</h2>
+                </div>
                 <button
                   onClick={regenerateLinks}
                   disabled={loading || guests.length === 0}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 text-sm"
+                  className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-4 py-2 rounded-xl hover:from-blue-600 hover:to-cyan-700 disabled:opacity-50 text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
                 >
                   🔄 Regenerate Links
                 </button>
               </div>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Guest
-                      </th>
-                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
-                        Partner
-                      </th>
-                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">
-                        Phone
-                      </th>
-                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        From
-                      </th>
-                      <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+              <div className="p-6">
+                {guests.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <span className="text-3xl">👥</span>
+                    </div>
+                    <p className="text-gray-500 text-lg">No guests yet</p>
+                    <p className="text-gray-400 text-sm">Add your first guest above!</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {guests.map((guest) => (
-                      <tr key={guest.id}>
-                        <td className="px-3 lg:px-6 py-4 text-sm font-medium text-gray-900">
-                          <div>
-                            <div className="font-medium">{guest.name}</div>
-                            <div className="lg:hidden text-xs text-gray-500">
-                              {guest.partner && `+ ${guest.partner}`}
-                              {guest.phone && (
-                                <div className="xl:hidden">{guest.phone}</div>
-                              )}
-                            </div>
+                      <div key={guest.id} className="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-5 border border-gray-100 hover:shadow-lg transition-all duration-200 hover:scale-105">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex-1">
+                            <h3 className="font-bold text-gray-800 text-lg">{guest.name}</h3>
+                            {guest.partner && (
+                              <p className="text-gray-600 text-sm">💕 {guest.partner}</p>
+                            )}
+                            {guest.phone && (
+                              <p className="text-gray-500 text-xs mt-1">📱 {guest.phone}</p>
+                            )}
                           </div>
-                        </td>
-                        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
-                          {guest.partner || '-'}
-                        </td>
-                        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden xl:table-cell">
-                          {guest.phone || '-'}
-                        </td>
-                        <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${
                             guest.from_side === 'adel'
-                              ? 'bg-pink-100 text-pink-800'
-                              : 'bg-blue-100 text-blue-800'
+                              ? 'bg-gradient-to-r from-pink-100 to-pink-200 text-pink-800'
+                              : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800'
                           }`}>
-                            {guest.from_side === 'adel' ? 'Adel' : 'Eko'}
+                            {guest.from_side === 'adel' ? '👰 Adel' : '🤵 Eko'}
                           </span>
-                        </td>
-                        <td className="px-3 lg:px-6 py-4 text-sm font-medium">
-                          <div className="flex flex-col lg:flex-row lg:space-x-2 space-y-1 lg:space-y-0">
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                copyToClipboard(guest.whatsapp_message, 'WhatsApp Message');
-                              }}
-                              className="text-green-600 hover:text-green-900 text-xs lg:text-sm"
-                            >
-                              Copy Message
-                            </button>
-                            <button
-                              onClick={() => handleDelete(guest.id)}
-                              className="text-red-600 hover:text-red-900 text-xs lg:text-sm"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
+                        </div>
+
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              copyToClipboard(guest.whatsapp_message, 'WhatsApp Message');
+                            }}
+                            className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-2 rounded-xl text-xs font-semibold hover:from-green-600 hover:to-emerald-700 transition-all duration-200 transform hover:scale-105 shadow-md"
+                          >
+                            💬 Copy Message
+                          </button>
+                          <button
+                            onClick={() => handleDelete(guest.id)}
+                            className="bg-gradient-to-r from-red-500 to-pink-600 text-white px-3 py-2 rounded-xl text-xs font-semibold hover:from-red-600 hover:to-pink-700 transition-all duration-200 transform hover:scale-105 shadow-md"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
+                  </div>
+                )}
               </div>
             </div>
           </div>
