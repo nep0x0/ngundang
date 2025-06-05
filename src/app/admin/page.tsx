@@ -69,7 +69,6 @@ export default function AdminPage() {
 
   // Wedding info state
   const [weddingInfo, setWeddingInfo] = useState<WeddingInfo | null>(null);
-  const [weddingInfoLoading, setWeddingInfoLoading] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -426,29 +425,52 @@ export default function AdminPage() {
     }
   };
 
-  // Wedding Info Functions
+  // Wedding Info Functions with Debouncing
+  const [updateTimeout, setUpdateTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+
   const handleUpdateWeddingInfo = async (updatedInfo: Partial<WeddingInfo>) => {
     if (!weddingInfo) {
       console.error('❌ No wedding info loaded');
       return;
     }
 
-    setWeddingInfoLoading(true);
-    try {
-      console.log('🔄 Updating wedding info:', updatedInfo);
-      const updated = await weddingInfoService.updateWeddingInfo(updatedInfo);
-      console.log('✅ Wedding info updated:', updated);
-      setWeddingInfo(updated);
-      alert('Wedding information updated successfully!');
-    } catch (error) {
-      console.error('❌ Error updating wedding info:', error);
+    // Update local state immediately for responsive UI
+    setWeddingInfo({ ...weddingInfo, ...updatedInfo });
 
-      // More detailed error message
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      alert(`Error updating wedding information: ${errorMessage}`);
-    } finally {
-      setWeddingInfoLoading(false);
+    // Clear existing timeout
+    if (updateTimeout) {
+      clearTimeout(updateTimeout);
     }
+
+    // Set saving status
+    setSaveStatus('saving');
+
+    // Debounce the actual database update
+    const newTimeout = setTimeout(async () => {
+      try {
+        console.log('🔄 Auto-saving wedding info:', updatedInfo);
+        const updated = await weddingInfoService.updateWeddingInfo(updatedInfo);
+        console.log('✅ Wedding info auto-saved');
+        setWeddingInfo(updated);
+        setSaveStatus('saved');
+
+        // Reset to idle after 2 seconds
+        setTimeout(() => setSaveStatus('idle'), 2000);
+      } catch (error) {
+        console.error('❌ Error auto-saving wedding info:', error);
+        setSaveStatus('error');
+
+        // Show error alert only on actual errors
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        alert(`Error saving wedding information: ${errorMessage}`);
+
+        // Reset to idle after error
+        setTimeout(() => setSaveStatus('idle'), 3000);
+      }
+    }, 1500); // Wait 1.5 seconds after user stops typing
+
+    setUpdateTimeout(newTimeout);
   };
 
   if (loading) {
@@ -1316,11 +1338,35 @@ export default function AdminPage() {
         {activeTab === 'wedding' && (
           <div className="space-y-6">
             {/* Wedding Info Header */}
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-purple-100 rounded-2xl flex items-center justify-center">
-                <span className="text-purple-600 text-lg">💍</span>
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-purple-100 rounded-2xl flex items-center justify-center">
+                  <span className="text-purple-600 text-lg">💍</span>
+                </div>
+                <h2 className="text-2xl font-semibold text-slate-700">Wedding Information</h2>
               </div>
-              <h2 className="text-2xl font-semibold text-slate-700">Wedding Information</h2>
+
+              {/* Save Status Indicator */}
+              <div className="flex items-center space-x-2">
+                {saveStatus === 'saving' && (
+                  <div className="flex items-center space-x-2 text-amber-600">
+                    <div className="w-4 h-4 border-2 border-amber-600 border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-sm">Saving...</span>
+                  </div>
+                )}
+                {saveStatus === 'saved' && (
+                  <div className="flex items-center space-x-2 text-emerald-600">
+                    <span className="text-sm">✅</span>
+                    <span className="text-sm">Saved</span>
+                  </div>
+                )}
+                {saveStatus === 'error' && (
+                  <div className="flex items-center space-x-2 text-rose-600">
+                    <span className="text-sm">❌</span>
+                    <span className="text-sm">Error</span>
+                  </div>
+                )}
+              </div>
             </div>
 
             {weddingInfo ? (
@@ -1340,7 +1386,7 @@ export default function AdminPage() {
                           value={weddingInfo.bride_name}
                           onChange={(e) => handleUpdateWeddingInfo({ bride_name: e.target.value })}
                           className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
-                          disabled={weddingInfoLoading}
+                          placeholder="Bride name"
                         />
                       </div>
                       <div>
@@ -1350,7 +1396,7 @@ export default function AdminPage() {
                           value={weddingInfo.groom_name}
                           onChange={(e) => handleUpdateWeddingInfo({ groom_name: e.target.value })}
                           className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
-                          disabled={weddingInfoLoading}
+                          placeholder="Groom name"
                         />
                       </div>
                     </div>
@@ -1363,7 +1409,7 @@ export default function AdminPage() {
                           onChange={(e) => handleUpdateWeddingInfo({ bride_initial: e.target.value })}
                           className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
                           maxLength={2}
-                          disabled={weddingInfoLoading}
+                          placeholder="A"
                         />
                       </div>
                       <div>
@@ -1374,7 +1420,7 @@ export default function AdminPage() {
                           onChange={(e) => handleUpdateWeddingInfo({ groom_initial: e.target.value })}
                           className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
                           maxLength={2}
-                          disabled={weddingInfoLoading}
+                          placeholder="A"
                         />
                       </div>
                     </div>
@@ -1395,7 +1441,6 @@ export default function AdminPage() {
                         value={weddingInfo.wedding_date}
                         onChange={(e) => handleUpdateWeddingInfo({ wedding_date: e.target.value })}
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
-                        disabled={weddingInfoLoading}
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -1406,7 +1451,6 @@ export default function AdminPage() {
                           value={weddingInfo.akad_time}
                           onChange={(e) => handleUpdateWeddingInfo({ akad_time: e.target.value })}
                           className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
-                          disabled={weddingInfoLoading}
                         />
                       </div>
                       <div>
@@ -1416,7 +1460,6 @@ export default function AdminPage() {
                           value={weddingInfo.resepsi_time}
                           onChange={(e) => handleUpdateWeddingInfo({ resepsi_time: e.target.value })}
                           className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
-                          disabled={weddingInfoLoading}
                         />
                       </div>
                     </div>
@@ -1437,7 +1480,6 @@ export default function AdminPage() {
                         value={weddingInfo.venue_name}
                         onChange={(e) => handleUpdateWeddingInfo({ venue_name: e.target.value })}
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
-                        disabled={weddingInfoLoading}
                       />
                     </div>
                     <div>
@@ -1447,7 +1489,7 @@ export default function AdminPage() {
                         onChange={(e) => handleUpdateWeddingInfo({ venue_address: e.target.value })}
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
                         rows={3}
-                        disabled={weddingInfoLoading}
+                        placeholder="Full venue address"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -1459,7 +1501,7 @@ export default function AdminPage() {
                           value={weddingInfo.venue_maps_lat}
                           onChange={(e) => handleUpdateWeddingInfo({ venue_maps_lat: parseFloat(e.target.value) })}
                           className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
-                          disabled={weddingInfoLoading}
+                          placeholder="-6.2088"
                         />
                       </div>
                       <div>
@@ -1470,7 +1512,7 @@ export default function AdminPage() {
                           value={weddingInfo.venue_maps_lng}
                           onChange={(e) => handleUpdateWeddingInfo({ venue_maps_lng: parseFloat(e.target.value) })}
                           className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
-                          disabled={weddingInfoLoading}
+                          placeholder="106.8456"
                         />
                       </div>
                     </div>
@@ -1492,7 +1534,6 @@ export default function AdminPage() {
                         onChange={(e) => handleUpdateWeddingInfo({ bride_child_order: e.target.value })}
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
                         placeholder="Putri Kedua"
-                        disabled={weddingInfoLoading}
                       />
                     </div>
                     <div>
@@ -1502,7 +1543,7 @@ export default function AdminPage() {
                         value={weddingInfo.bride_father}
                         onChange={(e) => handleUpdateWeddingInfo({ bride_father: e.target.value })}
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
-                        disabled={weddingInfoLoading}
+                        placeholder="Bapak [Name] (Alm)"
                       />
                     </div>
                     <div>
@@ -1512,7 +1553,7 @@ export default function AdminPage() {
                         value={weddingInfo.bride_mother}
                         onChange={(e) => handleUpdateWeddingInfo({ bride_mother: e.target.value })}
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
-                        disabled={weddingInfoLoading}
+                        placeholder="Ibu [Name]"
                       />
                     </div>
                     <div>
@@ -1523,7 +1564,6 @@ export default function AdminPage() {
                         onChange={(e) => handleUpdateWeddingInfo({ groom_child_order: e.target.value })}
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
                         placeholder="Putra Pertama"
-                        disabled={weddingInfoLoading}
                       />
                     </div>
                     <div>
@@ -1533,7 +1573,7 @@ export default function AdminPage() {
                         value={weddingInfo.groom_father}
                         onChange={(e) => handleUpdateWeddingInfo({ groom_father: e.target.value })}
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
-                        disabled={weddingInfoLoading}
+                        placeholder="Bapak [Name]"
                       />
                     </div>
                     <div>
@@ -1543,7 +1583,7 @@ export default function AdminPage() {
                         value={weddingInfo.groom_mother}
                         onChange={(e) => handleUpdateWeddingInfo({ groom_mother: e.target.value })}
                         className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
-                        disabled={weddingInfoLoading}
+                        placeholder="Ibu [Name]"
                       />
                     </div>
                   </div>
