@@ -64,6 +64,9 @@ export default function AdminPage() {
   // Sidebar state
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // Add guest form state
+  const [showAddForm, setShowAddForm] = useState(false);
+
   useEffect(() => {
     loadData();
     loadBudgetData();
@@ -293,6 +296,7 @@ export default function AdminPage() {
 
       setGuests([newGuest, ...guests]);
       setFormData({ name: '', partner: '', phone: '', from_side: 'adel' });
+      setShowAddForm(false); // Close form after successful submission
       // Reload stats after adding guest
       loadData();
       alert('Tamu berhasil ditambahkan!');
@@ -568,150 +572,202 @@ export default function AdminPage() {
 
         {activeTab === 'guests' && (
           <div className="space-y-6">
-            {/* Add Guest Form */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-sm p-6 lg:p-8 border border-slate-200/50">
-              <div className="flex items-center space-x-3 mb-6">
-                <div className="w-10 h-10 bg-rose-100 rounded-2xl flex items-center justify-center">
-                  <span className="text-rose-600 text-lg">✨</span>
+            {/* Add Guest Button/Form */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm border border-slate-200/50">
+              {!showAddForm ? (
+                <div className="p-4">
+                  <button
+                    onClick={() => setShowAddForm(true)}
+                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-rose-500 text-white rounded-xl hover:bg-rose-600 transition-all duration-300 font-medium"
+                  >
+                    <span>✨</span>
+                    <span>Add New Guest</span>
+                  </button>
                 </div>
-                <h2 className="text-xl lg:text-2xl font-semibold text-slate-700">Add New Guest</h2>
-              </div>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-slate-600">
-                      👤 Nama Tamu *
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm placeholder-slate-400"
-                      placeholder="Budi Santoso"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-slate-600">
-                      💕 Pasangan
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.partner}
-                      onChange={(e) => setFormData({ ...formData, partner: e.target.value })}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm placeholder-slate-400"
-                      placeholder="Siti Rahayu"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-slate-600">
-                      📱 Phone
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm placeholder-slate-400"
-                      placeholder="081234567890"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-slate-600">
-                      🎭 Tamu dari *
-                    </label>
-                    <select
-                      value={formData.from_side}
-                      onChange={(e) => setFormData({ ...formData, from_side: e.target.value as 'adel' | 'eko' })}
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm"
-                      required
+              ) : (
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-rose-100 rounded-xl flex items-center justify-center">
+                        <span className="text-rose-600">✨</span>
+                      </div>
+                      <h3 className="text-lg font-semibold text-slate-700">Add New Guest</h3>
+                    </div>
+                    <button
+                      onClick={() => setShowAddForm(false)}
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-colors text-slate-500"
                     >
-                      <option value="adel">👰 Adel</option>
-                      <option value="eko">🤵 Eko</option>
-                    </select>
+                      ✕
+                    </button>
                   </div>
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-600 mb-1">
+                          👤 Nama Tamu *
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm placeholder-slate-400"
+                          placeholder="Budi Santoso"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-600 mb-1">
+                          💕 Pasangan
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.partner}
+                          onChange={(e) => setFormData({ ...formData, partner: e.target.value })}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm placeholder-slate-400"
+                          placeholder="Siti Rahayu"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-600 mb-1">
+                          📱 Phone
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.phone}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm placeholder-slate-400"
+                          placeholder="081234567890"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-600 mb-1">
+                          🎭 Tamu dari *
+                        </label>
+                        <select
+                          value={formData.from_side}
+                          onChange={(e) => setFormData({ ...formData, from_side: e.target.value as 'adel' | 'eko' })}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm"
+                          required
+                        >
+                          <option value="adel">👰 Adel</option>
+                          <option value="eko">🤵 Eko</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="flex space-x-3 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowAddForm(false)}
+                        className="px-4 py-2 border border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-all duration-300 text-sm"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="px-6 py-2 bg-rose-500 text-white rounded-xl hover:bg-rose-600 disabled:opacity-50 font-medium text-sm transition-all duration-300"
+                      >
+                        {isSubmitting ? 'Adding...' : 'Add Guest'}
+                      </button>
+                    </div>
+                  </form>
                 </div>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full lg:w-auto bg-rose-500 text-white px-8 py-3 rounded-2xl hover:bg-rose-600 disabled:opacity-50 font-medium text-sm lg:text-base shadow-sm hover:shadow-md transition-all duration-300"
-                >
-                  {isSubmitting ? '✨ Adding...' : '✨ Add Guest'}
-                </button>
-              </form>
+              )}
             </div>
 
             {/* Guests List */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-sm border border-slate-200/50">
-              <div className="px-6 py-6 border-b border-slate-100 flex justify-between items-center">
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm border border-slate-200/50">
+              <div className="px-4 py-4 border-b border-slate-100 flex justify-between items-center">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-2xl flex items-center justify-center">
-                    <span className="text-blue-600 text-lg">👥</span>
+                  <div className="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <span className="text-blue-600">👥</span>
                   </div>
-                  <h2 className="text-xl lg:text-2xl font-semibold text-slate-700">Guest List</h2>
+                  <h3 className="text-lg font-semibold text-slate-700">Guest List ({guests.length})</h3>
                 </div>
                 <button
                   onClick={regenerateLinks}
                   disabled={loading || guests.length === 0}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-2xl hover:bg-blue-600 disabled:opacity-50 text-sm font-medium shadow-sm hover:shadow-md transition-all duration-300"
+                  className="bg-blue-500 text-white px-3 py-2 rounded-xl hover:bg-blue-600 disabled:opacity-50 text-sm font-medium transition-all duration-300"
                 >
                   🔄 Regenerate Links
                 </button>
               </div>
-              <div className="p-6">
-                {guests.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <span className="text-3xl">👥</span>
-                    </div>
-                    <p className="text-gray-500 text-lg">No guests yet</p>
-                    <p className="text-gray-400 text-sm">Add your first guest above!</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {guests.map((guest) => (
-                      <div key={guest.id} className="bg-white rounded-2xl p-5 border border-slate-100 hover:shadow-md transition-all duration-300 hover:border-slate-200">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-slate-800 text-lg">{guest.name}</h3>
-                            {guest.partner && (
-                              <p className="text-slate-600 text-sm">💕 {guest.partner}</p>
-                            )}
-                            {guest.phone && (
-                              <p className="text-slate-500 text-xs mt-1">📱 {guest.phone}</p>
-                            )}
-                          </div>
-                          <span className={`inline-flex px-3 py-1 text-xs font-medium rounded-full ${
-                            guest.from_side === 'adel'
-                              ? 'bg-rose-100 text-rose-700'
-                              : 'bg-blue-100 text-blue-700'
-                          }`}>
-                            {guest.from_side === 'adel' ? '👰 Adel' : '🤵 Eko'}
-                          </span>
-                        </div>
 
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              copyToClipboard(guest.whatsapp_message, 'WhatsApp Message');
-                            }}
-                            className="flex-1 bg-emerald-500 text-white px-3 py-2 rounded-xl text-xs font-medium hover:bg-emerald-600 transition-all duration-300 shadow-sm"
-                          >
-                            💬 Copy Message
-                          </button>
-                          <button
-                            onClick={() => handleDelete(guest.id)}
-                            className="bg-rose-500 text-white px-3 py-2 rounded-xl text-xs font-medium hover:bg-rose-600 transition-all duration-300 shadow-sm"
-                          >
-                            🗑️
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+              {guests.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <span className="text-2xl">👥</span>
                   </div>
-                )}
-              </div>
+                  <p className="text-slate-500">No guests yet</p>
+                  <p className="text-slate-400 text-sm">Add your first guest above!</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-slate-50 border-b border-slate-200">
+                      <tr>
+                        <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Guest</th>
+                        <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 hidden md:table-cell">Partner</th>
+                        <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 hidden lg:table-cell">Phone</th>
+                        <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">From</th>
+                        <th className="text-right px-4 py-3 text-sm font-medium text-slate-600">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {guests.map((guest) => (
+                        <tr key={guest.id} className="hover:bg-slate-50 transition-colors">
+                          <td className="px-4 py-3">
+                            <div>
+                              <div className="font-medium text-slate-800">{guest.name}</div>
+                              <div className="md:hidden text-xs text-slate-500 mt-1">
+                                {guest.partner && <div>💕 {guest.partner}</div>}
+                                {guest.phone && <div className="lg:hidden">📱 {guest.phone}</div>}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell">
+                            {guest.partner || '-'}
+                          </td>
+                          <td className="px-4 py-3 text-sm text-slate-600 hidden lg:table-cell">
+                            {guest.phone || '-'}
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                              guest.from_side === 'adel'
+                                ? 'bg-rose-100 text-rose-700'
+                                : 'bg-blue-100 text-blue-700'
+                            }`}>
+                              {guest.from_side === 'adel' ? '👰 Adel' : '🤵 Eko'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex justify-end space-x-2">
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  copyToClipboard(guest.whatsapp_message, 'WhatsApp Message');
+                                }}
+                                className="bg-emerald-500 text-white px-2 py-1 rounded-lg text-xs font-medium hover:bg-emerald-600 transition-all duration-300"
+                                title="Copy WhatsApp Message"
+                              >
+                                💬
+                              </button>
+                              <button
+                                onClick={() => handleDelete(guest.id)}
+                                className="bg-rose-500 text-white px-2 py-1 rounded-lg text-xs font-medium hover:bg-rose-600 transition-all duration-300"
+                                title="Delete Guest"
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         )}
