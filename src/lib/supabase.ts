@@ -210,16 +210,14 @@ export interface WeddingInfo {
   akad_time: string
   akad_venue_name: string
   akad_venue_address: string
-  akad_maps_lat: number
-  akad_maps_lng: number
+  akad_maps_url: string
 
   // Resepsi Event Details
   resepsi_date: string
   resepsi_time: string
   resepsi_venue_name: string
   resepsi_venue_address: string
-  resepsi_maps_lat: number
-  resepsi_maps_lng: number
+  resepsi_maps_url: string
 
   // Bride Family Information
   bride_father: string
@@ -233,8 +231,6 @@ export interface WeddingInfo {
 
   // Maps Configuration
   maps_display_option: 'akad' | 'resepsi' | 'both' | 'none'
-  akad_maps_url: string
-  resepsi_maps_url: string
 
   created_at: string
   updated_at: string

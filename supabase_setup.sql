@@ -277,16 +277,14 @@ CREATE TABLE IF NOT EXISTS wedding_info (
     akad_time TIME NOT NULL DEFAULT '08:00',
     akad_venue_name TEXT NOT NULL DEFAULT 'Masjid Al-Ikhlas',
     akad_venue_address TEXT NOT NULL DEFAULT 'Jl. Masjid No. 45, Jakarta Selatan',
-    akad_maps_lat DECIMAL(10,8) DEFAULT -6.2088,
-    akad_maps_lng DECIMAL(11,8) DEFAULT 106.8456,
+    akad_maps_url TEXT DEFAULT 'https://maps.google.com/maps?q=-6.2088,106.8456',
 
     -- Resepsi Event Details
     resepsi_date DATE NOT NULL DEFAULT '2025-02-15',
     resepsi_time TIME NOT NULL DEFAULT '11:00',
     resepsi_venue_name TEXT NOT NULL DEFAULT 'Gedung Serbaguna',
     resepsi_venue_address TEXT NOT NULL DEFAULT 'Jl. Raya No. 123, Jakarta Selatan',
-    resepsi_maps_lat DECIMAL(10,8) DEFAULT -6.2100,
-    resepsi_maps_lng DECIMAL(11,8) DEFAULT 106.8500,
+    resepsi_maps_url TEXT DEFAULT 'https://maps.google.com/maps?q=-6.2100,106.8500',
 
     -- Bride Family Information
     bride_father TEXT NOT NULL DEFAULT 'Bapak Andi Kuswanto (Alm)',
@@ -300,8 +298,6 @@ CREATE TABLE IF NOT EXISTS wedding_info (
 
     -- Maps Configuration
     maps_display_option TEXT NOT NULL DEFAULT 'both', -- 'akad', 'resepsi', 'both', 'none'
-    akad_maps_url TEXT DEFAULT 'https://maps.google.com/maps?q=-6.2088,106.8456',
-    resepsi_maps_url TEXT DEFAULT 'https://maps.google.com/maps?q=-6.2100,106.8500',
 
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -311,19 +307,19 @@ CREATE TABLE IF NOT EXISTS wedding_info (
 INSERT INTO wedding_info (
     bride_full_name, bride_nickname, bride_initial,
     groom_full_name, groom_nickname, groom_initial,
-    akad_date, akad_time, akad_venue_name, akad_venue_address, akad_maps_lat, akad_maps_lng,
-    resepsi_date, resepsi_time, resepsi_venue_name, resepsi_venue_address, resepsi_maps_lat, resepsi_maps_lng,
+    akad_date, akad_time, akad_venue_name, akad_venue_address, akad_maps_url,
+    resepsi_date, resepsi_time, resepsi_venue_name, resepsi_venue_address, resepsi_maps_url,
     bride_father, bride_mother, bride_child_order,
     groom_father, groom_mother, groom_child_order,
-    maps_display_option, akad_maps_url, resepsi_maps_url
+    maps_display_option
 ) VALUES (
     'Adelita Sari Kuswanto', 'Adelita', 'A',
     'Ansyah Eko Santoso', 'Ansyah', 'A',
-    '2025-02-15', '08:00', 'Masjid Al-Ikhlas', 'Jl. Masjid No. 45, Jakarta Selatan', -6.2088, 106.8456,
-    '2025-02-15', '11:00', 'Gedung Serbaguna', 'Jl. Raya No. 123, Jakarta Selatan', -6.2100, 106.8500,
+    '2025-02-15', '08:00', 'Masjid Al-Ikhlas', 'Jl. Masjid No. 45, Jakarta Selatan', 'https://maps.google.com/maps?q=-6.2088,106.8456',
+    '2025-02-15', '11:00', 'Gedung Serbaguna', 'Jl. Raya No. 123, Jakarta Selatan', 'https://maps.google.com/maps?q=-6.2100,106.8500',
     'Bapak Andi Kuswanto (Alm)', 'Ibu Yulita Anggraini', 'Putri Kedua',
     'Bapak Ahmad Santoso', 'Ibu Siti Rahayu', 'Putra Pertama',
-    'both', 'https://maps.google.com/maps?q=-6.2088,106.8456', 'https://maps.google.com/maps?q=-6.2100,106.8500'
+    'both'
 ) ON CONFLICT (id) DO NOTHING;
 
 -- Enable Row Level Security
