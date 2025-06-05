@@ -260,6 +260,66 @@ CREATE TRIGGER update_expense_items_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION update_budget_updated_at_column();
 
+-- Create wedding_info table for basic wedding information
+CREATE TABLE IF NOT EXISTS wedding_info (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    bride_name TEXT NOT NULL DEFAULT 'Adelita',
+    groom_name TEXT NOT NULL DEFAULT 'Ansyah',
+    bride_initial TEXT NOT NULL DEFAULT 'A',
+    groom_initial TEXT NOT NULL DEFAULT 'A',
+    wedding_date DATE NOT NULL DEFAULT '2025-02-15',
+    akad_time TIME NOT NULL DEFAULT '08:00',
+    resepsi_time TIME NOT NULL DEFAULT '11:00',
+    venue_name TEXT NOT NULL DEFAULT 'Gedung Serbaguna',
+    venue_address TEXT NOT NULL DEFAULT 'Jl. Raya No. 123, Jakarta',
+    venue_maps_lat DECIMAL(10,8) DEFAULT -6.2088,
+    venue_maps_lng DECIMAL(11,8) DEFAULT 106.8456,
+    bride_father TEXT NOT NULL DEFAULT 'Bapak Andi Kuswanto (Alm)',
+    bride_mother TEXT NOT NULL DEFAULT 'Ibu Yulita Anggraini',
+    groom_father TEXT NOT NULL DEFAULT 'Bapak Ahmad Santoso',
+    groom_mother TEXT NOT NULL DEFAULT 'Ibu Siti Rahayu',
+    bride_child_order TEXT NOT NULL DEFAULT 'Putri Kedua',
+    groom_child_order TEXT NOT NULL DEFAULT 'Putra Pertama',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Insert default wedding info
+INSERT INTO wedding_info (
+    bride_name, groom_name, bride_initial, groom_initial,
+    wedding_date, akad_time, resepsi_time,
+    venue_name, venue_address, venue_maps_lat, venue_maps_lng,
+    bride_father, bride_mother, groom_father, groom_mother,
+    bride_child_order, groom_child_order
+) VALUES (
+    'Adelita', 'Ansyah', 'A', 'A',
+    '2025-02-15', '08:00', '11:00',
+    'Gedung Serbaguna', 'Jl. Raya No. 123, Jakarta', -6.2088, 106.8456,
+    'Bapak Andi Kuswanto (Alm)', 'Ibu Yulita Anggraini',
+    'Bapak Ahmad Santoso', 'Ibu Siti Rahayu',
+    'Putri Kedua', 'Putra Pertama'
+) ON CONFLICT (id) DO NOTHING;
+
+-- Enable Row Level Security
+ALTER TABLE wedding_info ENABLE ROW LEVEL SECURITY;
+
+-- Create policy for wedding_info table
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies
+        WHERE tablename = 'wedding_info' AND policyname = 'Allow all operations on wedding_info'
+    ) THEN
+        CREATE POLICY "Allow all operations on wedding_info" ON wedding_info FOR ALL USING (true);
+    END IF;
+END $$;
+
+-- Create trigger to automatically update updated_at
+CREATE TRIGGER update_wedding_info_updated_at
+    BEFORE UPDATE ON wedding_info
+    FOR EACH ROW
+    EXECUTE FUNCTION update_budget_updated_at_column();
+
 -- Grant permissions (adjust as needed)
 -- These are basic permissions - you might want to be more restrictive in production
 GRANT ALL ON guests TO anon, authenticated;
@@ -267,5 +327,6 @@ GRANT ALL ON rsvps TO anon, authenticated;
 GRANT ALL ON monthly_budgets TO anon, authenticated;
 GRANT ALL ON income_items TO anon, authenticated;
 GRANT ALL ON expense_items TO anon, authenticated;
+GRANT ALL ON wedding_info TO anon, authenticated;
 GRANT SELECT ON admin_guest_summary TO anon, authenticated;
 GRANT SELECT ON rsvp_statistics TO anon, authenticated;

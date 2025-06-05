@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { guestService, rsvpService, statsService, budgetService, generateInvitationLink, generateWhatsAppMessage, Guest, RSVP, MonthlyBudget, IncomeItem, ExpenseItem } from '@/lib/supabase';
+import { guestService, rsvpService, statsService, budgetService, weddingInfoService, generateInvitationLink, generateWhatsAppMessage, Guest, RSVP, MonthlyBudget, IncomeItem, ExpenseItem, WeddingInfo } from '@/lib/supabase';
 
 export default function AdminPage() {
   const [guests, setGuests] = useState<Guest[]>([]);
@@ -18,7 +18,7 @@ export default function AdminPage() {
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const [databaseReady, setDatabaseReady] = useState(false);
-  const [activeTab, setActiveTab] = useState<'guests' | 'rsvps' | 'stats' | 'budget'>('guests');
+  const [activeTab, setActiveTab] = useState<'guests' | 'rsvps' | 'stats' | 'budget' | 'wedding'>('guests');
 
   // Form state
   const [formData, setFormData] = useState({
@@ -67,10 +67,50 @@ export default function AdminPage() {
   // Add guest form state
   const [showAddForm, setShowAddForm] = useState(false);
 
+  // Wedding info state
+  const [weddingInfo, setWeddingInfo] = useState<WeddingInfo | null>(null);
+  const [weddingInfoLoading, setWeddingInfoLoading] = useState(false);
+
   useEffect(() => {
     loadData();
     loadBudgetData();
+    loadWeddingInfo();
   }, []);
+
+  // Load wedding info from database
+  const loadWeddingInfo = async () => {
+    try {
+      const info = await weddingInfoService.getWeddingInfo();
+      setWeddingInfo(info);
+    } catch (error) {
+      console.error('Error loading wedding info:', error);
+      // If no wedding info exists, create default
+      try {
+        const defaultInfo = await weddingInfoService.createWeddingInfo({
+          bride_name: 'Adelita',
+          groom_name: 'Ansyah',
+          bride_initial: 'A',
+          groom_initial: 'A',
+          wedding_date: '2025-02-15',
+          akad_time: '08:00',
+          resepsi_time: '11:00',
+          venue_name: 'Gedung Serbaguna',
+          venue_address: 'Jl. Raya No. 123, Jakarta',
+          venue_maps_lat: -6.2088,
+          venue_maps_lng: 106.8456,
+          bride_father: 'Bapak Andi Kuswanto (Alm)',
+          bride_mother: 'Ibu Yulita Anggraini',
+          groom_father: 'Bapak Ahmad Santoso',
+          groom_mother: 'Ibu Siti Rahayu',
+          bride_child_order: 'Putri Kedua',
+          groom_child_order: 'Putra Pertama'
+        });
+        setWeddingInfo(defaultInfo);
+      } catch (createError) {
+        console.error('Error creating default wedding info:', createError);
+      }
+    }
+  };
 
   // Budget Functions
   const handleAddMonth = async (e: React.FormEvent) => {
@@ -380,6 +420,23 @@ export default function AdminPage() {
     }
   };
 
+  // Wedding Info Functions
+  const handleUpdateWeddingInfo = async (updatedInfo: Partial<WeddingInfo>) => {
+    if (!weddingInfo) return;
+
+    setWeddingInfoLoading(true);
+    try {
+      const updated = await weddingInfoService.updateWeddingInfo(updatedInfo);
+      setWeddingInfo(updated);
+      alert('Wedding information updated successfully!');
+    } catch (error) {
+      console.error('Error updating wedding info:', error);
+      alert('Error updating wedding information. Please try again.');
+    } finally {
+      setWeddingInfoLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -451,7 +508,8 @@ export default function AdminPage() {
     { id: 'guests', icon: '👥', label: 'Guests', count: guests.length, color: 'rose' },
     { id: 'rsvps', icon: '💌', label: 'RSVPs', count: rsvps.length, color: 'blue' },
     { id: 'stats', icon: '📊', label: 'Statistics', count: null, color: 'emerald' },
-    { id: 'budget', icon: '💰', label: 'Budget', count: null, color: 'amber' }
+    { id: 'budget', icon: '💰', label: 'Budget', count: null, color: 'amber' },
+    { id: 'wedding', icon: '💍', label: 'Wedding Info', count: null, color: 'purple' }
   ];
 
   return (
@@ -488,6 +546,7 @@ export default function AdminPage() {
                 case 'blue': return 'bg-blue-100 text-blue-700 shadow-sm';
                 case 'emerald': return 'bg-emerald-100 text-emerald-700 shadow-sm';
                 case 'amber': return 'bg-amber-100 text-amber-700 shadow-sm';
+                case 'purple': return 'bg-purple-100 text-purple-700 shadow-sm';
                 default: return 'bg-slate-100 text-slate-700 shadow-sm';
               }
             };
@@ -498,6 +557,7 @@ export default function AdminPage() {
                 case 'blue': return 'bg-blue-200 text-blue-800';
                 case 'emerald': return 'bg-emerald-200 text-emerald-800';
                 case 'amber': return 'bg-amber-200 text-amber-800';
+                case 'purple': return 'bg-purple-200 text-purple-800';
                 default: return 'bg-slate-200 text-slate-800';
               }
             };
@@ -506,7 +566,7 @@ export default function AdminPage() {
               <button
                 key={item.id}
                 onClick={() => {
-                  setActiveTab(item.id as 'guests' | 'rsvps' | 'stats' | 'budget');
+                  setActiveTab(item.id as 'guests' | 'rsvps' | 'stats' | 'budget' | 'wedding');
                   setSidebarOpen(false);
                 }}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl font-medium text-sm transition-all duration-300 ${
@@ -1236,6 +1296,253 @@ export default function AdminPage() {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'wedding' && (
+          <div className="space-y-6">
+            {/* Wedding Info Header */}
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-10 h-10 bg-purple-100 rounded-2xl flex items-center justify-center">
+                <span className="text-purple-600 text-lg">💍</span>
+              </div>
+              <h2 className="text-2xl font-semibold text-slate-700">Wedding Information</h2>
+            </div>
+
+            {weddingInfo ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Basic Info Card */}
+                <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm p-6 border border-slate-200/50">
+                  <h3 className="text-lg font-semibold text-slate-700 mb-4 flex items-center space-x-2">
+                    <span>👰🤵</span>
+                    <span>Couple Information</span>
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-600 mb-1">Bride Name</label>
+                        <input
+                          type="text"
+                          value={weddingInfo.bride_name}
+                          onChange={(e) => handleUpdateWeddingInfo({ bride_name: e.target.value })}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                          disabled={weddingInfoLoading}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-600 mb-1">Groom Name</label>
+                        <input
+                          type="text"
+                          value={weddingInfo.groom_name}
+                          onChange={(e) => handleUpdateWeddingInfo({ groom_name: e.target.value })}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                          disabled={weddingInfoLoading}
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-600 mb-1">Bride Initial</label>
+                        <input
+                          type="text"
+                          value={weddingInfo.bride_initial}
+                          onChange={(e) => handleUpdateWeddingInfo({ bride_initial: e.target.value })}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                          maxLength={2}
+                          disabled={weddingInfoLoading}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-600 mb-1">Groom Initial</label>
+                        <input
+                          type="text"
+                          value={weddingInfo.groom_initial}
+                          onChange={(e) => handleUpdateWeddingInfo({ groom_initial: e.target.value })}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                          maxLength={2}
+                          disabled={weddingInfoLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Date & Time Card */}
+                <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm p-6 border border-slate-200/50">
+                  <h3 className="text-lg font-semibold text-slate-700 mb-4 flex items-center space-x-2">
+                    <span>📅</span>
+                    <span>Date & Time</span>
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 mb-1">Wedding Date</label>
+                      <input
+                        type="date"
+                        value={weddingInfo.wedding_date}
+                        onChange={(e) => handleUpdateWeddingInfo({ wedding_date: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                        disabled={weddingInfoLoading}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-600 mb-1">Akad Time</label>
+                        <input
+                          type="time"
+                          value={weddingInfo.akad_time}
+                          onChange={(e) => handleUpdateWeddingInfo({ akad_time: e.target.value })}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                          disabled={weddingInfoLoading}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-600 mb-1">Resepsi Time</label>
+                        <input
+                          type="time"
+                          value={weddingInfo.resepsi_time}
+                          onChange={(e) => handleUpdateWeddingInfo({ resepsi_time: e.target.value })}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                          disabled={weddingInfoLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Venue Info Card */}
+                <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm p-6 border border-slate-200/50">
+                  <h3 className="text-lg font-semibold text-slate-700 mb-4 flex items-center space-x-2">
+                    <span>📍</span>
+                    <span>Venue Information</span>
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 mb-1">Venue Name</label>
+                      <input
+                        type="text"
+                        value={weddingInfo.venue_name}
+                        onChange={(e) => handleUpdateWeddingInfo({ venue_name: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                        disabled={weddingInfoLoading}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 mb-1">Venue Address</label>
+                      <textarea
+                        value={weddingInfo.venue_address}
+                        onChange={(e) => handleUpdateWeddingInfo({ venue_address: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                        rows={3}
+                        disabled={weddingInfoLoading}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-600 mb-1">Latitude</label>
+                        <input
+                          type="number"
+                          step="any"
+                          value={weddingInfo.venue_maps_lat}
+                          onChange={(e) => handleUpdateWeddingInfo({ venue_maps_lat: parseFloat(e.target.value) })}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                          disabled={weddingInfoLoading}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-600 mb-1">Longitude</label>
+                        <input
+                          type="number"
+                          step="any"
+                          value={weddingInfo.venue_maps_lng}
+                          onChange={(e) => handleUpdateWeddingInfo({ venue_maps_lng: parseFloat(e.target.value) })}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                          disabled={weddingInfoLoading}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Family Info Card */}
+                <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-sm p-6 border border-slate-200/50">
+                  <h3 className="text-lg font-semibold text-slate-700 mb-4 flex items-center space-x-2">
+                    <span>👨‍👩‍👧‍👦</span>
+                    <span>Family Information</span>
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 mb-1">Bride Child Order</label>
+                      <input
+                        type="text"
+                        value={weddingInfo.bride_child_order}
+                        onChange={(e) => handleUpdateWeddingInfo({ bride_child_order: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                        placeholder="Putri Kedua"
+                        disabled={weddingInfoLoading}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 mb-1">Bride Father</label>
+                      <input
+                        type="text"
+                        value={weddingInfo.bride_father}
+                        onChange={(e) => handleUpdateWeddingInfo({ bride_father: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                        disabled={weddingInfoLoading}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 mb-1">Bride Mother</label>
+                      <input
+                        type="text"
+                        value={weddingInfo.bride_mother}
+                        onChange={(e) => handleUpdateWeddingInfo({ bride_mother: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                        disabled={weddingInfoLoading}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 mb-1">Groom Child Order</label>
+                      <input
+                        type="text"
+                        value={weddingInfo.groom_child_order}
+                        onChange={(e) => handleUpdateWeddingInfo({ groom_child_order: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                        placeholder="Putra Pertama"
+                        disabled={weddingInfoLoading}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 mb-1">Groom Father</label>
+                      <input
+                        type="text"
+                        value={weddingInfo.groom_father}
+                        onChange={(e) => handleUpdateWeddingInfo({ groom_father: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                        disabled={weddingInfoLoading}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 mb-1">Groom Mother</label>
+                      <input
+                        type="text"
+                        value={weddingInfo.groom_mother}
+                        onChange={(e) => handleUpdateWeddingInfo({ groom_mother: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-purple-300 focus:bg-white transition-all duration-300 text-sm"
+                        disabled={weddingInfoLoading}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl">💍</span>
+                </div>
+                <p className="text-slate-500">Loading wedding information...</p>
+              </div>
+            )}
           </div>
         )}
 

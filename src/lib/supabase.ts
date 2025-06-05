@@ -193,6 +193,30 @@ export interface ExpenseItem {
   updated_at: string
 }
 
+// Wedding Info Types
+export interface WeddingInfo {
+  id: string
+  bride_name: string
+  groom_name: string
+  bride_initial: string
+  groom_initial: string
+  wedding_date: string
+  akad_time: string
+  resepsi_time: string
+  venue_name: string
+  venue_address: string
+  venue_maps_lat: number
+  venue_maps_lng: number
+  bride_father: string
+  bride_mother: string
+  groom_father: string
+  groom_mother: string
+  bride_child_order: string
+  groom_child_order: string
+  created_at: string
+  updated_at: string
+}
+
 // Budget Services
 export const budgetService = {
   // Get all monthly budgets with their items
@@ -338,6 +362,44 @@ export const budgetService = {
       expenseCount: expenseResult.data?.length || 0,
       totalItems: (incomeResult.data?.length || 0) + (expenseResult.data?.length || 0)
     }
+  }
+}
+
+// Wedding Info Services
+export const weddingInfoService = {
+  // Get wedding info (should only be one record)
+  async getWeddingInfo(): Promise<WeddingInfo> {
+    const { data, error } = await supabase
+      .from('wedding_info')
+      .select('*')
+      .single()
+
+    if (error) throw error
+    return data
+  },
+
+  // Update wedding info
+  async updateWeddingInfo(weddingInfo: Partial<WeddingInfo>): Promise<WeddingInfo> {
+    const { data, error } = await supabase
+      .from('wedding_info')
+      .update(weddingInfo)
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  },
+
+  // Create wedding info if doesn't exist
+  async createWeddingInfo(weddingInfo: Omit<WeddingInfo, 'id' | 'created_at' | 'updated_at'>): Promise<WeddingInfo> {
+    const { data, error } = await supabase
+      .from('wedding_info')
+      .insert([weddingInfo])
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
   }
 }
 
