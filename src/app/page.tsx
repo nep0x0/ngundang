@@ -172,7 +172,9 @@ export default function Home() {
       showAkad: true,
       showResepsi: false,
       akadUrl: "https://www.google.com/maps/place/1%C2%B036'53.0%22S+103%C2%B037'06.4%22E/@-1.6147901,103.6184471,20z/data=!4m4!3m3!8m2!3d-1.6147192!4d103.6184381?entry=ttu&g_ep=EgoyMDI1MDUyOC4wIKXMDSoASAFQAw%3D%3D",
-      resepsiUrl: null
+      akadEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.6234567890123!2d103.6184471!3d-1.6147901!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMcKwMzYnNTMuMCJTIDEwM8KwMzcnMDYuNCJF!5e0!3m2!1sid!2sid!4v1682329193229!5m2!1sid!2sid",
+      resepsiUrl: null,
+      resepsiEmbedUrl: null
     },
     audio: "/audio/wedding-song.mp3",
     quote: {
@@ -306,7 +308,7 @@ export default function Home() {
         {weddingData.location.showAkad && (
           <LocationMap
             title="Lokasi Akad Nikah"
-            mapEmbedUrl={weddingData.location.akadUrl || ""}
+            mapEmbedUrl={weddingData.location.akadEmbedUrl || ""}
             locationName={weddingData.events.akadNikah.location}
             locationAddress={weddingData.events.akadNikah.address}
             googleMapsUrl={weddingData.location.akadUrl || ""}
@@ -316,7 +318,7 @@ export default function Home() {
         {weddingData.location.showResepsi && (
           <LocationMap
             title="Lokasi Resepsi"
-            mapEmbedUrl={weddingData.location.resepsiUrl || ""}
+            mapEmbedUrl={weddingData.location.resepsiEmbedUrl || ""}
             locationName={weddingData.events.resepsi.location}
             locationAddress={weddingData.events.resepsi.address}
             googleMapsUrl={weddingData.location.resepsiUrl || ""}

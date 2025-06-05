@@ -90,17 +90,21 @@ export default function LocationMap({
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 items-center w-full">
-          <div ref={mapRef} className="w-full h-[250px] sm:h-[300px] md:h-[400px] rounded-lg overflow-hidden shadow-lg border border-blue-200">
-            <iframe
-              src={mapEmbedUrl}
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Lokasi Acara"
-            ></iframe>
+          <div ref={mapRef} className="w-full h-[250px] sm:h-[300px] md:h-[400px] rounded-lg overflow-hidden shadow-lg border border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center">
+            <div className="text-center p-6">
+              <div className="text-6xl mb-4">📍</div>
+              <h3 className="text-xl font-bold text-blue-800 mb-2">{locationName}</h3>
+              <p className="text-sm text-blue-600 mb-6 leading-relaxed">{locationAddress}</p>
+              <a
+                href={googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center space-x-2 px-6 py-3 bg-blue-500 text-white text-sm font-medium rounded-full hover:bg-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                <span>🗺️</span>
+                <span>Lihat di Google Maps</span>
+              </a>
+            </div>
           </div>
 
           <div ref={infoRef} className="text-center md:text-left">
