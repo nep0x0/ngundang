@@ -153,6 +153,166 @@ export const statsService = {
   }
 }
 
+// Budget Types
+export interface MonthlyBudget {
+  id: string
+  month: number
+  year: number
+  month_name: string
+  total_income: number
+  total_expense: number
+  balance: number
+  created_at: string
+  updated_at: string
+}
+
+export interface IncomeItem {
+  id: string
+  monthly_budget_id: string
+  source: string
+  amount: number
+  status: 'received' | 'pending' | 'planned'
+  date_received?: string
+  notes?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface ExpenseItem {
+  id: string
+  monthly_budget_id: string
+  item_name: string
+  category: string
+  estimated_cost: number
+  actual_cost?: number
+  status: 'paid' | 'pending' | 'planned'
+  payment_date?: string
+  vendor?: string
+  notes?: string
+  created_at: string
+  updated_at: string
+}
+
+// Budget Services
+export const budgetService = {
+  // Get all monthly budgets with their items
+  async getAllMonthlyBudgets(): Promise<(MonthlyBudget & { income_items: IncomeItem[], expense_items: ExpenseItem[] })[]> {
+    const { data: budgets, error: budgetError } = await supabase
+      .from('monthly_budgets')
+      .select('*')
+      .order('year', { ascending: true })
+      .order('month', { ascending: true })
+
+    if (budgetError) throw budgetError
+
+    const budgetsWithItems = await Promise.all(
+      (budgets || []).map(async (budget) => {
+        const [incomeResult, expenseResult] = await Promise.all([
+          supabase.from('income_items').select('*').eq('monthly_budget_id', budget.id),
+          supabase.from('expense_items').select('*').eq('monthly_budget_id', budget.id)
+        ])
+
+        return {
+          ...budget,
+          income_items: incomeResult.data || [],
+          expense_items: expenseResult.data || []
+        }
+      })
+    )
+
+    return budgetsWithItems
+  },
+
+  // Create new monthly budget
+  async createMonthlyBudget(budget: Omit<MonthlyBudget, 'id' | 'created_at' | 'updated_at'>): Promise<MonthlyBudget> {
+    const { data, error } = await supabase
+      .from('monthly_budgets')
+      .insert([budget])
+      .select()
+      .single()
+
+    if (error) throw error
+    return data
+  },
+
+  // Add income item
+  async addIncomeItem(income: Omit<IncomeItem, 'id' | 'created_at' | 'updated_at'>): Promise<IncomeItem> {
+    const { data, error } = await supabase
+      .from('income_items')
+      .insert([income])
+      .select()
+      .single()
+
+    if (error) throw error
+
+    // Update monthly budget totals
+    await this.updateBudgetTotals(income.monthly_budget_id)
+
+    return data
+  },
+
+  // Add expense item
+  async addExpenseItem(expense: Omit<ExpenseItem, 'id' | 'created_at' | 'updated_at'>): Promise<ExpenseItem> {
+    const { data, error } = await supabase
+      .from('expense_items')
+      .insert([expense])
+      .select()
+      .single()
+
+    if (error) throw error
+
+    // Update monthly budget totals
+    await this.updateBudgetTotals(expense.monthly_budget_id)
+
+    return data
+  },
+
+  // Update budget totals
+  async updateBudgetTotals(monthlyBudgetId: string) {
+    const [incomeResult, expenseResult] = await Promise.all([
+      supabase.from('income_items').select('amount').eq('monthly_budget_id', monthlyBudgetId),
+      supabase.from('expense_items').select('estimated_cost').eq('monthly_budget_id', monthlyBudgetId)
+    ])
+
+    const totalIncome = (incomeResult.data || []).reduce((sum, item) => sum + item.amount, 0)
+    const totalExpense = (expenseResult.data || []).reduce((sum, item) => sum + item.estimated_cost, 0)
+    const balance = totalIncome - totalExpense
+
+    const { error } = await supabase
+      .from('monthly_budgets')
+      .update({
+        total_income: totalIncome,
+        total_expense: totalExpense,
+        balance: balance
+      })
+      .eq('id', monthlyBudgetId)
+
+    if (error) throw error
+  },
+
+  // Delete income item
+  async deleteIncomeItem(id: string, monthlyBudgetId: string) {
+    const { error } = await supabase
+      .from('income_items')
+      .delete()
+      .eq('id', id)
+
+    if (error) throw error
+    await this.updateBudgetTotals(monthlyBudgetId)
+  },
+
+  // Delete expense item
+  async deleteExpenseItem(id: string, monthlyBudgetId: string) {
+    const { error } = await supabase
+      .from('expense_items')
+      .delete()
+      .eq('id', id)
+
+    if (error) throw error
+    await this.updateBudgetTotals(monthlyBudgetId)
+  }
+}
+
 // Helper function to generate invitation link
 export function generateInvitationLink(guestName: string, partnerName?: string, baseUrl: string = 'https://yourwebsite.com'): string {
   const fullName = partnerName ? `${guestName} dan ${partnerName}` : guestName

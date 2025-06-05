@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { guestService, rsvpService, statsService, generateInvitationLink, generateWhatsAppMessage, Guest, RSVP } from '@/lib/supabase';
+import { guestService, rsvpService, statsService, budgetService, generateInvitationLink, generateWhatsAppMessage, Guest, RSVP, MonthlyBudget, IncomeItem, ExpenseItem } from '@/lib/supabase';
 
 export default function AdminPage() {
   const [guests, setGuests] = useState<Guest[]>([]);
@@ -30,102 +30,131 @@ export default function AdminPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Budget Planner State
-  interface IncomeItem {
-    id: string;
-    source: string;
-    amount: number;
-    status: 'received' | 'pending' | 'planned';
-    date_received?: string;
-    notes?: string;
-  }
-
-  interface ExpenseItem {
-    id: string;
-    item_name: string;
-    category: string;
-    estimated_cost: number;
-    actual_cost?: number;
-    status: 'paid' | 'pending' | 'planned';
-    payment_date?: string;
-    vendor?: string;
-    notes?: string;
-  }
-
-  interface MonthlyBudget {
-    id: string;
-    month: number;
-    year: number;
-    month_name: string;
-    income_items: IncomeItem[];
-    expense_items: ExpenseItem[];
-    total_income: number;
-    total_expense: number;
-    balance: number;
-  }
-
-  const [monthlyBudgets, setMonthlyBudgets] = useState<MonthlyBudget[]>([]);
+  const [monthlyBudgets, setMonthlyBudgets] = useState<(MonthlyBudget & { income_items: IncomeItem[], expense_items: ExpenseItem[] })[]>([]);
   const [showIncomeModal, setShowIncomeModal] = useState(false);
   const [showExpenseModal, setShowExpenseModal] = useState(false);
+  const [showAddMonthModal, setShowAddMonthModal] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<string>('');
+
+  // Form states
+  const [incomeForm, setIncomeForm] = useState({
+    source: '',
+    amount: '',
+    status: 'planned' as 'received' | 'pending' | 'planned',
+    date_received: '',
+    notes: ''
+  });
+
+  const [expenseForm, setExpenseForm] = useState({
+    item_name: '',
+    category: 'Venue',
+    estimated_cost: '',
+    actual_cost: '',
+    status: 'planned' as 'paid' | 'pending' | 'planned',
+    payment_date: '',
+    vendor: '',
+    notes: ''
+  });
+
+  const [monthForm, setMonthForm] = useState({
+    month: new Date().getMonth() + 1,
+    year: new Date().getFullYear()
+  });
 
   useEffect(() => {
     loadData();
     loadBudgetData();
   }, []);
 
-  // Load budget data from localStorage
-  const loadBudgetData = () => {
-    const saved = localStorage.getItem('wedding_budget');
-    if (saved) {
-      setMonthlyBudgets(JSON.parse(saved));
-    } else {
-      // Initialize with default data
-      const defaultBudgets: MonthlyBudget[] = [
-        {
-          id: '1',
-          month: 7,
-          year: 2024,
-          month_name: 'Juli 2024',
-          income_items: [
-            { id: '1', source: 'Tabungan pribadi', amount: 30000000, status: 'received' },
-            { id: '2', source: 'Bantuan orangtua', amount: 20000000, status: 'pending' },
-            { id: '3', source: 'Arisan nikah', amount: 15000000, status: 'planned' }
-          ],
-          expense_items: [
-            { id: '1', item_name: 'Booking venue', category: 'Venue', estimated_cost: 25000000, status: 'paid' },
-            { id: '2', item_name: 'Catering', category: 'Catering', estimated_cost: 20000000, status: 'pending' },
-            { id: '3', item_name: 'Undangan', category: 'Documentation', estimated_cost: 3000000, status: 'planned' }
-          ],
-          total_income: 65000000,
-          total_expense: 48000000,
-          balance: 17000000
-        },
-        {
-          id: '2',
-          month: 8,
-          year: 2024,
-          month_name: 'Agustus 2024',
-          income_items: [
-            { id: '4', source: 'Bonus kerja', amount: 10000000, status: 'planned' }
-          ],
-          expense_items: [
-            { id: '4', item_name: 'Fitting baju', category: 'Fashion', estimated_cost: 15000000, status: 'planned' },
-            { id: '5', item_name: 'Photographer', category: 'Documentation', estimated_cost: 12000000, status: 'planned' }
-          ],
-          total_income: 10000000,
-          total_expense: 27000000,
-          balance: -17000000
-        }
+  // Budget Functions
+  const handleAddMonth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const monthNames = [
+        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+        'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
       ];
-      setMonthlyBudgets(defaultBudgets);
-      localStorage.setItem('wedding_budget', JSON.stringify(defaultBudgets));
+
+      const newBudget = await budgetService.createMonthlyBudget({
+        month: monthForm.month,
+        year: monthForm.year,
+        month_name: `${monthNames[monthForm.month - 1]} ${monthForm.year}`,
+        total_income: 0,
+        total_expense: 0,
+        balance: 0
+      });
+
+      setMonthlyBudgets([...monthlyBudgets, { ...newBudget, income_items: [], expense_items: [] }]);
+      setShowAddMonthModal(false);
+      setMonthForm({ month: new Date().getMonth() + 1, year: new Date().getFullYear() });
+      alert('Bulan berhasil ditambahkan!');
+    } catch (error) {
+      console.error('Error adding month:', error);
+      alert('Error menambah bulan. Silakan coba lagi.');
     }
   };
 
-  // Save budget data to localStorage
-  const saveBudgetData = (budgets: MonthlyBudget[]) => {
-    localStorage.setItem('wedding_budget', JSON.stringify(budgets));
-    setMonthlyBudgets(budgets);
+  const handleAddIncome = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const newIncome = await budgetService.addIncomeItem({
+        monthly_budget_id: selectedMonth,
+        source: incomeForm.source,
+        amount: parseFloat(incomeForm.amount),
+        status: incomeForm.status,
+        date_received: incomeForm.date_received || undefined,
+        notes: incomeForm.notes || undefined
+      });
+
+      // Reload budget data to get updated totals
+      await loadBudgetData();
+      setShowIncomeModal(false);
+      setIncomeForm({ source: '', amount: '', status: 'planned', date_received: '', notes: '' });
+      alert('Pendapatan berhasil ditambahkan!');
+    } catch (error) {
+      console.error('Error adding income:', error);
+      alert('Error menambah pendapatan. Silakan coba lagi.');
+    }
+  };
+
+  const handleAddExpense = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const newExpense = await budgetService.addExpenseItem({
+        monthly_budget_id: selectedMonth,
+        item_name: expenseForm.item_name,
+        category: expenseForm.category,
+        estimated_cost: parseFloat(expenseForm.estimated_cost),
+        actual_cost: expenseForm.actual_cost ? parseFloat(expenseForm.actual_cost) : undefined,
+        status: expenseForm.status,
+        payment_date: expenseForm.payment_date || undefined,
+        vendor: expenseForm.vendor || undefined,
+        notes: expenseForm.notes || undefined
+      });
+
+      // Reload budget data to get updated totals
+      await loadBudgetData();
+      setShowExpenseModal(false);
+      setExpenseForm({
+        item_name: '', category: 'Venue', estimated_cost: '', actual_cost: '',
+        status: 'planned', payment_date: '', vendor: '', notes: ''
+      });
+      alert('Pengeluaran berhasil ditambahkan!');
+    } catch (error) {
+      console.error('Error adding expense:', error);
+      alert('Error menambah pengeluaran. Silakan coba lagi.');
+    }
+  };
+
+  // Load budget data from database
+  const loadBudgetData = async () => {
+    try {
+      const budgets = await budgetService.getAllMonthlyBudgets();
+      setMonthlyBudgets(budgets);
+    } catch (error) {
+      console.error('Error loading budget data:', error);
+      setMonthlyBudgets([]);
+    }
   };
 
   const loadData = async () => {
@@ -718,6 +747,17 @@ export default function AdminPage() {
 
         {activeTab === 'budget' && (
           <div className="space-y-6">
+            {/* Budget Header */}
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-800">Wedding Budget Planner</h2>
+              <button
+                onClick={() => setShowAddMonthModal(true)}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm"
+              >
+                + Tambah Bulan
+              </button>
+            </div>
+
             {/* Budget Overview */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-white rounded-lg shadow p-4 lg:p-6">
@@ -939,6 +979,243 @@ export default function AdminPage() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {/* Add Month Modal */}
+        {showAddMonthModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+              <h3 className="text-lg font-semibold mb-4">Tambah Bulan Baru</h3>
+              <form onSubmit={handleAddMonth} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Bulan</label>
+                  <select
+                    value={monthForm.month}
+                    onChange={(e) => setMonthForm({ ...monthForm, month: parseInt(e.target.value) })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  >
+                    {['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'].map((month, index) => (
+                      <option key={index} value={index + 1}>{month}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tahun</label>
+                  <input
+                    type="number"
+                    value={monthForm.year}
+                    onChange={(e) => setMonthForm({ ...monthForm, year: parseInt(e.target.value) })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    min="2024"
+                    max="2030"
+                    required
+                  />
+                </div>
+                <div className="flex space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddMonthModal(false)}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  >
+                    Tambah
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Add Income Modal */}
+        {showIncomeModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+              <h3 className="text-lg font-semibold mb-4">Tambah Pendapatan</h3>
+              <form onSubmit={handleAddIncome} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Sumber Pendapatan *</label>
+                  <input
+                    type="text"
+                    value={incomeForm.source}
+                    onChange={(e) => setIncomeForm({ ...incomeForm, source: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Tabungan pribadi"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Jumlah *</label>
+                  <input
+                    type="number"
+                    value={incomeForm.amount}
+                    onChange={(e) => setIncomeForm({ ...incomeForm, amount: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="30000000"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <select
+                    value={incomeForm.status}
+                    onChange={(e) => setIncomeForm({ ...incomeForm, status: e.target.value as 'received' | 'pending' | 'planned' })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="planned">Rencana</option>
+                    <option value="pending">Pending</option>
+                    <option value="received">Sudah Diterima</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tanggal Diterima</label>
+                  <input
+                    type="date"
+                    value={incomeForm.date_received}
+                    onChange={(e) => setIncomeForm({ ...incomeForm, date_received: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
+                  <textarea
+                    value={incomeForm.notes}
+                    onChange={(e) => setIncomeForm({ ...incomeForm, notes: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={3}
+                    placeholder="Catatan tambahan..."
+                  />
+                </div>
+                <div className="flex space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowIncomeModal(false)}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                  >
+                    Tambah
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Add Expense Modal */}
+        {showExpenseModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+              <h3 className="text-lg font-semibold mb-4">Tambah Pengeluaran</h3>
+              <form onSubmit={handleAddExpense} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Nama Item *</label>
+                  <input
+                    type="text"
+                    value={expenseForm.item_name}
+                    onChange={(e) => setExpenseForm({ ...expenseForm, item_name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Booking venue"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                  <select
+                    value={expenseForm.category}
+                    onChange={(e) => setExpenseForm({ ...expenseForm, category: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="Venue">Venue</option>
+                    <option value="Catering">Catering</option>
+                    <option value="Fashion">Fashion</option>
+                    <option value="Documentation">Documentation</option>
+                    <option value="Decoration">Decoration</option>
+                    <option value="Transportation">Transportation</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Other">Lainnya</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Estimasi Biaya *</label>
+                  <input
+                    type="number"
+                    value={expenseForm.estimated_cost}
+                    onChange={(e) => setExpenseForm({ ...expenseForm, estimated_cost: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="25000000"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Biaya Aktual</label>
+                  <input
+                    type="number"
+                    value={expenseForm.actual_cost}
+                    onChange={(e) => setExpenseForm({ ...expenseForm, actual_cost: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="23000000"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <select
+                    value={expenseForm.status}
+                    onChange={(e) => setExpenseForm({ ...expenseForm, status: e.target.value as 'paid' | 'pending' | 'planned' })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="planned">Rencana</option>
+                    <option value="pending">Pending</option>
+                    <option value="paid">Sudah Bayar</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Vendor</label>
+                  <input
+                    type="text"
+                    value={expenseForm.vendor}
+                    onChange={(e) => setExpenseForm({ ...expenseForm, vendor: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Nama vendor"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
+                  <textarea
+                    value={expenseForm.notes}
+                    onChange={(e) => setExpenseForm({ ...expenseForm, notes: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={3}
+                    placeholder="Catatan tambahan..."
+                  />
+                </div>
+                <div className="flex space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowExpenseModal(false)}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                  >
+                    Tambah
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

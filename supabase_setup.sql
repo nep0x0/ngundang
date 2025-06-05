@@ -147,9 +147,125 @@ SELECT
     SUM(CASE WHEN attendance = 'hadir' THEN guest_count ELSE 0 END) as total_attending_count
 FROM rsvps;
 
+-- Create monthly_budgets table
+CREATE TABLE IF NOT EXISTS monthly_budgets (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    month INTEGER NOT NULL CHECK (month >= 1 AND month <= 12),
+    year INTEGER NOT NULL,
+    month_name TEXT NOT NULL,
+    total_income DECIMAL(15,2) DEFAULT 0,
+    total_expense DECIMAL(15,2) DEFAULT 0,
+    balance DECIMAL(15,2) DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(month, year)
+);
+
+-- Create income_items table
+CREATE TABLE IF NOT EXISTS income_items (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    monthly_budget_id UUID REFERENCES monthly_budgets(id) ON DELETE CASCADE,
+    source TEXT NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('received', 'pending', 'planned')) DEFAULT 'planned',
+    date_received DATE,
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create expense_items table
+CREATE TABLE IF NOT EXISTS expense_items (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    monthly_budget_id UUID REFERENCES monthly_budgets(id) ON DELETE CASCADE,
+    item_name TEXT NOT NULL,
+    category TEXT NOT NULL,
+    estimated_cost DECIMAL(15,2) NOT NULL,
+    actual_cost DECIMAL(15,2),
+    status TEXT NOT NULL CHECK (status IN ('paid', 'pending', 'planned')) DEFAULT 'planned',
+    payment_date DATE,
+    vendor TEXT,
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_monthly_budgets_month_year ON monthly_budgets(month, year);
+CREATE INDEX IF NOT EXISTS idx_income_items_monthly_budget ON income_items(monthly_budget_id);
+CREATE INDEX IF NOT EXISTS idx_expense_items_monthly_budget ON expense_items(monthly_budget_id);
+CREATE INDEX IF NOT EXISTS idx_income_items_status ON income_items(status);
+CREATE INDEX IF NOT EXISTS idx_expense_items_status ON expense_items(status);
+
+-- Enable Row Level Security (RLS)
+ALTER TABLE monthly_budgets ENABLE ROW LEVEL SECURITY;
+ALTER TABLE income_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE expense_items ENABLE ROW LEVEL SECURITY;
+
+-- Create policies for monthly_budgets table
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies
+        WHERE tablename = 'monthly_budgets' AND policyname = 'Allow all operations on monthly_budgets'
+    ) THEN
+        CREATE POLICY "Allow all operations on monthly_budgets" ON monthly_budgets FOR ALL USING (true);
+    END IF;
+END $$;
+
+-- Create policies for income_items table
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies
+        WHERE tablename = 'income_items' AND policyname = 'Allow all operations on income_items'
+    ) THEN
+        CREATE POLICY "Allow all operations on income_items" ON income_items FOR ALL USING (true);
+    END IF;
+END $$;
+
+-- Create policies for expense_items table
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_policies
+        WHERE tablename = 'expense_items' AND policyname = 'Allow all operations on expense_items'
+    ) THEN
+        CREATE POLICY "Allow all operations on expense_items" ON expense_items FOR ALL USING (true);
+    END IF;
+END $$;
+
+-- Create function to update updated_at timestamp for budget tables
+CREATE OR REPLACE FUNCTION update_budget_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Create triggers to automatically update updated_at
+CREATE TRIGGER update_monthly_budgets_updated_at
+    BEFORE UPDATE ON monthly_budgets
+    FOR EACH ROW
+    EXECUTE FUNCTION update_budget_updated_at_column();
+
+CREATE TRIGGER update_income_items_updated_at
+    BEFORE UPDATE ON income_items
+    FOR EACH ROW
+    EXECUTE FUNCTION update_budget_updated_at_column();
+
+CREATE TRIGGER update_expense_items_updated_at
+    BEFORE UPDATE ON expense_items
+    FOR EACH ROW
+    EXECUTE FUNCTION update_budget_updated_at_column();
+
 -- Grant permissions (adjust as needed)
 -- These are basic permissions - you might want to be more restrictive in production
 GRANT ALL ON guests TO anon, authenticated;
 GRANT ALL ON rsvps TO anon, authenticated;
+GRANT ALL ON monthly_budgets TO anon, authenticated;
+GRANT ALL ON income_items TO anon, authenticated;
+GRANT ALL ON expense_items TO anon, authenticated;
 GRANT SELECT ON admin_guest_summary TO anon, authenticated;
 GRANT SELECT ON rsvp_statistics TO anon, authenticated;
