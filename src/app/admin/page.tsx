@@ -18,7 +18,7 @@ export default function AdminPage() {
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const [databaseReady, setDatabaseReady] = useState(false);
-  const [activeTab, setActiveTab] = useState<'guests' | 'rsvps' | 'stats'>('guests');
+  const [activeTab, setActiveTab] = useState<'guests' | 'rsvps' | 'stats' | 'budget'>('guests');
 
   // Form state
   const [formData, setFormData] = useState({
@@ -29,9 +29,104 @@ export default function AdminPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Budget Planner State
+  interface IncomeItem {
+    id: string;
+    source: string;
+    amount: number;
+    status: 'received' | 'pending' | 'planned';
+    date_received?: string;
+    notes?: string;
+  }
+
+  interface ExpenseItem {
+    id: string;
+    item_name: string;
+    category: string;
+    estimated_cost: number;
+    actual_cost?: number;
+    status: 'paid' | 'pending' | 'planned';
+    payment_date?: string;
+    vendor?: string;
+    notes?: string;
+  }
+
+  interface MonthlyBudget {
+    id: string;
+    month: number;
+    year: number;
+    month_name: string;
+    income_items: IncomeItem[];
+    expense_items: ExpenseItem[];
+    total_income: number;
+    total_expense: number;
+    balance: number;
+  }
+
+  const [monthlyBudgets, setMonthlyBudgets] = useState<MonthlyBudget[]>([]);
+  const [showIncomeModal, setShowIncomeModal] = useState(false);
+  const [showExpenseModal, setShowExpenseModal] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState<string>('');
+
   useEffect(() => {
     loadData();
+    loadBudgetData();
   }, []);
+
+  // Load budget data from localStorage
+  const loadBudgetData = () => {
+    const saved = localStorage.getItem('wedding_budget');
+    if (saved) {
+      setMonthlyBudgets(JSON.parse(saved));
+    } else {
+      // Initialize with default data
+      const defaultBudgets: MonthlyBudget[] = [
+        {
+          id: '1',
+          month: 7,
+          year: 2024,
+          month_name: 'Juli 2024',
+          income_items: [
+            { id: '1', source: 'Tabungan pribadi', amount: 30000000, status: 'received' },
+            { id: '2', source: 'Bantuan orangtua', amount: 20000000, status: 'pending' },
+            { id: '3', source: 'Arisan nikah', amount: 15000000, status: 'planned' }
+          ],
+          expense_items: [
+            { id: '1', item_name: 'Booking venue', category: 'Venue', estimated_cost: 25000000, status: 'paid' },
+            { id: '2', item_name: 'Catering', category: 'Catering', estimated_cost: 20000000, status: 'pending' },
+            { id: '3', item_name: 'Undangan', category: 'Documentation', estimated_cost: 3000000, status: 'planned' }
+          ],
+          total_income: 65000000,
+          total_expense: 48000000,
+          balance: 17000000
+        },
+        {
+          id: '2',
+          month: 8,
+          year: 2024,
+          month_name: 'Agustus 2024',
+          income_items: [
+            { id: '4', source: 'Bonus kerja', amount: 10000000, status: 'planned' }
+          ],
+          expense_items: [
+            { id: '4', item_name: 'Fitting baju', category: 'Fashion', estimated_cost: 15000000, status: 'planned' },
+            { id: '5', item_name: 'Photographer', category: 'Documentation', estimated_cost: 12000000, status: 'planned' }
+          ],
+          total_income: 10000000,
+          total_expense: 27000000,
+          balance: -17000000
+        }
+      ];
+      setMonthlyBudgets(defaultBudgets);
+      localStorage.setItem('wedding_budget', JSON.stringify(defaultBudgets));
+    }
+  };
+
+  // Save budget data to localStorage
+  const saveBudgetData = (budgets: MonthlyBudget[]) => {
+    localStorage.setItem('wedding_budget', JSON.stringify(budgets));
+    setMonthlyBudgets(budgets);
+  };
 
   const loadData = async () => {
     try {
@@ -298,6 +393,16 @@ export default function AdminPage() {
                 }`}
               >
                 Statistics
+              </button>
+              <button
+                onClick={() => setActiveTab('budget')}
+                className={`py-2 px-1 border-b-2 font-medium text-xs lg:text-sm whitespace-nowrap ${
+                  activeTab === 'budget'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Budget Planner
               </button>
             </nav>
           </div>
@@ -607,6 +712,167 @@ export default function AdminPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'budget' && (
+          <div className="space-y-6">
+            {/* Budget Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">💰</span>
+                    </div>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Total Pendapatan</p>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      Rp {monthlyBudgets.reduce((sum, month) => sum + month.total_income, 0).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">💸</span>
+                    </div>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Total Pengeluaran</p>
+                    <p className="text-2xl font-semibold text-gray-900">
+                      Rp {monthlyBudgets.reduce((sum, month) => sum + month.total_expense, 0).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      monthlyBudgets.reduce((sum, month) => sum + month.balance, 0) >= 0
+                        ? 'bg-green-500' : 'bg-red-500'
+                    }`}>
+                      <span className="text-white text-sm font-bold">💚</span>
+                    </div>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Saldo</p>
+                    <p className={`text-2xl font-semibold ${
+                      monthlyBudgets.reduce((sum, month) => sum + month.balance, 0) >= 0
+                        ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      Rp {monthlyBudgets.reduce((sum, month) => sum + month.balance, 0).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Monthly Budget Cards */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {monthlyBudgets.map((month) => (
+                <div key={month.id} className="bg-white rounded-lg shadow">
+                  <div className="px-6 py-4 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold">📅 {month.month_name}</h3>
+                  </div>
+
+                  <div className="p-6">
+                    {/* Income Section */}
+                    <div className="mb-6">
+                      <div className="flex justify-between items-center mb-3">
+                        <h4 className="font-medium text-green-600">💰 Pendapatan</h4>
+                        <button
+                          onClick={() => {
+                            setSelectedMonth(month.id);
+                            setShowIncomeModal(true);
+                          }}
+                          className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded hover:bg-green-200"
+                        >
+                          + Tambah
+                        </button>
+                      </div>
+                      <div className="space-y-2">
+                        {month.income_items.map((item) => (
+                          <div key={item.id} className="flex justify-between items-center text-sm">
+                            <div className="flex items-center">
+                              <span className={`mr-2 ${
+                                item.status === 'received' ? '✅' :
+                                item.status === 'pending' ? '⏳' : '❌'
+                              }`}></span>
+                              <span>{item.source}</span>
+                            </div>
+                            <span className="font-medium">Rp {item.amount.toLocaleString()}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="border-t pt-2 mt-2">
+                        <div className="flex justify-between font-medium text-green-600">
+                          <span>Total:</span>
+                          <span>Rp {month.total_income.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Expense Section */}
+                    <div className="mb-6">
+                      <div className="flex justify-between items-center mb-3">
+                        <h4 className="font-medium text-red-600">💸 Pengeluaran</h4>
+                        <button
+                          onClick={() => {
+                            setSelectedMonth(month.id);
+                            setShowExpenseModal(true);
+                          }}
+                          className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded hover:bg-red-200"
+                        >
+                          + Tambah
+                        </button>
+                      </div>
+                      <div className="space-y-2">
+                        {month.expense_items.map((item) => (
+                          <div key={item.id} className="flex justify-between items-center text-sm">
+                            <div className="flex items-center">
+                              <span className={`mr-2 ${
+                                item.status === 'paid' ? '✅' :
+                                item.status === 'pending' ? '⏳' : '❌'
+                              }`}></span>
+                              <span>{item.item_name}</span>
+                            </div>
+                            <span className="font-medium">Rp {item.estimated_cost.toLocaleString()}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="border-t pt-2 mt-2">
+                        <div className="flex justify-between font-medium text-red-600">
+                          <span>Total:</span>
+                          <span>Rp {month.total_expense.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Balance */}
+                    <div className={`p-3 rounded-lg ${
+                      month.balance >= 0 ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+                    }`}>
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">Saldo:</span>
+                        <span className={`font-bold ${month.balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {month.balance >= 0 ? '+' : ''}Rp {month.balance.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="text-xs mt-1">
+                        {month.balance >= 0 ? '💚 Surplus' : '🔴 Deficit'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
