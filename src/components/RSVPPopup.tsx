@@ -7,9 +7,10 @@ interface RSVPPopupProps {
   guest: Guest;
   onClose: () => void;
   onSubmit: () => void;
+  onRSVPSuccess?: () => void; // Callback to refresh RSVP list
 }
 
-export default function RSVPPopup({ guest, onClose, onSubmit }: RSVPPopupProps) {
+export default function RSVPPopup({ guest, onClose, onSubmit, onRSVPSuccess }: RSVPPopupProps) {
   const [attendance, setAttendance] = useState<'hadir' | 'tidak_hadir'>('hadir');
   const [guestCount, setGuestCount] = useState(1);
   const [message, setMessage] = useState('');
@@ -34,6 +35,11 @@ export default function RSVPPopup({ guest, onClose, onSubmit }: RSVPPopupProps) 
       await guestService.update(guest.id, {
         rsvp_submitted: true
       });
+
+      // Call callback to refresh RSVP list
+      if (onRSVPSuccess) {
+        onRSVPSuccess();
+      }
 
       onSubmit();
     } catch (error) {

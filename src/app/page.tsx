@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import gsap from 'gsap';
 import { useSearchParams } from 'next/navigation';
@@ -39,6 +39,9 @@ export default function Home() {
   const [showRSVPPopup, setShowRSVPPopup] = useState(false);
   const [hasSubmittedRSVP, setHasSubmittedRSVP] = useState(false);
   const [showThankYouPopup, setShowThankYouPopup] = useState(false);
+
+  // Ref untuk trigger refresh RSVP list
+  const rsvpRefreshTrigger = useRef(0);
 
   // Fetch wedding info from database
   const { weddingInfo, loading: weddingLoading, error: weddingError } = useWeddingInfo();
@@ -116,6 +119,13 @@ export default function Home() {
     setTimeout(() => {
       setShowThankYouPopup(false);
     }, 5000);
+  };
+
+  const handleRSVPSuccess = () => {
+    // Trigger refresh of RSVP list by incrementing the trigger
+    rsvpRefreshTrigger.current += 1;
+    // Force re-render by updating state
+    setHasSubmittedRSVP(prev => prev);
   };
 
   // Generate dynamic wedding data from database or fallback to static
@@ -408,7 +418,7 @@ export default function Home() {
         </div>
 
         {/* 5. RSVP Section - Always show for chat functionality */}
-        <RSVP />
+        <RSVP key={rsvpRefreshTrigger.current} />
 
         {/* 6. Bottom */}
         <Bottom
@@ -427,6 +437,7 @@ export default function Home() {
           guest={guest}
           onClose={() => setShowRSVPPopup(false)}
           onSubmit={handleRSVPSubmit}
+          onRSVPSuccess={handleRSVPSuccess}
         />
       )}
 
