@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import gsap from 'gsap';
 import { useSearchParams } from 'next/navigation';
@@ -24,7 +24,8 @@ import Cover from "@/components/Cover";
 import { useWeddingInfo, formatWeddingDate, formatTime, formatFamilyDescription, getDisplayMaps } from '@/hooks/useWeddingInfo';
 import { guestService, rsvpService, Guest } from '@/lib/supabase';
 
-export default function Home() {
+// Component that uses useSearchParams
+function HomeContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [showCover, setShowCover] = useState(true);
 
@@ -479,5 +480,21 @@ export default function Home() {
       {/* Audio Player - selalu ditampilkan */}
       <AudioPlayer audioSrc={weddingData.audio} />
     </div>
+  );
+}
+
+// Main component with Suspense boundary
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-rose-50 to-pink-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading invitation...</p>
+        </div>
+      </div>
+    }>
+      <HomeContent />
+    </Suspense>
   );
 }
