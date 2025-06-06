@@ -487,6 +487,51 @@ export default function AdminPage() {
     setUpdateTimeout(newTimeout);
   };
 
+  // Filtered and sorted guests (must be before early returns)
+  const filteredAndSortedGuests = useMemo(() => {
+    let filtered = guests.filter(guest => {
+      // Search filter
+      const matchesSearch = searchQuery === '' ||
+        guest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (guest.partner && guest.partner.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (guest.phone && guest.phone.includes(searchQuery));
+
+      // From filter
+      const matchesFrom = filterBy === 'all' || guest.from_side === filterBy;
+
+      return matchesSearch && matchesFrom;
+    });
+
+    // Sorting
+    filtered.sort((a, b) => {
+      let comparison = 0;
+
+      switch (sortBy) {
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case 'from':
+          comparison = a.from_side.localeCompare(b.from_side);
+          break;
+        case 'date':
+          comparison = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          break;
+      }
+
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+
+    return filtered;
+  }, [guests, searchQuery, sortBy, sortOrder, filterBy]);
+
+  // Clear filters function
+  const clearFilters = () => {
+    setSearchQuery('');
+    setFilterBy('all');
+    setSortBy('name');
+    setSortOrder('asc');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -553,51 +598,6 @@ export default function AdminPage() {
       </div>
     );
   }
-
-  // Filtered and sorted guests
-  const filteredAndSortedGuests = useMemo(() => {
-    let filtered = guests.filter(guest => {
-      // Search filter
-      const matchesSearch = searchQuery === '' ||
-        guest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (guest.partner && guest.partner.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        (guest.phone && guest.phone.includes(searchQuery));
-
-      // From filter
-      const matchesFrom = filterBy === 'all' || guest.from_side === filterBy;
-
-      return matchesSearch && matchesFrom;
-    });
-
-    // Sorting
-    filtered.sort((a, b) => {
-      let comparison = 0;
-
-      switch (sortBy) {
-        case 'name':
-          comparison = a.name.localeCompare(b.name);
-          break;
-        case 'from':
-          comparison = a.from_side.localeCompare(b.from_side);
-          break;
-        case 'date':
-          comparison = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-          break;
-      }
-
-      return sortOrder === 'asc' ? comparison : -comparison;
-    });
-
-    return filtered;
-  }, [guests, searchQuery, sortBy, sortOrder, filterBy]);
-
-  // Clear filters function
-  const clearFilters = () => {
-    setSearchQuery('');
-    setFilterBy('all');
-    setSortBy('name');
-    setSortOrder('asc');
-  };
 
   const menuItems = [
     { id: 'guests', icon: '👥', label: 'Guests', count: guests.length, color: 'rose' },
