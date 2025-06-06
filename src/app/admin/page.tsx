@@ -77,6 +77,10 @@ export default function AdminPage() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [filterBy, setFilterBy] = useState<'all' | 'adel' | 'eko'>('all');
 
+  // Wedding Info update state (moved from line 442-443)
+  const [updateTimeout, setUpdateTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+
   useEffect(() => {
     loadData();
     loadBudgetData();
@@ -439,9 +443,6 @@ export default function AdminPage() {
   };
 
   // Wedding Info Functions with Debouncing
-  const [updateTimeout, setUpdateTimeout] = useState<NodeJS.Timeout | null>(null);
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
-
   const handleUpdateWeddingInfo = async (updatedInfo: Partial<WeddingInfo>) => {
     if (!weddingInfo) {
       console.error('❌ No wedding info loaded');
