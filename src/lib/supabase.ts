@@ -17,7 +17,7 @@ export function generateInvitationCode(): string {
 
 // Check if invitation code is unique
 async function isInvitationCodeUnique(code: string): Promise<boolean> {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('guests')
     .select('id')
     .eq('invitation_code', code)

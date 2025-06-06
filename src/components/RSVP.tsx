@@ -19,7 +19,6 @@ export default function RSVP() {
   const [rsvps, setRSVPs] = useState<RSVPType[]>([]);
   const [existingRSVP, setExistingRSVP] = useState<RSVPType | null>(null);
   const [isPersonalized, setIsPersonalized] = useState(false);
-  const [guestHasSubmittedRSVP, setGuestHasSubmittedRSVP] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
