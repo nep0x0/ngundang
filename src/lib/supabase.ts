@@ -81,7 +81,7 @@ export const guestService = {
   },
 
   // Add new guest
-  async create(guest: Omit<Guest, 'id' | 'invitation_code' | 'invitation_link' | 'whatsapp_message' | 'rsvp_submitted' | 'created_at' | 'updated_at'>, baseUrl: string = 'https://yourwebsite.com'): Promise<Guest> {
+  async create(guest: Omit<Guest, 'id' | 'invitation_code' | 'invitation_link' | 'whatsapp_message' | 'rsvp_submitted' | 'created_at' | 'updated_at'>, baseUrl: string = 'https://ngundang-psi.vercel.app'): Promise<Guest> {
     // Generate unique invitation code
     const invitationCode = await generateUniqueInvitationCode();
 
@@ -661,7 +661,7 @@ export const weddingInfoService = {
 }
 
 // Helper function to generate invitation link using invitation code
-export function generateInvitationLink(invitationCode: string, baseUrl: string = 'https://yourwebsite.com'): string {
+export function generateInvitationLink(invitationCode: string, baseUrl: string = 'https://ngundang-psi.vercel.app'): string {
   return `${baseUrl}/${invitationCode}`
 }
 
@@ -673,7 +673,7 @@ export function generateInvitationLinkLegacy(guestName: string, partnerName?: st
 }
 
 // Helper function to generate WhatsApp message with invitation code
-export function generateWhatsAppMessage(guestName: string, partnerName?: string, invitationCode?: string, baseUrl: string = 'https://yourwebsite.com'): string {
+export function generateWhatsAppMessage(guestName: string, partnerName?: string, invitationCode?: string, baseUrl: string = 'https://ngundang-psi.vercel.app'): string {
   const partner = partnerName ? ` dan ${partnerName}` : ''
   const link = invitationCode ? generateInvitationLink(invitationCode, baseUrl) : `${baseUrl}`
 

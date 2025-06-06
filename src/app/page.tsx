@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import gsap from 'gsap';
+import { useSearchParams } from 'next/navigation';
 
 gsap.registerPlugin(ScrollTrigger);
 import Header from "@/components/Header";
@@ -14,38 +15,77 @@ import CountdownTimer from "@/components/CountdownTimer";
 
 import LocationMap from "@/components/LocationMap";
 import RSVP from "@/components/RSVP";
+import RSVPPopup from "@/components/RSVPPopup";
 
 import Bottom from "@/components/Bottom";
 import AudioPlayer from "@/components/AudioPlayer";
 import Loading from "@/components/Loading";
 import Cover from "@/components/Cover";
 import { useWeddingInfo, formatWeddingDate, formatTime, formatFamilyDescription, getDisplayMaps } from '@/hooks/useWeddingInfo';
+import { guestService, rsvpService, Guest } from '@/lib/supabase';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [showCover, setShowCover] = useState(true);
 
-  // Mendapatkan nama penerima dari URL query parameter (jika ada)
+  // Get search params for invitation code
+  const searchParams = useSearchParams();
+  const invitationCode = searchParams.get('code');
+
+  // Personalization states
+  const [guest, setGuest] = useState<Guest | null>(null);
+  const [isPersonalized, setIsPersonalized] = useState(false);
   const [recipientName, setRecipientName] = useState<string>("Tamu Undangan");
+  const [showRSVPPopup, setShowRSVPPopup] = useState(false);
+  const [hasSubmittedRSVP, setHasSubmittedRSVP] = useState(false);
 
   // Fetch wedding info from database
   const { weddingInfo, loading: weddingLoading, error: weddingError } = useWeddingInfo();
 
+  // Fetch guest data if invitation code is provided
   useEffect(() => {
-    // Mendapatkan nama penerima dari URL query parameter
-    const searchParams = new URLSearchParams(window.location.search);
-    const toParam = searchParams.get('to') || searchParams.get('nama') || searchParams.get('guest');
+    const fetchGuestData = async () => {
+      if (invitationCode) {
+        try {
+          const guestData = await guestService.getByInvitationCode(invitationCode);
+          if (guestData) {
+            setGuest(guestData);
+            setIsPersonalized(true);
 
-    if (toParam) {
-      // Decode dan bersihkan nama
-      let cleanName = decodeURIComponent(toParam);
-      // Hapus karakter yang tidak diinginkan
-      cleanName = cleanName.replace(/[<>]/g, '');
-      // Kapitalisasi nama dengan benar
-      cleanName = cleanName.replace(/\b\w/g, l => l.toUpperCase());
-      setRecipientName(cleanName);
-    }
-  }, []);
+            // Set personalized recipient name
+            const guestName = guestData.partner
+              ? `${guestData.name} & ${guestData.partner}`
+              : guestData.name;
+            setRecipientName(guestName);
+
+            // Check if guest has already submitted RSVP
+            setHasSubmittedRSVP(guestData.rsvp_submitted);
+
+            // Check RSVP status from database
+            const existingRSVP = await rsvpService.checkExisting(guestData.name);
+            if (existingRSVP) {
+              setHasSubmittedRSVP(true);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching guest data:', error);
+          // Fallback to generic invitation if guest not found
+          setIsPersonalized(false);
+        }
+      } else {
+        // Legacy support for old URL format (?to=name)
+        const toParam = searchParams.get('to') || searchParams.get('nama') || searchParams.get('guest');
+        if (toParam) {
+          let cleanName = decodeURIComponent(toParam);
+          cleanName = cleanName.replace(/[<>]/g, '');
+          cleanName = cleanName.replace(/\b\w/g, l => l.toUpperCase());
+          setRecipientName(cleanName);
+        }
+      }
+    };
+
+    fetchGuestData();
+  }, [invitationCode, searchParams]);
 
   const handleLoadingComplete = () => {
     setIsLoading(false);
@@ -64,6 +104,11 @@ export default function Home() {
     setTimeout(() => {
       ScrollTrigger.refresh();
     }, 100);
+  };
+
+  const handleRSVPSubmit = () => {
+    setHasSubmittedRSVP(true);
+    setShowRSVPPopup(false);
   };
 
   // Generate dynamic wedding data from database or fallback to static
@@ -205,6 +250,34 @@ export default function Home() {
     thankYouMessage: "Terima kasih atas doa dan restu yang telah diberikan untuk pernikahan kami. Kehadiran dan dukungan Anda sangat berarti bagi kami dalam memulai babak baru kehidupan ini."
   };
 
+  // Intersection Observer for RSVP popup trigger
+  useEffect(() => {
+    if (!showCover && isPersonalized && !hasSubmittedRSVP) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setShowRSVPPopup(true);
+            }
+          });
+        },
+        { threshold: 0.5 }
+      );
+
+      // Find location section (we'll add ID to it)
+      const locationSection = document.getElementById('location-section');
+      if (locationSection) {
+        observer.observe(locationSection);
+      }
+
+      return () => {
+        if (locationSection) {
+          observer.unobserve(locationSection);
+        }
+      };
+    }
+  }, [showCover, isPersonalized, hasSubmittedRSVP]);
+
   // Mengatur overflow hidden saat menampilkan cover
   useEffect(() => {
     if (showCover) {
@@ -260,7 +333,7 @@ export default function Home() {
             groom: weddingData.couple.groom.name
           }}
           onOpenInvitation={handleOpenInvitation}
-          recipientName={recipientName}
+          recipientName={isPersonalized ? `Bapak/Ibu ${recipientName}` : recipientName}
         />
       )}
 
@@ -305,28 +378,49 @@ export default function Home() {
         <CountdownTimer targetDate={weddingInfo?.akad_date || "2025-12-19"} />
 
         {/* Dynamic Location Maps based on configuration */}
-        {weddingData.location.showAkad && (
-          <LocationMap
-            title="Lokasi Akad Nikah"
-            mapEmbedUrl={weddingData.location.akadEmbedUrl || ""}
-            locationName={weddingData.events.akadNikah.location}
-            locationAddress={weddingData.events.akadNikah.address}
-            googleMapsUrl={weddingData.location.akadUrl || ""}
-          />
-        )}
+        <div id="location-section">
+          {weddingData.location.showAkad && (
+            <LocationMap
+              title="Lokasi Akad Nikah"
+              mapEmbedUrl={weddingData.location.akadEmbedUrl || ""}
+              locationName={weddingData.events.akadNikah.location}
+              locationAddress={weddingData.events.akadNikah.address}
+              googleMapsUrl={weddingData.location.akadUrl || ""}
+            />
+          )}
 
-        {weddingData.location.showResepsi && (
-          <LocationMap
-            title="Lokasi Resepsi"
-            mapEmbedUrl={weddingData.location.resepsiEmbedUrl || ""}
-            locationName={weddingData.events.resepsi.location}
-            locationAddress={weddingData.events.resepsi.address}
-            googleMapsUrl={weddingData.location.resepsiUrl || ""}
-          />
-        )}
+          {weddingData.location.showResepsi && (
+            <LocationMap
+              title="Lokasi Resepsi"
+              mapEmbedUrl={weddingData.location.resepsiEmbedUrl || ""}
+              locationName={weddingData.events.resepsi.location}
+              locationAddress={weddingData.events.resepsi.address}
+              googleMapsUrl={weddingData.location.resepsiUrl || ""}
+            />
+          )}
+        </div>
 
-        {/* 5. RSVP */}
-        <RSVP />
+        {/* 5. RSVP - Show different content based on personalization */}
+        {isPersonalized && hasSubmittedRSVP ? (
+          // Thank you section for personalized guests who already submitted RSVP
+          <section className="py-16 px-4 bg-gradient-to-b from-rose-50 to-pink-50">
+            <div className="max-w-2xl mx-auto text-center">
+              <div className="bg-green-50 border border-green-200 rounded-2xl p-8 shadow-lg">
+                <div className="text-4xl mb-4">✅</div>
+                <h3 className="text-2xl font-bold text-green-800 mb-4">
+                  Terima Kasih!
+                </h3>
+                <p className="text-green-700">
+                  Terima kasih {recipientName} atas konfirmasi kehadirannya.
+                  Kami sangat menantikan kehadiran Anda di hari bahagia kami.
+                </p>
+              </div>
+            </div>
+          </section>
+        ) : (
+          // Regular RSVP for non-personalized or guests who haven't submitted
+          <RSVP />
+        )}
 
         {/* 6. Bottom */}
         <Bottom
@@ -338,6 +432,15 @@ export default function Home() {
           thankYouMessage={weddingData.thankYouMessage}
         />
       </div>
+
+      {/* RSVP Popup for personalized invitations */}
+      {showRSVPPopup && isPersonalized && guest && !hasSubmittedRSVP && (
+        <RSVPPopup
+          guest={guest}
+          onClose={() => setShowRSVPPopup(false)}
+          onSubmit={handleRSVPSubmit}
+        />
+      )}
 
       {/* Audio Player - selalu ditampilkan */}
       <AudioPlayer audioSrc={weddingData.audio} />
