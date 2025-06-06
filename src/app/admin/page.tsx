@@ -489,7 +489,7 @@ export default function AdminPage() {
 
   // Filtered and sorted guests (must be before early returns)
   const filteredAndSortedGuests = useMemo(() => {
-    let filtered = guests.filter(guest => {
+    const filtered = guests.filter(guest => {
       // Search filter
       const matchesSearch = searchQuery === '' ||
         guest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
