@@ -18,6 +18,7 @@ export default function RSVP() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rsvps, setRSVPs] = useState<RSVPType[]>([]);
   const [existingRSVP, setExistingRSVP] = useState<RSVPType | null>(null);
+  const [isPersonalized, setIsPersonalized] = useState(false);
   const [guestHasSubmittedRSVP, setGuestHasSubmittedRSVP] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -27,6 +28,11 @@ export default function RSVP() {
   useEffect(() => {
     loadRSVPs();
     checkExistingRSVP();
+
+    // Check if this is a personalized invitation (client-side only)
+    const searchParams = new URLSearchParams(window.location.search);
+    const invitationCode = searchParams.get('code');
+    setIsPersonalized(!!invitationCode);
   }, []);
 
   useEffect(() => {
@@ -173,10 +179,7 @@ export default function RSVP() {
     }));
   };
 
-  // Check if this is a personalized invitation
-  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
-  const invitationCode = searchParams.get('code');
-  const isPersonalized = !!invitationCode;
+  // isPersonalized is now set in useEffect to avoid hydration mismatch
 
   return (
     <section
