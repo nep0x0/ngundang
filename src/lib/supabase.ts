@@ -111,6 +111,26 @@ export const rsvpService = {
 
     if (error && error.code !== 'PGRST116') throw error
     return data
+  },
+
+  // Delete individual RSVP
+  async delete(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('rsvps')
+      .delete()
+      .eq('id', id)
+
+    if (error) throw error
+  },
+
+  // Delete all RSVPs
+  async deleteAll(): Promise<void> {
+    const { error } = await supabase
+      .from('rsvps')
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000') // Delete all records
+
+    if (error) throw error
   }
 }
 

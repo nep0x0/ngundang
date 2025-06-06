@@ -385,6 +385,39 @@ export default function AdminPage() {
     }
   };
 
+  const handleDeleteRSVP = async (id: string) => {
+    if (!confirm('Yakin ingin menghapus RSVP ini?')) return;
+
+    try {
+      await rsvpService.delete(id);
+      setRSVPs(rsvps.filter(r => r.id !== id));
+      // Reload stats after deleting RSVP
+      loadData();
+      alert('RSVP berhasil dihapus!');
+    } catch (error) {
+      console.error('Error deleting RSVP:', error);
+      alert('Error deleting RSVP. Please try again.');
+    }
+  };
+
+  const handleDeleteAllRSVPs = async () => {
+    if (!confirm('PERINGATAN: Ini akan menghapus SEMUA data RSVP yang ada!\n\nApakah Anda yakin ingin melanjutkan?')) return;
+
+    // Double confirmation for safety
+    if (!confirm('Konfirmasi sekali lagi: Hapus SEMUA RSVP?\n\nTindakan ini tidak dapat dibatalkan!')) return;
+
+    try {
+      await rsvpService.deleteAll();
+      setRSVPs([]);
+      // Reload stats after deleting all RSVPs
+      loadData();
+      alert('Semua RSVP berhasil dihapus!');
+    } catch (error) {
+      console.error('Error deleting all RSVPs:', error);
+      alert('Error deleting RSVPs. Please try again.');
+    }
+  };
+
   const regenerateLinks = async () => {
     if (!confirm('Regenerate semua invitation links dan WhatsApp messages? Ini akan update semua data existing.')) return;
 
@@ -1448,8 +1481,16 @@ export default function AdminPage() {
 
         {activeTab === 'rsvps' && (
           <div className="bg-white rounded-lg shadow">
-            <div className="px-4 lg:px-6 py-4 border-b border-gray-200">
+            <div className="px-4 lg:px-6 py-4 border-b border-gray-200 flex justify-between items-center">
               <h2 className="text-lg lg:text-xl font-semibold">RSVP Responses</h2>
+              {rsvps.length > 0 && (
+                <button
+                  onClick={handleDeleteAllRSVPs}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                >
+                  Hapus Semua RSVP
+                </button>
+              )}
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -1469,6 +1510,9 @@ export default function AdminPage() {
                     </th>
                     <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
                       Date
+                    </th>
+                    <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -1504,10 +1548,29 @@ export default function AdminPage() {
                       <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
                         {new Date(rsvp.created_at).toLocaleDateString('id-ID')}
                       </td>
+                      <td className="px-3 lg:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button
+                          onClick={() => handleDeleteRSVP(rsvp.id)}
+                          className="text-red-600 hover:text-red-900 transition-colors"
+                          title="Hapus RSVP"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              {rsvps.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                  </svg>
+                  <p>Belum ada RSVP yang masuk</p>
+                </div>
+              )}
             </div>
           </div>
         )}
