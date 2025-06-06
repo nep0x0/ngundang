@@ -400,29 +400,28 @@ export default function Home() {
           )}
         </div>
 
-        {/* 5. RSVP - Show different content based on personalization */}
-        {isPersonalized && hasSubmittedRSVP ? (
-          // Thank you section for personalized guests who already submitted RSVP
-          <section className="py-16 px-4 bg-gradient-to-b from-rose-50 to-pink-50">
+        {/* 5. Thank You Section for personalized guests who already submitted RSVP */}
+        {isPersonalized && hasSubmittedRSVP && (
+          <section className="py-8 px-4">
             <div className="max-w-2xl mx-auto text-center">
-              <div className="bg-green-50 border border-green-200 rounded-2xl p-8 shadow-lg">
-                <div className="text-4xl mb-4">✅</div>
-                <h3 className="text-2xl font-bold text-green-800 mb-4">
+              <div className="bg-green-50 border border-green-200 rounded-2xl p-6 shadow-lg mb-8">
+                <div className="text-3xl mb-3">✅</div>
+                <h3 className="text-xl font-bold text-green-800 mb-3">
                   Terima Kasih!
                 </h3>
-                <p className="text-green-700">
+                <p className="text-green-700 text-sm">
                   Terima kasih {recipientName} atas konfirmasi kehadirannya.
                   Kami sangat menantikan kehadiran Anda di hari bahagia kami.
                 </p>
               </div>
             </div>
           </section>
-        ) : (
-          // Regular RSVP for non-personalized or guests who haven't submitted
-          <RSVP />
         )}
 
-        {/* 6. Bottom */}
+        {/* 6. RSVP Section - Always show for chat functionality */}
+        <RSVP />
+
+        {/* 7. Bottom */}
         <Bottom
           brideNames={{
             bride: weddingData.couple.bride.name,
