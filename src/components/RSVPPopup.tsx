@@ -50,11 +50,11 @@ export default function RSVPPopup({ guest, onClose, onSubmit }: RSVPPopupProps) 
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-rose-500 to-pink-500 text-white p-6 rounded-t-2xl">
+        <div className="bg-gradient-to-r from-blue-500 to-slate-600 text-white p-6 rounded-t-2xl">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-xl font-bold mb-1">💌 Konfirmasi Kehadiran</h3>
-              <p className="text-rose-100 text-sm">Halo {guestName}</p>
+              <p className="text-blue-100 text-sm">Halo {guestName}</p>
             </div>
             <button
               onClick={onClose}
@@ -76,14 +76,14 @@ export default function RSVPPopup({ guest, onClose, onSubmit }: RSVPPopupProps) 
 
           {/* Attendance Selection */}
           <div className="space-y-3">
-            <label className="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-green-300 transition-colors">
+            <label className="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-blue-300 transition-colors">
               <input
                 type="radio"
                 name="attendance"
                 value="hadir"
                 checked={attendance === 'hadir'}
                 onChange={(e) => setAttendance(e.target.value as 'hadir')}
-                className="w-4 h-4 text-green-600 mr-3"
+                className="w-4 h-4 text-blue-600 mr-3"
                 disabled={isSubmitting}
               />
               <div className="flex-1">
@@ -92,14 +92,14 @@ export default function RSVPPopup({ guest, onClose, onSubmit }: RSVPPopupProps) 
               </div>
             </label>
 
-            <label className="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-red-300 transition-colors">
+            <label className="flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-slate-300 transition-colors">
               <input
                 type="radio"
                 name="attendance"
                 value="tidak_hadir"
                 checked={attendance === 'tidak_hadir'}
                 onChange={(e) => setAttendance(e.target.value as 'tidak_hadir')}
-                className="w-4 h-4 text-red-600 mr-3"
+                className="w-4 h-4 text-slate-600 mr-3"
                 disabled={isSubmitting}
               />
               <div className="flex-1">
@@ -118,7 +118,7 @@ export default function RSVPPopup({ guest, onClose, onSubmit }: RSVPPopupProps) 
               <select
                 value={guestCount}
                 onChange={(e) => setGuestCount(parseInt(e.target.value))}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-rose-400 transition-colors"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-400 transition-colors"
                 disabled={isSubmitting}
               >
                 {[1, 2, 3, 4, 5].map(num => (
@@ -140,7 +140,7 @@ export default function RSVPPopup({ guest, onClose, onSubmit }: RSVPPopupProps) 
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Selamat untuk kalian berdua..."
               rows={3}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-rose-400 transition-colors resize-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-400 transition-colors resize-none"
               disabled={isSubmitting}
             />
           </div>
@@ -158,7 +158,7 @@ export default function RSVPPopup({ guest, onClose, onSubmit }: RSVPPopupProps) 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 px-4 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl hover:from-rose-600 hover:to-pink-600 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-500 to-slate-600 text-white rounded-xl hover:from-blue-600 hover:to-slate-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <div className="flex items-center justify-center">

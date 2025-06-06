@@ -38,6 +38,7 @@ export default function Home() {
   const [recipientName, setRecipientName] = useState<string>("Tamu Undangan");
   const [showRSVPPopup, setShowRSVPPopup] = useState(false);
   const [hasSubmittedRSVP, setHasSubmittedRSVP] = useState(false);
+  const [showThankYouPopup, setShowThankYouPopup] = useState(false);
 
   // Fetch wedding info from database
   const { weddingInfo, loading: weddingLoading, error: weddingError } = useWeddingInfo();
@@ -109,6 +110,12 @@ export default function Home() {
   const handleRSVPSubmit = () => {
     setHasSubmittedRSVP(true);
     setShowRSVPPopup(false);
+    setShowThankYouPopup(true);
+
+    // Auto-hide thank you popup after 5 seconds
+    setTimeout(() => {
+      setShowThankYouPopup(false);
+    }, 5000);
   };
 
   // Generate dynamic wedding data from database or fallback to static
@@ -400,28 +407,10 @@ export default function Home() {
           )}
         </div>
 
-        {/* 5. Thank You Section for personalized guests who already submitted RSVP */}
-        {isPersonalized && hasSubmittedRSVP && (
-          <section className="py-8 px-4">
-            <div className="max-w-2xl mx-auto text-center">
-              <div className="bg-green-50 border border-green-200 rounded-2xl p-6 shadow-lg mb-8">
-                <div className="text-3xl mb-3">✅</div>
-                <h3 className="text-xl font-bold text-green-800 mb-3">
-                  Terima Kasih!
-                </h3>
-                <p className="text-green-700 text-sm">
-                  Terima kasih {recipientName} atas konfirmasi kehadirannya.
-                  Kami sangat menantikan kehadiran Anda di hari bahagia kami.
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* 6. RSVP Section - Always show for chat functionality */}
+        {/* 5. RSVP Section - Always show for chat functionality */}
         <RSVP />
 
-        {/* 7. Bottom */}
+        {/* 6. Bottom */}
         <Bottom
           brideNames={{
             bride: weddingData.couple.bride.name,
@@ -439,6 +428,41 @@ export default function Home() {
           onClose={() => setShowRSVPPopup(false)}
           onSubmit={handleRSVPSubmit}
         />
+      )}
+
+      {/* Thank You Popup */}
+      {showThankYouPopup && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-500 to-slate-600 text-white p-6 rounded-t-2xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold mb-1">✅ Terima Kasih!</h3>
+                  <p className="text-blue-100 text-sm">Konfirmasi berhasil dikirim</p>
+                </div>
+                <button
+                  onClick={() => setShowThankYouPopup(false)}
+                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 text-center">
+              <div className="text-4xl mb-4">🎉</div>
+              <p className="text-gray-700 leading-relaxed">
+                Terima kasih <span className="font-semibold text-blue-700">{recipientName}</span> atas konfirmasi kehadirannya.
+                Kami sangat menantikan kehadiran Anda di hari bahagia kami.
+              </p>
+              <div className="mt-6 text-xs text-gray-500">
+                Popup ini akan hilang otomatis dalam 5 detik
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Audio Player - selalu ditampilkan */}
