@@ -219,9 +219,9 @@ export default function RSVP() {
 
         {/* Only show RSVP form/thank you if not personalized invitation that already submitted */}
         {!isPersonalizedAndSubmitted && (
-
-        {/* RSVP Form or Thank You Message */}
-        {!isSubmitted ? (
+          <>
+            {/* RSVP Form or Thank You Message */}
+            {!isSubmitted ? (
           <div>
             <div className="text-center mb-12">
               <h2 ref={titleRef} className="text-3xl sm:text-4xl md:text-5xl font-serif font-light text-slate-700 mb-6">
@@ -360,7 +360,8 @@ export default function RSVP() {
               <div className="w-16 h-px bg-blue-300"></div>
             </div>
           </div>
-        )}
+            )}
+          </>
         )}
       </div>
     </section>
