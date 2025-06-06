@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { rsvpService, RSVP as RSVPType } from '@/lib/supabase';
+import { rsvpService, guestService, RSVP as RSVPType } from '@/lib/supabase';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -81,11 +81,32 @@ export default function RSVP() {
   };
 
   const checkExistingRSVP = async () => {
-    // Get guest name from URL parameter
     const searchParams = new URLSearchParams(window.location.search);
+    const invitationCode = searchParams.get('code');
     const guestName = searchParams.get('to') || searchParams.get('nama') || searchParams.get('guest');
 
-    if (guestName) {
+    // Check for personalized invitation (invitation code)
+    if (invitationCode) {
+      try {
+        const guest = await guestService.getByInvitationCode(invitationCode);
+        if (guest && guest.rsvp_submitted) {
+          // Guest has already submitted RSVP via popup, check for existing RSVP
+          const existing = await rsvpService.checkExisting(guest.name);
+          if (existing) {
+            setExistingRSVP(existing);
+            setIsSubmitted(true);
+          }
+        } else if (guest) {
+          // Guest exists but hasn't submitted RSVP yet
+          const guestDisplayName = guest.partner ? `${guest.name} & ${guest.partner}` : guest.name;
+          setFormData(prev => ({ ...prev, name: guestDisplayName }));
+        }
+      } catch (error) {
+        console.error('Error checking guest by invitation code:', error);
+      }
+    }
+    // Legacy support for old URL format
+    else if (guestName) {
       try {
         const cleanName = decodeURIComponent(guestName).replace(/[<>]/g, '').replace(/\b\w/g, l => l.toUpperCase());
         const existing = await rsvpService.checkExisting(cleanName);
@@ -151,6 +172,11 @@ export default function RSVP() {
     }));
   };
 
+  // Check if this is a personalized invitation where guest already submitted RSVP
+  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+  const invitationCode = searchParams.get('code');
+  const isPersonalizedAndSubmitted = invitationCode && isSubmitted;
+
   return (
     <section
       ref={containerRef}
@@ -159,7 +185,7 @@ export default function RSVP() {
       <div className="container mx-auto px-6 sm:px-8 max-w-4xl relative z-10">
         {/* RSVP Chat Display */}
         {rsvps.length > 0 && (
-          <div className="mb-12">
+          <div className={isPersonalizedAndSubmitted ? "" : "mb-12"}>
             <h3 className="text-2xl font-serif text-center text-slate-700 mb-8">
               Tamu yang Akan Hadir
             </h3>
@@ -190,6 +216,9 @@ export default function RSVP() {
             </div>
           </div>
         )}
+
+        {/* Only show RSVP form/thank you if not personalized invitation that already submitted */}
+        {!isPersonalizedAndSubmitted && (
 
         {/* RSVP Form or Thank You Message */}
         {!isSubmitted ? (
@@ -331,6 +360,7 @@ export default function RSVP() {
               <div className="w-16 h-px bg-blue-300"></div>
             </div>
           </div>
+        )}
         )}
       </div>
     </section>
