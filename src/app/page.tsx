@@ -333,7 +333,7 @@ export default function Home() {
             groom: weddingData.couple.groom.name
           }}
           onOpenInvitation={handleOpenInvitation}
-          recipientName={isPersonalized ? `Bapak/Ibu ${recipientName}` : recipientName}
+          recipientName={recipientName}
         />
       )}
 
