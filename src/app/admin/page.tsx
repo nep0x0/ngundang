@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { guestService, rsvpService, statsService, budgetService, weddingInfoService, generateInvitationLink, generateWhatsAppMessage, Guest, RSVP, MonthlyBudget, IncomeItem, ExpenseItem, WeddingInfo } from '@/lib/supabase';
 
@@ -70,6 +70,12 @@ export default function AdminPage() {
 
   // Wedding info state
   const [weddingInfo, setWeddingInfo] = useState<WeddingInfo | null>(null);
+
+  // Search and filter state for guests
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'name' | 'from' | 'date'>('name');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [filterBy, setFilterBy] = useState<'all' | 'adel' | 'eko'>('all');
 
   useEffect(() => {
     loadData();
@@ -559,6 +565,51 @@ export default function AdminPage() {
     { id: 'view-invitation', icon: '🌐', label: 'Lihat Undangan', href: '/', color: 'indigo' }
   ];
 
+  // Filtered and sorted guests
+  const filteredAndSortedGuests = useMemo(() => {
+    let filtered = guests.filter(guest => {
+      // Search filter
+      const matchesSearch = searchQuery === '' ||
+        guest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (guest.partner && guest.partner.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (guest.phone && guest.phone.includes(searchQuery));
+
+      // From filter
+      const matchesFrom = filterBy === 'all' || guest.from_side === filterBy;
+
+      return matchesSearch && matchesFrom;
+    });
+
+    // Sorting
+    filtered.sort((a, b) => {
+      let comparison = 0;
+
+      switch (sortBy) {
+        case 'name':
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case 'from':
+          comparison = a.from_side.localeCompare(b.from_side);
+          break;
+        case 'date':
+          comparison = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+          break;
+      }
+
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+
+    return filtered;
+  }, [guests, searchQuery, sortBy, sortOrder, filterBy]);
+
+  // Clear filters function
+  const clearFilters = () => {
+    setSearchQuery('');
+    setFilterBy('all');
+    setSortBy('name');
+    setSortOrder('asc');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex">
       {/* Sidebar */}
@@ -836,13 +887,91 @@ export default function AdminPage() {
                 </button>
               </div>
 
-              {guests.length === 0 ? (
+              {/* Search & Filter Bar */}
+              <div className="px-4 py-4 border-b border-slate-100 bg-slate-50/50">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  {/* Search Input */}
+                  <div className="relative flex-1">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <svg className="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Search guests, partners, or phone..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100 transition-all duration-300 text-sm"
+                    />
+                  </div>
+
+                  {/* Filter Dropdown */}
+                  <select
+                    value={filterBy}
+                    onChange={(e) => setFilterBy(e.target.value as 'all' | 'adel' | 'eko')}
+                    className="px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100 transition-all duration-300 text-sm"
+                  >
+                    <option value="all">All Guests</option>
+                    <option value="adel">👰 Adel</option>
+                    <option value="eko">🤵 Eko</option>
+                  </select>
+
+                  {/* Sort Dropdown */}
+                  <select
+                    value={`${sortBy}-${sortOrder}`}
+                    onChange={(e) => {
+                      const [sort, order] = e.target.value.split('-');
+                      setSortBy(sort as 'name' | 'from' | 'date');
+                      setSortOrder(order as 'asc' | 'desc');
+                    }}
+                    className="px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100 transition-all duration-300 text-sm"
+                  >
+                    <option value="name-asc">Name A-Z</option>
+                    <option value="name-desc">Name Z-A</option>
+                    <option value="from-asc">Adel First</option>
+                    <option value="from-desc">Eko First</option>
+                    <option value="date-desc">Newest First</option>
+                    <option value="date-asc">Oldest First</option>
+                  </select>
+                </div>
+
+                {/* Results Counter & Clear Filters */}
+                <div className="flex justify-between items-center mt-4">
+                  <p className="text-sm text-slate-600">
+                    Showing {filteredAndSortedGuests.length} of {guests.length} guests
+                    {searchQuery && (
+                      <span className="ml-2 text-blue-600">for &quot;{searchQuery}&quot;</span>
+                    )}
+                  </p>
+
+                  {(searchQuery || filterBy !== 'all' || sortBy !== 'name' || sortOrder !== 'asc') && (
+                    <button
+                      onClick={clearFilters}
+                      className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                    >
+                      Clear filters
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {filteredAndSortedGuests.length === 0 ? (
                 <div className="text-center py-8">
                   <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <span className="text-2xl">👥</span>
+                    <span className="text-2xl">
+                      {guests.length === 0 ? '👥' : '🔍'}
+                    </span>
                   </div>
-                  <p className="text-slate-500">No guests yet</p>
-                  <p className="text-slate-400 text-sm">Add your first guest above!</p>
+                  <p className="text-slate-500">
+                    {guests.length === 0 ? 'No guests yet' : 'No guests found'}
+                  </p>
+                  <p className="text-slate-400 text-sm">
+                    {guests.length === 0
+                      ? 'Add your first guest above!'
+                      : 'Try adjusting your search or filters'
+                    }
+                  </p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
@@ -857,7 +986,7 @@ export default function AdminPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {guests.map((guest, index) => (
+                      {filteredAndSortedGuests.map((guest, index) => (
                         <tr
                           key={guest.id}
                           className={`transition-colors hover:bg-rose-50 ${
