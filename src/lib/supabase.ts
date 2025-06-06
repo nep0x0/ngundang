@@ -181,39 +181,131 @@ export const rsvpService = {
 
 // Statistics service
 export const statsService = {
-  // Get guest statistics
-  async getGuestStats() {
+  // Get comprehensive statistics
+  async getDetailedStats() {
+    // Get all guests with categories
     const { data: guests, error: guestError } = await supabase
       .from('guests')
-      .select('from_side')
+      .select('name, from_side, category, created_at')
 
     if (guestError) throw guestError
 
+    // Get all RSVPs
     const { data: rsvps, error: rsvpError } = await supabase
       .from('rsvps')
-      .select('attendance, guest_count')
+      .select('attendance, guest_count, guest_name, created_at')
 
     if (rsvpError) throw rsvpError
 
+    // Basic guest statistics
     const totalGuests = guests?.length || 0
-    const adelGuests = guests?.filter(g => g.from_side === 'adel').length || 0
-    const ekoGuests = guests?.filter(g => g.from_side === 'eko').length || 0
+    const adelGuests = guests?.filter(g => g.from_side?.toLowerCase() === 'adel').length || 0
+    const ekoGuests = guests?.filter(g => g.from_side?.toLowerCase() === 'eko').length || 0
+    const otherGuests = totalGuests - adelGuests - ekoGuests
 
+    // From side distribution
+    const fromSideStats: { [key: string]: number } = {}
+    guests?.forEach(guest => {
+      const fromSide = guest.from_side?.toLowerCase() || 'unknown'
+      fromSideStats[fromSide] = (fromSideStats[fromSide] || 0) + 1
+    })
+
+    // Category distribution
+    const categoryStats: { [key: string]: number } = {}
+    guests?.forEach(guest => {
+      if (guest.category) {
+        const category = guest.category.toLowerCase()
+        categoryStats[category] = (categoryStats[category] || 0) + 1
+      }
+    })
+
+    // RSVP statistics
     const totalRSVPs = rsvps?.length || 0
     const attending = rsvps?.filter(r => r.attendance === 'hadir').length || 0
     const notAttending = rsvps?.filter(r => r.attendance === 'tidak_hadir').length || 0
     const totalAttendingCount = rsvps?.filter(r => r.attendance === 'hadir')
       .reduce((sum, r) => sum + (r.guest_count || 1), 0) || 0
+    const totalNotAttendingCount = rsvps?.filter(r => r.attendance === 'tidak_hadir')
+      .reduce((sum, r) => sum + (r.guest_count || 1), 0) || 0
+
+    // Response rates
+    const responseRate = totalGuests > 0 ? Math.round((totalRSVPs / totalGuests) * 100) : 0
+    const attendanceRate = totalRSVPs > 0 ? Math.round((attending / totalRSVPs) * 100) : 0
+
+    // Recent activity (last 7 days)
+    const sevenDaysAgo = new Date()
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+
+    const recentGuests = guests?.filter(g => new Date(g.created_at) >= sevenDaysAgo).length || 0
+    const recentRSVPs = rsvps?.filter(r => new Date(r.created_at) >= sevenDaysAgo).length || 0
+
+    // RSVP by from_side
+    const rsvpByFromSide: { [key: string]: { attending: number; notAttending: number; total: number } } = {}
+
+    // Initialize with guest from_side data
+    Object.keys(fromSideStats).forEach(fromSide => {
+      rsvpByFromSide[fromSide] = { attending: 0, notAttending: 0, total: 0 }
+    })
+
+    // Count RSVPs by matching guest names
+    rsvps?.forEach(rsvp => {
+      const guest = guests?.find(g => g.name === rsvp.guest_name)
+      if (guest) {
+        const fromSide = guest.from_side?.toLowerCase() || 'unknown'
+        if (!rsvpByFromSide[fromSide]) {
+          rsvpByFromSide[fromSide] = { attending: 0, notAttending: 0, total: 0 }
+        }
+
+        rsvpByFromSide[fromSide].total += 1
+        if (rsvp.attendance === 'hadir') {
+          rsvpByFromSide[fromSide].attending += 1
+        } else {
+          rsvpByFromSide[fromSide].notAttending += 1
+        }
+      }
+    })
 
     return {
+      // Basic stats
       totalGuests,
       adelGuests,
       ekoGuests,
+      otherGuests,
       totalRSVPs,
       attending,
       notAttending,
       totalAttendingCount,
-      responseRate: totalGuests > 0 ? Math.round((totalRSVPs / totalGuests) * 100) : 0
+      totalNotAttendingCount,
+      responseRate,
+      attendanceRate,
+
+      // Detailed breakdowns
+      fromSideStats,
+      categoryStats,
+      rsvpByFromSide,
+
+      // Recent activity
+      recentGuests,
+      recentRSVPs,
+
+      // Calculated metrics
+      pendingInvitations: totalGuests - totalRSVPs,
+      averageGuestPerRSVP: totalRSVPs > 0 ? Math.round((totalAttendingCount + totalNotAttendingCount) / totalRSVPs * 10) / 10 : 0
+    }
+  },
+
+  // Legacy function for backward compatibility
+  async getGuestStats() {
+    const detailedStats = await this.getDetailedStats()
+    return {
+      totalGuests: detailedStats.totalGuests,
+      adelGuests: detailedStats.adelGuests,
+      ekoGuests: detailedStats.ekoGuests,
+      totalRSVPs: detailedStats.totalRSVPs,
+      attending: detailedStats.attending,
+      notAttending: detailedStats.notAttending,
+      totalAttendingCount: detailedStats.totalAttendingCount,
+      responseRate: detailedStats.responseRate
     }
   }
 }

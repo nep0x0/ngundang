@@ -17,6 +17,7 @@ export default function AdminPage() {
     totalAttendingCount: number;
     responseRate: number;
   } | null>(null);
+  const [detailedStats, setDetailedStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [databaseReady, setDatabaseReady] = useState(false);
   const [activeTab, setActiveTab] = useState<'guests' | 'rsvps' | 'stats' | 'budget' | 'wedding'>('guests');
@@ -318,6 +319,11 @@ export default function AdminPage() {
       const statsData = await statsService.getGuestStats();
       console.log('✅ Stats loaded:', statsData);
       setStats(statsData);
+
+      // Load detailed stats
+      const detailedStatsData = await statsService.getDetailedStats();
+      console.log('✅ Detailed stats loaded:', detailedStatsData);
+      setDetailedStats(detailedStatsData);
 
       // Load from_side options
       const fromSideData = await guestService.getFromSideOptions();
@@ -1353,147 +1359,318 @@ export default function AdminPage() {
           </div>
         )}
 
-        {activeTab === 'stats' && stats && (
+        {activeTab === 'stats' && stats && detailedStats && (
           <div className="space-y-6">
-            {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
+            {/* Overview Statistics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-sm p-4 lg:p-6 border border-blue-200/50">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-10 h-10 bg-blue-200 rounded-2xl flex items-center justify-center">
+                      <svg className="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                       </svg>
                     </div>
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-500">Total Tamu</p>
-                    <p className="text-2xl font-semibold text-gray-900">{stats.totalGuests}</p>
+                    <p className="text-sm font-medium text-blue-700">Total Tamu</p>
+                    <p className="text-2xl font-semibold text-blue-800">{detailedStats.totalGuests}</p>
+                    <p className="text-xs text-blue-600">+{detailedStats.recentGuests} minggu ini</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
+              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl shadow-sm p-4 lg:p-6 border border-green-200/50">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">A</span>
-                    </div>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-500">Tamu Adel</p>
-                    <p className="text-2xl font-semibold text-gray-900">{stats.adelGuests}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">E</span>
-                    </div>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-500">Tamu Eko</p>
-                    <p className="text-2xl font-semibold text-gray-900">{stats.ekoGuests}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-10 h-10 bg-green-200 rounded-2xl flex items-center justify-center">
+                      <svg className="w-5 h-5 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                       </svg>
                     </div>
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-500">Response Rate</p>
-                    <p className="text-2xl font-semibold text-gray-900">{stats.responseRate}%</p>
+                    <p className="text-sm font-medium text-green-700">Konfirmasi</p>
+                    <p className="text-2xl font-semibold text-green-800">{detailedStats.totalRSVPs}</p>
+                    <p className="text-xs text-green-600">+{detailedStats.recentRSVPs} minggu ini</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl shadow-sm p-4 lg:p-6 border border-emerald-200/50">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 bg-emerald-200 rounded-2xl flex items-center justify-center">
+                      <svg className="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M19 10a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-emerald-700">Akan Hadir</p>
+                    <p className="text-2xl font-semibold text-emerald-800">{detailedStats.attending}</p>
+                    <p className="text-xs text-emerald-600">{detailedStats.totalAttendingCount} orang</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl shadow-sm p-4 lg:p-6 border border-orange-200/50">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 bg-orange-200 rounded-2xl flex items-center justify-center">
+                      <svg className="w-5 h-5 text-orange-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-orange-700">Belum Konfirmasi</p>
+                    <p className="text-2xl font-semibold text-orange-800">{detailedStats.pendingInvitations}</p>
+                    <p className="text-xs text-orange-600">{detailedStats.responseRate}% sudah respon</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl shadow-sm p-4 lg:p-6 border border-purple-200/50">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className="w-10 h-10 bg-purple-200 rounded-2xl flex items-center justify-center">
+                      <svg className="w-5 h-5 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-purple-700">Tingkat Kehadiran</p>
+                    <p className="text-2xl font-semibold text-purple-800">{detailedStats.attendanceRate}%</p>
+                    <p className="text-xs text-purple-600">dari yang konfirmasi</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* RSVP Statistics */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">RSVP Status</h3>
-                <div className="space-y-3">
+            {/* Detailed Statistics */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {/* RSVP Breakdown */}
+              <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+                <div className="flex items-center mb-4">
+                  <div className="w-8 h-8 bg-green-100 rounded-xl flex items-center justify-center mr-3">
+                    <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">Status RSVP</h3>
+                </div>
+                <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Total Konfirmasi</span>
-                    <span className="font-semibold">{stats.totalRSVPs}</span>
+                    <span className="font-semibold text-lg">{detailedStats.totalRSVPs}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-green-600">Akan Hadir</span>
-                    <span className="font-semibold text-green-600">{stats.attending}</span>
+                    <span className="text-sm text-green-600 flex items-center">
+                      <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                      Akan Hadir
+                    </span>
+                    <span className="font-semibold text-green-600">{detailedStats.attending}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-red-600">Tidak Hadir</span>
-                    <span className="font-semibold text-red-600">{stats.notAttending}</span>
+                    <span className="text-sm text-red-600 flex items-center">
+                      <span className="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+                      Tidak Hadir
+                    </span>
+                    <span className="font-semibold text-red-600">{detailedStats.notAttending}</span>
                   </div>
-                  <div className="flex justify-between items-center pt-2 border-t">
-                    <span className="text-sm font-medium text-gray-900">Total Kehadiran</span>
-                    <span className="font-bold text-blue-600">{stats.totalAttendingCount} orang</span>
+                  <div className="pt-3 border-t border-gray-100">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-900">Total Kehadiran</span>
+                      <span className="font-bold text-blue-600 text-lg">{detailedStats.totalAttendingCount} orang</span>
+                    </div>
+                    <div className="flex justify-between items-center mt-1">
+                      <span className="text-xs text-gray-500">Rata-rata per RSVP</span>
+                      <span className="text-xs text-gray-600">{detailedStats.averageGuestPerRSVP} orang</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Progress</h3>
+              {/* From Side Distribution */}
+              <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+                <div className="flex items-center mb-4">
+                  <div className="w-8 h-8 bg-purple-100 rounded-xl flex items-center justify-center mr-3">
+                    <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">Distribusi Tamu</h3>
+                </div>
+                <div className="space-y-3">
+                  {Object.entries(detailedStats.fromSideStats)
+                    .sort(([,a], [,b]) => (b as number) - (a as number))
+                    .map(([fromSide, count]) => {
+                      const percentage = detailedStats.totalGuests > 0 ? Math.round(((count as number) / detailedStats.totalGuests) * 100) : 0;
+                      const rsvpData = detailedStats.rsvpByFromSide[fromSide] || { attending: 0, notAttending: 0, total: 0 };
+
+                      return (
+                        <div key={fromSide} className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm font-medium text-gray-700 flex items-center">
+                              {fromSide === 'adel' ? '👰' : fromSide === 'eko' ? '🤵' : '👥'}
+                              <span className="ml-2 capitalize">{fromSide}</span>
+                            </span>
+                            <span className="font-semibold">{count as number}</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              className={`h-2 rounded-full ${
+                                fromSide === 'adel' ? 'bg-pink-500' :
+                                fromSide === 'eko' ? 'bg-blue-500' : 'bg-purple-500'
+                              }`}
+                              style={{ width: `${percentage}%` }}
+                            ></div>
+                          </div>
+                          <div className="flex justify-between text-xs text-gray-500">
+                            <span>{percentage}% dari total</span>
+                            <span>RSVP: {rsvpData.total}/{count as number}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+
+              {/* Category Distribution */}
+              <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+                <div className="flex items-center mb-4">
+                  <div className="w-8 h-8 bg-orange-100 rounded-xl flex items-center justify-center mr-3">
+                    <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">Kategori Hubungan</h3>
+                </div>
+                <div className="space-y-3">
+                  {Object.entries(detailedStats.categoryStats).length > 0 ? (
+                    Object.entries(detailedStats.categoryStats)
+                      .sort(([,a], [,b]) => (b as number) - (a as number))
+                      .map(([category, count]) => {
+                        const percentage = detailedStats.totalGuests > 0 ? Math.round(((count as number) / detailedStats.totalGuests) * 100) : 0;
+
+                        return (
+                          <div key={category} className="space-y-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm font-medium text-gray-700 flex items-center">
+                                {category === 'keluarga' ? '👨‍👩‍👧‍👦' :
+                                 category === 'teman' ? '👫' :
+                                 category === 'kolega' ? '👔' : '🏷️'}
+                                <span className="ml-2 capitalize">{category}</span>
+                              </span>
+                              <span className="font-semibold">{count as number}</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className={`h-2 rounded-full ${
+                                  category === 'keluarga' ? 'bg-green-500' :
+                                  category === 'teman' ? 'bg-blue-500' :
+                                  category === 'kolega' ? 'bg-orange-500' : 'bg-gray-500'
+                                }`}
+                                style={{ width: `${percentage}%` }}
+                              ></div>
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {percentage}% dari total tamu
+                            </div>
+                          </div>
+                        );
+                      })
+                  ) : (
+                    <div className="text-center py-4 text-gray-500">
+                      <p className="text-sm">Belum ada kategori yang diset</p>
+                      <p className="text-xs">Edit tamu untuk menambah kategori</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Progress Metrics */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Progress Undangan</h3>
                 <div className="space-y-4">
                   <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Response Rate</span>
-                      <span>{stats.responseRate}%</span>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="font-medium">Response Rate</span>
+                      <span className="font-semibold">{detailedStats.responseRate}%</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-gray-200 rounded-full h-3">
                       <div
-                        className="bg-blue-600 h-2 rounded-full"
-                        style={{ width: `${stats.responseRate}%` }}
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500"
+                        style={{ width: `${detailedStats.responseRate}%` }}
                       ></div>
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-500 mt-1">
+                      <span>{detailedStats.totalRSVPs} sudah konfirmasi</span>
+                      <span>{detailedStats.pendingInvitations} belum konfirmasi</span>
                     </div>
                   </div>
                   <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Attendance Rate</span>
-                      <span>{stats.totalRSVPs > 0 ? Math.round((stats.attending / stats.totalRSVPs) * 100) : 0}%</span>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="font-medium">Attendance Rate</span>
+                      <span className="font-semibold">{detailedStats.attendanceRate}%</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-gray-200 rounded-full h-3">
                       <div
-                        className="bg-green-600 h-2 rounded-full"
-                        style={{ width: `${stats.totalRSVPs > 0 ? Math.round((stats.attending / stats.totalRSVPs) * 100) : 0}%` }}
+                        className="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full transition-all duration-500"
+                        style={{ width: `${detailedStats.attendanceRate}%` }}
                       ></div>
+                    </div>
+                    <div className="flex justify-between text-xs text-gray-500 mt-1">
+                      <span>{detailedStats.attending} akan hadir</span>
+                      <span>{detailedStats.notAttending} tidak hadir</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow p-4 lg:p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Guest Distribution</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-pink-600">Adel&apos;s Guests</span>
-                    <span className="font-semibold">{stats.adelGuests}</span>
+              <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Aktivitas Terkini</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-xl">
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-blue-200 rounded-lg flex items-center justify-center mr-3">
+                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="font-medium text-blue-800">Tamu Baru</p>
+                        <p className="text-sm text-blue-600">7 hari terakhir</p>
+                      </div>
+                    </div>
+                    <span className="text-2xl font-bold text-blue-700">+{detailedStats.recentGuests}</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-pink-500 h-2 rounded-full"
-                      style={{ width: `${stats.totalGuests > 0 ? (stats.adelGuests / stats.totalGuests) * 100 : 0}%` }}
-                    ></div>
+
+                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-xl">
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-green-200 rounded-lg flex items-center justify-center mr-3">
+                        <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="font-medium text-green-800">RSVP Baru</p>
+                        <p className="text-sm text-green-600">7 hari terakhir</p>
+                      </div>
+                    </div>
+                    <span className="text-2xl font-bold text-green-700">+{detailedStats.recentRSVPs}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-blue-600">Eko&apos;s Guests</span>
-                    <span className="font-semibold">{stats.ekoGuests}</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-blue-500 h-2 rounded-full"
-                      style={{ width: `${stats.totalGuests > 0 ? (stats.ekoGuests / stats.totalGuests) * 100 : 0}%` }}
-                    ></div>
+
+                  <div className="p-3 bg-gray-50 rounded-xl">
+                    <div className="text-center">
+                      <p className="text-sm text-gray-600 mb-1">Estimasi Total Kehadiran</p>
+                      <p className="text-3xl font-bold text-gray-800">{detailedStats.totalAttendingCount + detailedStats.totalNotAttendingCount}</p>
+                      <p className="text-xs text-gray-500">orang (termasuk yang tidak hadir)</p>
+                    </div>
                   </div>
                 </div>
               </div>
