@@ -553,18 +553,6 @@ export default function AdminPage() {
     );
   }
 
-  const menuItems = [
-    { id: 'guests', icon: '👥', label: 'Guests', count: guests.length, color: 'rose' },
-    { id: 'rsvps', icon: '💌', label: 'RSVPs', count: rsvps.length, color: 'blue' },
-    { id: 'stats', icon: '📊', label: 'Statistics', count: null, color: 'emerald' },
-    { id: 'budget', icon: '💰', label: 'Budget', count: null, color: 'amber' },
-    { id: 'wedding', icon: '💍', label: 'Wedding Info', count: null, color: 'purple' }
-  ];
-
-  const externalMenuItems = [
-    { id: 'view-invitation', icon: '🌐', label: 'Lihat Undangan', href: '/', color: 'indigo' }
-  ];
-
   // Filtered and sorted guests
   const filteredAndSortedGuests = useMemo(() => {
     let filtered = guests.filter(guest => {
@@ -609,6 +597,18 @@ export default function AdminPage() {
     setSortBy('name');
     setSortOrder('asc');
   };
+
+  const menuItems = [
+    { id: 'guests', icon: '👥', label: 'Guests', count: guests.length, color: 'rose' },
+    { id: 'rsvps', icon: '💌', label: 'RSVPs', count: rsvps.length, color: 'blue' },
+    { id: 'stats', icon: '📊', label: 'Statistics', count: null, color: 'emerald' },
+    { id: 'budget', icon: '💰', label: 'Budget', count: null, color: 'amber' },
+    { id: 'wedding', icon: '💍', label: 'Wedding Info', count: null, color: 'purple' }
+  ];
+
+  const externalMenuItems = [
+    { id: 'view-invitation', icon: '🌐', label: 'Lihat Undangan', href: '/', color: 'indigo' }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex">
