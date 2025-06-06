@@ -17,7 +17,26 @@ export default function AdminPage() {
     totalAttendingCount: number;
     responseRate: number;
   } | null>(null);
-  const [detailedStats, setDetailedStats] = useState<any>(null);
+  const [detailedStats, setDetailedStats] = useState<{
+    totalGuests: number;
+    adelGuests: number;
+    ekoGuests: number;
+    otherGuests: number;
+    totalRSVPs: number;
+    attending: number;
+    notAttending: number;
+    totalAttendingCount: number;
+    totalNotAttendingCount: number;
+    responseRate: number;
+    attendanceRate: number;
+    fromSideStats: { [key: string]: number };
+    categoryStats: { [key: string]: number };
+    rsvpByFromSide: { [key: string]: { attending: number; notAttending: number; total: number } };
+    recentGuests: number;
+    recentRSVPs: number;
+    pendingInvitations: number;
+    averageGuestPerRSVP: number;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [databaseReady, setDatabaseReady] = useState(false);
   const [activeTab, setActiveTab] = useState<'guests' | 'rsvps' | 'stats' | 'budget' | 'wedding'>('guests');
@@ -492,8 +511,11 @@ export default function AdminPage() {
         const newInvitationLink = generateInvitationLink(editFormData.name.trim(), editFormData.partner.trim() || undefined, baseUrl);
         const newWhatsAppMessage = generateWhatsAppMessage(editFormData.name.trim(), editFormData.partner.trim() || undefined, newInvitationLink);
 
-        updates.invitation_link = newInvitationLink;
-        updates.whatsapp_message = newWhatsAppMessage;
+        updates = {
+          ...updates,
+          invitation_link: newInvitationLink,
+          whatsapp_message: newWhatsAppMessage
+        };
       }
 
       const updatedGuest = await guestService.update(editingGuest.id, updates);
