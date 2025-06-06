@@ -12,6 +12,7 @@ export interface Guest {
   partner?: string
   phone?: string
   from_side: string // Changed from 'adel' | 'eko' to string for flexibility
+  category?: string // New field for guest category (teman/keluarga/etc)
   invitation_link: string
   whatsapp_message: string
   created_at: string
@@ -89,6 +90,29 @@ export const guestService = {
     data?.forEach(guest => {
       const normalized = guest.from_side.toLowerCase().trim()
       counts[normalized] = (counts[normalized] || 0) + 1
+    })
+
+    // Convert to array and sort by count (descending)
+    return Object.entries(counts)
+      .map(([value, count]) => ({ value, count }))
+      .sort((a, b) => b.count - a.count)
+  },
+
+  // Get unique category values for suggestions
+  async getCategoryOptions(): Promise<{ value: string; count: number }[]> {
+    const { data, error } = await supabase
+      .from('guests')
+      .select('category')
+
+    if (error) throw error
+
+    // Count occurrences of each category value
+    const counts: { [key: string]: number } = {}
+    data?.forEach(guest => {
+      if (guest.category) {
+        const normalized = guest.category.toLowerCase().trim()
+        counts[normalized] = (counts[normalized] || 0) + 1
+      }
     })
 
     // Convert to array and sort by count (descending)

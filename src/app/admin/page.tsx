@@ -26,7 +26,8 @@ export default function AdminPage() {
     name: '',
     partner: '',
     phone: '',
-    from_side: 'adel'
+    from_side: 'adel',
+    category: 'keluarga'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -37,11 +38,15 @@ export default function AdminPage() {
     name: '',
     partner: '',
     phone: '',
-    from_side: ''
+    from_side: '',
+    category: ''
   });
   const [fromSideOptions, setFromSideOptions] = useState<{ value: string; count: number }[]>([]);
-  const [fromSideInput, setFromSideInput] = useState('');
-  const [showFromSideSuggestions, setShowFromSideSuggestions] = useState(false);
+  const [categoryOptions, setCategoryOptions] = useState<{ value: string; count: number }[]>([]);
+  const [showFromSideQuickAdd, setShowFromSideQuickAdd] = useState(false);
+  const [showCategoryQuickAdd, setShowCategoryQuickAdd] = useState(false);
+  const [quickAddFromSide, setQuickAddFromSide] = useState('');
+  const [quickAddCategory, setQuickAddCategory] = useState('');
 
   // Budget Planner State
   const [monthlyBudgets, setMonthlyBudgets] = useState<(MonthlyBudget & { income_items: IncomeItem[], expense_items: ExpenseItem[] })[]>([]);
@@ -319,6 +324,11 @@ export default function AdminPage() {
       console.log('✅ From side options loaded:', fromSideData);
       setFromSideOptions(fromSideData);
 
+      // Load category options
+      const categoryData = await guestService.getCategoryOptions();
+      console.log('✅ Category options loaded:', categoryData);
+      setCategoryOptions(categoryData);
+
       // If we reach here, database is ready
       setDatabaseReady(true);
       console.log('✅ Database is ready!');
@@ -369,13 +379,14 @@ export default function AdminPage() {
         name: formData.name.trim(),
         partner: formData.partner.trim() || undefined,
         phone: formData.phone.trim() || undefined,
-        from_side: formData.from_side,
+        from_side: formData.from_side.toLowerCase().trim(),
+        category: formData.category.toLowerCase().trim(),
         invitation_link: invitationLink,
         whatsapp_message: whatsappMessage
       });
 
       setGuests([newGuest, ...guests]);
-      setFormData({ name: '', partner: '', phone: '', from_side: 'adel' });
+      setFormData({ name: '', partner: '', phone: '', from_side: 'adel', category: 'keluarga' });
       setShowAddForm(false); // Close form after successful submission
       // Reload stats after adding guest
       loadData();
@@ -442,9 +453,9 @@ export default function AdminPage() {
       name: guest.name,
       partner: guest.partner || '',
       phone: guest.phone || '',
-      from_side: guest.from_side
+      from_side: guest.from_side,
+      category: guest.category || ''
     });
-    setFromSideInput(guest.from_side);
     setShowEditModal(true);
   };
 
@@ -467,7 +478,8 @@ export default function AdminPage() {
         name: editFormData.name.trim(),
         partner: editFormData.partner.trim() || undefined,
         phone: editFormData.phone.trim() || undefined,
-        from_side: normalizedFromSide
+        from_side: normalizedFromSide,
+        category: editFormData.category.toLowerCase().trim() || undefined
       };
 
       if (nameChanged || partnerChanged) {
@@ -497,21 +509,51 @@ export default function AdminPage() {
     }
   };
 
-  const handleFromSideInputChange = (value: string) => {
-    setFromSideInput(value);
-    setEditFormData({ ...editFormData, from_side: value });
-    setShowFromSideSuggestions(value.length > 0);
+  const handleFromSideChange = (value: string) => {
+    if (value === '__ADD_NEW__') {
+      setShowFromSideQuickAdd(true);
+      setQuickAddFromSide('');
+    } else {
+      setFormData({ ...formData, from_side: value });
+      setEditFormData({ ...editFormData, from_side: value });
+      setShowFromSideQuickAdd(false);
+    }
   };
 
-  const selectFromSideSuggestion = (suggestion: string) => {
-    setFromSideInput(suggestion);
-    setEditFormData({ ...editFormData, from_side: suggestion });
-    setShowFromSideSuggestions(false);
+  const handleCategoryChange = (value: string) => {
+    if (value === '__ADD_NEW__') {
+      setShowCategoryQuickAdd(true);
+      setQuickAddCategory('');
+    } else {
+      setFormData({ ...formData, category: value });
+      setEditFormData({ ...editFormData, category: value });
+      setShowCategoryQuickAdd(false);
+    }
   };
 
-  const filteredFromSideSuggestions = fromSideOptions.filter(option =>
-    option.value.toLowerCase().includes(fromSideInput.toLowerCase())
-  );
+  const addNewFromSide = () => {
+    if (quickAddFromSide.trim()) {
+      const normalized = quickAddFromSide.toLowerCase().trim();
+      setFormData({ ...formData, from_side: normalized });
+      setEditFormData({ ...editFormData, from_side: normalized });
+      setShowFromSideQuickAdd(false);
+      setQuickAddFromSide('');
+      // Add to options for immediate use
+      setFromSideOptions(prev => [...prev, { value: normalized, count: 1 }]);
+    }
+  };
+
+  const addNewCategory = () => {
+    if (quickAddCategory.trim()) {
+      const normalized = quickAddCategory.toLowerCase().trim();
+      setFormData({ ...formData, category: normalized });
+      setEditFormData({ ...editFormData, category: normalized });
+      setShowCategoryQuickAdd(false);
+      setQuickAddCategory('');
+      // Add to options for immediate use
+      setCategoryOptions(prev => [...prev, { value: normalized, count: 1 }]);
+    }
+  };
 
   const regenerateLinks = async () => {
     if (!confirm('Regenerate semua invitation links dan WhatsApp messages? Ini akan update semua data existing.')) return;
@@ -924,7 +966,7 @@ export default function AdminPage() {
                     </button>
                   </div>
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-5 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-slate-600 mb-1">
                           👤 Nama Tamu *
@@ -966,14 +1008,114 @@ export default function AdminPage() {
                         <label className="block text-sm font-medium text-slate-600 mb-1">
                           🎭 Tamu dari *
                         </label>
-                        <input
-                          type="text"
+                        <select
                           value={formData.from_side}
-                          onChange={(e) => setFormData({ ...formData, from_side: e.target.value })}
+                          onChange={(e) => handleFromSideChange(e.target.value)}
                           className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm"
-                          placeholder="adel, eko, mamak adel, mbah epi..."
                           required
-                        />
+                        >
+                          <option value="">-- Pilih --</option>
+                          <optgroup label="📌 Popular">
+                            <option value="adel">👰 adel</option>
+                            <option value="eko">🤵 eko</option>
+                          </optgroup>
+                          {fromSideOptions.filter(opt => !['adel', 'eko'].includes(opt.value)).length > 0 && (
+                            <optgroup label="👥 Others">
+                              {fromSideOptions.filter(opt => !['adel', 'eko'].includes(opt.value)).map((option) => (
+                                <option key={option.value} value={option.value}>
+                                  👥 {option.value} ({option.count})
+                                </option>
+                              ))}
+                            </optgroup>
+                          )}
+                          <option value="__ADD_NEW__">+ Add new category</option>
+                        </select>
+                        {showFromSideQuickAdd && (
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              value={quickAddFromSide}
+                              onChange={(e) => setQuickAddFromSide(e.target.value)}
+                              onKeyPress={(e) => e.key === 'Enter' && addNewFromSide()}
+                              className="w-full px-3 py-2 bg-white border border-rose-300 rounded-xl focus:outline-none focus:border-rose-400 text-sm"
+                              placeholder="Type new category..."
+                              autoFocus
+                            />
+                            <div className="flex space-x-2 mt-2">
+                              <button
+                                type="button"
+                                onClick={addNewFromSide}
+                                className="px-3 py-1 bg-rose-500 text-white rounded-lg text-xs hover:bg-rose-600"
+                              >
+                                Add
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setShowFromSideQuickAdd(false)}
+                                className="px-3 py-1 bg-gray-300 text-gray-700 rounded-lg text-xs hover:bg-gray-400"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <div className="relative">
+                        <label className="block text-sm font-medium text-slate-600 mb-1">
+                          🏷️ Kategori *
+                        </label>
+                        <select
+                          value={formData.category}
+                          onChange={(e) => handleCategoryChange(e.target.value)}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm"
+                          required
+                        >
+                          <option value="">-- Pilih --</option>
+                          <optgroup label="📌 Popular">
+                            <option value="keluarga">👨‍👩‍👧‍👦 keluarga</option>
+                            <option value="teman">👫 teman</option>
+                            <option value="kolega">👔 kolega</option>
+                          </optgroup>
+                          {categoryOptions.filter(opt => !['keluarga', 'teman', 'kolega'].includes(opt.value)).length > 0 && (
+                            <optgroup label="🏷️ Others">
+                              {categoryOptions.filter(opt => !['keluarga', 'teman', 'kolega'].includes(opt.value)).map((option) => (
+                                <option key={option.value} value={option.value}>
+                                  🏷️ {option.value} ({option.count})
+                                </option>
+                              ))}
+                            </optgroup>
+                          )}
+                          <option value="__ADD_NEW__">+ Add new category</option>
+                        </select>
+                        {showCategoryQuickAdd && (
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              value={quickAddCategory}
+                              onChange={(e) => setQuickAddCategory(e.target.value)}
+                              onKeyPress={(e) => e.key === 'Enter' && addNewCategory()}
+                              className="w-full px-3 py-2 bg-white border border-rose-300 rounded-xl focus:outline-none focus:border-rose-400 text-sm"
+                              placeholder="Type new category..."
+                              autoFocus
+                            />
+                            <div className="flex space-x-2 mt-2">
+                              <button
+                                type="button"
+                                onClick={addNewCategory}
+                                className="px-3 py-1 bg-rose-500 text-white rounded-lg text-xs hover:bg-rose-600"
+                              >
+                                Add
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setShowCategoryQuickAdd(false)}
+                                className="px-3 py-1 bg-gray-300 text-gray-700 rounded-lg text-xs hover:bg-gray-400"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="flex space-x-3 pt-2">
@@ -1114,6 +1256,7 @@ export default function AdminPage() {
                         <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 hidden md:table-cell">Partner</th>
                         <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 hidden lg:table-cell">Phone</th>
                         <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">From</th>
+                        <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 hidden xl:table-cell">Category</th>
                         <th className="text-right px-4 py-3 text-sm font-medium text-slate-600">Actions</th>
                       </tr>
                     </thead>
@@ -1132,6 +1275,7 @@ export default function AdminPage() {
                               <div className="md:hidden text-xs text-slate-500 mt-1">
                                 {guest.partner && <div>💕 {guest.partner}</div>}
                                 {guest.phone && <div className="lg:hidden">📱 {guest.phone}</div>}
+                                {guest.category && <div className="xl:hidden">🏷️ {guest.category}</div>}
                               </div>
                             </div>
                           </td>
@@ -1152,6 +1296,23 @@ export default function AdminPage() {
                               {guest.from_side.toLowerCase() === 'adel' ? '👰' :
                                guest.from_side.toLowerCase() === 'eko' ? '🤵' : '👥'} {guest.from_side}
                             </span>
+                          </td>
+                          <td className="px-4 py-3 text-sm text-slate-600 hidden xl:table-cell">
+                            {guest.category ? (
+                              <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                                guest.category.toLowerCase() === 'keluarga'
+                                  ? 'bg-green-100 text-green-700'
+                                  : guest.category.toLowerCase() === 'teman'
+                                  ? 'bg-blue-100 text-blue-700'
+                                  : guest.category.toLowerCase() === 'kolega'
+                                  ? 'bg-orange-100 text-orange-700'
+                                  : 'bg-gray-100 text-gray-700'
+                              }`}>
+                                {guest.category.toLowerCase() === 'keluarga' ? '👨‍👩‍👧‍👦' :
+                                 guest.category.toLowerCase() === 'teman' ? '👫' :
+                                 guest.category.toLowerCase() === 'kolega' ? '👔' : '🏷️'} {guest.category}
+                              </span>
+                            ) : '-'}
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex justify-end space-x-2">
@@ -2448,29 +2609,111 @@ export default function AdminPage() {
                   <label className="block text-sm font-medium text-gray-600 mb-1">
                     🎭 Tamu dari *
                   </label>
-                  <input
-                    type="text"
-                    value={fromSideInput}
-                    onChange={(e) => handleFromSideInputChange(e.target.value)}
-                    onFocus={() => setShowFromSideSuggestions(true)}
-                    onBlur={() => setTimeout(() => setShowFromSideSuggestions(false), 200)}
+                  <select
+                    value={editFormData.from_side}
+                    onChange={(e) => handleFromSideChange(e.target.value)}
                     className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-300 focus:bg-white transition-all duration-300 text-sm"
-                    placeholder="adel, eko, mamak adel, mbah epi..."
                     required
-                  />
-                  {showFromSideSuggestions && filteredFromSideSuggestions.length > 0 && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-40 overflow-y-auto">
-                      {filteredFromSideSuggestions.map((option) => (
+                  >
+                    <option value="">-- Pilih --</option>
+                    <optgroup label="📌 Popular">
+                      <option value="adel">👰 adel</option>
+                      <option value="eko">🤵 eko</option>
+                    </optgroup>
+                    {fromSideOptions.filter(opt => !['adel', 'eko'].includes(opt.value)).length > 0 && (
+                      <optgroup label="👥 Others">
+                        {fromSideOptions.filter(opt => !['adel', 'eko'].includes(opt.value)).map((option) => (
+                          <option key={option.value} value={option.value}>
+                            👥 {option.value} ({option.count})
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+                    <option value="__ADD_NEW__">+ Add new category</option>
+                  </select>
+                  {showFromSideQuickAdd && (
+                    <div className="mt-2">
+                      <input
+                        type="text"
+                        value={quickAddFromSide}
+                        onChange={(e) => setQuickAddFromSide(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && addNewFromSide()}
+                        className="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl focus:outline-none focus:border-blue-400 text-sm"
+                        placeholder="Type new category..."
+                        autoFocus
+                      />
+                      <div className="flex space-x-2 mt-2">
                         <button
-                          key={option.value}
                           type="button"
-                          onClick={() => selectFromSideSuggestion(option.value)}
-                          className="w-full px-3 py-2 text-left hover:bg-gray-50 transition-colors text-sm flex justify-between items-center"
+                          onClick={addNewFromSide}
+                          className="px-3 py-1 bg-blue-500 text-white rounded-lg text-xs hover:bg-blue-600"
                         >
-                          <span>{option.value}</span>
-                          <span className="text-xs text-gray-500">({option.count} guests)</span>
+                          Add
                         </button>
-                      ))}
+                        <button
+                          type="button"
+                          onClick={() => setShowFromSideQuickAdd(false)}
+                          className="px-3 py-1 bg-gray-300 text-gray-700 rounded-lg text-xs hover:bg-gray-400"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="relative">
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    🏷️ Kategori
+                  </label>
+                  <select
+                    value={editFormData.category}
+                    onChange={(e) => handleCategoryChange(e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-300 focus:bg-white transition-all duration-300 text-sm"
+                  >
+                    <option value="">-- Pilih --</option>
+                    <optgroup label="📌 Popular">
+                      <option value="keluarga">👨‍👩‍👧‍👦 keluarga</option>
+                      <option value="teman">👫 teman</option>
+                      <option value="kolega">👔 kolega</option>
+                    </optgroup>
+                    {categoryOptions.filter(opt => !['keluarga', 'teman', 'kolega'].includes(opt.value)).length > 0 && (
+                      <optgroup label="🏷️ Others">
+                        {categoryOptions.filter(opt => !['keluarga', 'teman', 'kolega'].includes(opt.value)).map((option) => (
+                          <option key={option.value} value={option.value}>
+                            🏷️ {option.value} ({option.count})
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+                    <option value="__ADD_NEW__">+ Add new category</option>
+                  </select>
+                  {showCategoryQuickAdd && (
+                    <div className="mt-2">
+                      <input
+                        type="text"
+                        value={quickAddCategory}
+                        onChange={(e) => setQuickAddCategory(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && addNewCategory()}
+                        className="w-full px-3 py-2 bg-white border border-blue-300 rounded-xl focus:outline-none focus:border-blue-400 text-sm"
+                        placeholder="Type new category..."
+                        autoFocus
+                      />
+                      <div className="flex space-x-2 mt-2">
+                        <button
+                          type="button"
+                          onClick={addNewCategory}
+                          className="px-3 py-1 bg-blue-500 text-white rounded-lg text-xs hover:bg-blue-600"
+                        >
+                          Add
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setShowCategoryQuickAdd(false)}
+                          className="px-3 py-1 bg-gray-300 text-gray-700 rounded-lg text-xs hover:bg-gray-400"
+                        >
+                          Cancel
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
