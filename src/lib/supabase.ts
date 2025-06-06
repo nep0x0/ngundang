@@ -5,6 +5,41 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
+// Generate 5-character invitation code (exclude confusing characters)
+export function generateInvitationCode(): string {
+  const chars = '23456789abcdefghjkmnpqrstuvwxyz'; // Exclude 0,o,1,l,i
+  let result = '';
+  for (let i = 0; i < 5; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
+// Check if invitation code is unique
+async function isInvitationCodeUnique(code: string): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('guests')
+    .select('id')
+    .eq('invitation_code', code)
+    .single();
+
+  // If no data found, code is unique
+  return error?.code === 'PGRST116';
+}
+
+// Generate unique invitation code
+export async function generateUniqueInvitationCode(): Promise<string> {
+  let code: string;
+  let isUnique = false;
+
+  do {
+    code = generateInvitationCode();
+    isUnique = await isInvitationCodeUnique(code);
+  } while (!isUnique);
+
+  return code;
+}
+
 // Types for our database tables
 export interface Guest {
   id: string
@@ -13,8 +48,10 @@ export interface Guest {
   phone?: string
   from_side: string // Changed from 'adel' | 'eko' to string for flexibility
   category?: string // New field for guest category (teman/keluarga/etc)
+  invitation_code: string // 5-character unique code for personalized invitations
   invitation_link: string
   whatsapp_message: string
+  rsvp_submitted: boolean // Track if guest has submitted RSVP
   created_at: string
   updated_at: string
 }
@@ -26,6 +63,7 @@ export interface RSVP {
   attendance: 'hadir' | 'tidak_hadir'
   guest_count: number
   message?: string
+  invitation_code?: string
   created_at: string
 }
 
@@ -43,13 +81,28 @@ export const guestService = {
   },
 
   // Add new guest
-  async create(guest: Omit<Guest, 'id' | 'created_at' | 'updated_at'>): Promise<Guest> {
+  async create(guest: Omit<Guest, 'id' | 'invitation_code' | 'invitation_link' | 'whatsapp_message' | 'rsvp_submitted' | 'created_at' | 'updated_at'>, baseUrl: string = 'https://yourwebsite.com'): Promise<Guest> {
+    // Generate unique invitation code
+    const invitationCode = await generateUniqueInvitationCode();
+
+    // Generate invitation link and WhatsApp message
+    const invitationLink = generateInvitationLink(invitationCode, baseUrl);
+    const whatsappMessage = generateWhatsAppMessage(guest.name, guest.partner, invitationCode, baseUrl);
+
+    const guestWithCode = {
+      ...guest,
+      invitation_code: invitationCode,
+      invitation_link: invitationLink,
+      whatsapp_message: whatsappMessage,
+      rsvp_submitted: false
+    };
+
     const { data, error } = await supabase
       .from('guests')
-      .insert([guest])
+      .insert([guestWithCode])
       .select()
       .single()
-    
+
     if (error) throw error
     return data
   },
@@ -119,6 +172,18 @@ export const guestService = {
     return Object.entries(counts)
       .map(([value, count]) => ({ value, count }))
       .sort((a, b) => b.count - a.count)
+  },
+
+  // Get guest by invitation code
+  async getByInvitationCode(code: string): Promise<Guest | null> {
+    const { data, error } = await supabase
+      .from('guests')
+      .select('*')
+      .eq('invitation_code', code)
+      .single()
+
+    if (error && error.code !== 'PGRST116') throw error
+    return data
   }
 }
 
@@ -595,17 +660,22 @@ export const weddingInfoService = {
   }
 }
 
-// Helper function to generate invitation link
-export function generateInvitationLink(guestName: string, partnerName?: string, baseUrl: string = 'https://yourwebsite.com'): string {
+// Helper function to generate invitation link using invitation code
+export function generateInvitationLink(invitationCode: string, baseUrl: string = 'https://yourwebsite.com'): string {
+  return `${baseUrl}/${invitationCode}`
+}
+
+// Legacy function for backward compatibility (will be updated to use invitation codes)
+export function generateInvitationLinkLegacy(guestName: string, partnerName?: string, baseUrl: string = 'https://yourwebsite.com'): string {
   const fullName = partnerName ? `${guestName} dan ${partnerName}` : guestName
   const encodedName = encodeURIComponent(fullName)
   return `${baseUrl}/?to=${encodedName}`
 }
 
-// Helper function to generate WhatsApp message
-export function generateWhatsAppMessage(guestName: string, partnerName?: string, invitationLink?: string): string {
+// Helper function to generate WhatsApp message with invitation code
+export function generateWhatsAppMessage(guestName: string, partnerName?: string, invitationCode?: string, baseUrl: string = 'https://yourwebsite.com'): string {
   const partner = partnerName ? ` dan ${partnerName}` : ''
-  const link = invitationLink || generateInvitationLink(guestName, partnerName)
+  const link = invitationCode ? generateInvitationLink(invitationCode, baseUrl) : `${baseUrl}`
 
   return `Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i ${guestName}${partner} untuk menghadiri acara kami.
 

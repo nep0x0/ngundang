@@ -397,18 +397,14 @@ export default function AdminPage() {
     try {
       setIsSubmitting(true);
       const baseUrl = window.location.origin;
-      const invitationLink = generateInvitationLink(formData.name, formData.partner || undefined, baseUrl);
-      const whatsappMessage = generateWhatsAppMessage(formData.name, formData.partner || undefined, invitationLink);
 
       const newGuest = await guestService.create({
         name: formData.name.trim(),
         partner: formData.partner.trim() || undefined,
         phone: formData.phone.trim() || undefined,
         from_side: formData.from_side.toLowerCase().trim(),
-        category: formData.category.toLowerCase().trim(),
-        invitation_link: invitationLink,
-        whatsapp_message: whatsappMessage
-      });
+        category: formData.category.toLowerCase().trim()
+      }, baseUrl);
 
       setGuests([newGuest, ...guests]);
       setFormData({ name: '', partner: '', phone: '', from_side: 'adel', category: 'keluarga' });
@@ -508,8 +504,8 @@ export default function AdminPage() {
       };
 
       if (nameChanged || partnerChanged) {
-        const newInvitationLink = generateInvitationLink(editFormData.name.trim(), editFormData.partner.trim() || undefined, baseUrl);
-        const newWhatsAppMessage = generateWhatsAppMessage(editFormData.name.trim(), editFormData.partner.trim() || undefined, newInvitationLink);
+        const newInvitationLink = generateInvitationLink(editingGuest.invitation_code, baseUrl);
+        const newWhatsAppMessage = generateWhatsAppMessage(editFormData.name.trim(), editFormData.partner.trim() || undefined, editingGuest.invitation_code, baseUrl);
 
         updates = {
           ...updates,
@@ -591,8 +587,8 @@ export default function AdminPage() {
       const baseUrl = window.location.origin;
 
       for (const guest of guests) {
-        const newInvitationLink = generateInvitationLink(guest.name, guest.partner || undefined, baseUrl);
-        const newWhatsAppMessage = generateWhatsAppMessage(guest.name, guest.partner || undefined, newInvitationLink);
+        const newInvitationLink = generateInvitationLink(guest.invitation_code, baseUrl);
+        const newWhatsAppMessage = generateWhatsAppMessage(guest.name, guest.partner || undefined, guest.invitation_code, baseUrl);
 
         await guestService.update(guest.id, {
           invitation_link: newInvitationLink,
