@@ -18,6 +18,7 @@ export default function RSVP() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rsvps, setRSVPs] = useState<RSVPType[]>([]);
   const [existingRSVP, setExistingRSVP] = useState<RSVPType | null>(null);
+  const [guestHasSubmittedRSVP, setGuestHasSubmittedRSVP] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -172,10 +173,10 @@ export default function RSVP() {
     }));
   };
 
-  // Check if this is a personalized invitation where guest already submitted RSVP
+  // Check if this is a personalized invitation
   const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
   const invitationCode = searchParams.get('code');
-  const isPersonalizedAndSubmitted = invitationCode && isSubmitted;
+  const isPersonalized = !!invitationCode;
 
   return (
     <section
@@ -185,7 +186,7 @@ export default function RSVP() {
       <div className="container mx-auto px-6 sm:px-8 max-w-4xl relative z-10">
         {/* RSVP Chat Display */}
         {rsvps.length > 0 && (
-          <div className={isPersonalizedAndSubmitted ? "" : "mb-12"}>
+          <div>
             <h3 className="text-2xl font-serif text-center text-slate-700 mb-8">
               Tamu yang Akan Hadir
             </h3>
@@ -217,8 +218,8 @@ export default function RSVP() {
           </div>
         )}
 
-        {/* Only show RSVP form/thank you if not personalized invitation that already submitted */}
-        {!isPersonalizedAndSubmitted && (
+        {/* Only show RSVP form for non-personalized invitations */}
+        {!isPersonalized && (
           <>
             {/* RSVP Form or Thank You Message */}
             {!isSubmitted ? (
