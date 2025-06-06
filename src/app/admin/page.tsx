@@ -26,9 +26,22 @@ export default function AdminPage() {
     name: '',
     partner: '',
     phone: '',
-    from_side: 'adel' as 'adel' | 'eko'
+    from_side: 'adel'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Edit guest state
+  const [editingGuest, setEditingGuest] = useState<Guest | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    name: '',
+    partner: '',
+    phone: '',
+    from_side: ''
+  });
+  const [fromSideOptions, setFromSideOptions] = useState<{ value: string; count: number }[]>([]);
+  const [fromSideInput, setFromSideInput] = useState('');
+  const [showFromSideSuggestions, setShowFromSideSuggestions] = useState(false);
 
   // Budget Planner State
   const [monthlyBudgets, setMonthlyBudgets] = useState<(MonthlyBudget & { income_items: IncomeItem[], expense_items: ExpenseItem[] })[]>([]);
@@ -75,7 +88,7 @@ export default function AdminPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'from' | 'date'>('name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [filterBy, setFilterBy] = useState<'all' | 'adel' | 'eko'>('all');
+  const [filterBy, setFilterBy] = useState<string>('all');
 
   // Wedding Info update state (moved from line 442-443)
   const [updateTimeout, setUpdateTimeout] = useState<NodeJS.Timeout | null>(null);
@@ -301,6 +314,11 @@ export default function AdminPage() {
       console.log('✅ Stats loaded:', statsData);
       setStats(statsData);
 
+      // Load from_side options
+      const fromSideData = await guestService.getFromSideOptions();
+      console.log('✅ From side options loaded:', fromSideData);
+      setFromSideOptions(fromSideData);
+
       // If we reach here, database is ready
       setDatabaseReady(true);
       console.log('✅ Database is ready!');
@@ -418,6 +436,83 @@ export default function AdminPage() {
     }
   };
 
+  const handleEditGuest = (guest: Guest) => {
+    setEditingGuest(guest);
+    setEditFormData({
+      name: guest.name,
+      partner: guest.partner || '',
+      phone: guest.phone || '',
+      from_side: guest.from_side
+    });
+    setFromSideInput(guest.from_side);
+    setShowEditModal(true);
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingGuest || !editFormData.name.trim()) return;
+
+    try {
+      setIsSubmitting(true);
+      const baseUrl = window.location.origin;
+
+      // Normalize from_side to lowercase
+      const normalizedFromSide = editFormData.from_side.toLowerCase().trim();
+
+      // Regenerate links if name or partner changed
+      const nameChanged = editFormData.name.trim() !== editingGuest.name;
+      const partnerChanged = (editFormData.partner.trim() || undefined) !== editingGuest.partner;
+
+      let updates: Partial<Guest> = {
+        name: editFormData.name.trim(),
+        partner: editFormData.partner.trim() || undefined,
+        phone: editFormData.phone.trim() || undefined,
+        from_side: normalizedFromSide
+      };
+
+      if (nameChanged || partnerChanged) {
+        const newInvitationLink = generateInvitationLink(editFormData.name.trim(), editFormData.partner.trim() || undefined, baseUrl);
+        const newWhatsAppMessage = generateWhatsAppMessage(editFormData.name.trim(), editFormData.partner.trim() || undefined, newInvitationLink);
+
+        updates.invitation_link = newInvitationLink;
+        updates.whatsapp_message = newWhatsAppMessage;
+      }
+
+      const updatedGuest = await guestService.update(editingGuest.id, updates);
+
+      // Update local state
+      setGuests(guests.map(g => g.id === editingGuest.id ? updatedGuest : g));
+
+      // Close modal and reload data
+      setShowEditModal(false);
+      setEditingGuest(null);
+      loadData();
+
+      alert('Tamu berhasil diupdate!');
+    } catch (error) {
+      console.error('Error updating guest:', error);
+      alert('Error updating guest. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleFromSideInputChange = (value: string) => {
+    setFromSideInput(value);
+    setEditFormData({ ...editFormData, from_side: value });
+    setShowFromSideSuggestions(value.length > 0);
+  };
+
+  const selectFromSideSuggestion = (suggestion: string) => {
+    setFromSideInput(suggestion);
+    setEditFormData({ ...editFormData, from_side: suggestion });
+    setShowFromSideSuggestions(false);
+  };
+
+  const filteredFromSideSuggestions = fromSideOptions.filter(option =>
+    option.value.toLowerCase().includes(fromSideInput.toLowerCase())
+  );
+
   const regenerateLinks = async () => {
     if (!confirm('Regenerate semua invitation links dan WhatsApp messages? Ini akan update semua data existing.')) return;
 
@@ -530,7 +625,7 @@ export default function AdminPage() {
         (guest.phone && guest.phone.includes(searchQuery));
 
       // From filter
-      const matchesFrom = filterBy === 'all' || guest.from_side === filterBy;
+      const matchesFrom = filterBy === 'all' || guest.from_side.toLowerCase() === filterBy.toLowerCase();
 
       return matchesSearch && matchesFrom;
     });
@@ -867,19 +962,18 @@ export default function AdminPage() {
                           placeholder="081234567890"
                         />
                       </div>
-                      <div>
+                      <div className="relative">
                         <label className="block text-sm font-medium text-slate-600 mb-1">
                           🎭 Tamu dari *
                         </label>
-                        <select
+                        <input
+                          type="text"
                           value={formData.from_side}
-                          onChange={(e) => setFormData({ ...formData, from_side: e.target.value as 'adel' | 'eko' })}
+                          onChange={(e) => setFormData({ ...formData, from_side: e.target.value })}
                           className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm"
+                          placeholder="adel, eko, mamak adel, mbah epi..."
                           required
-                        >
-                          <option value="adel">👰 Adel</option>
-                          <option value="eko">🤵 Eko</option>
-                        </select>
+                        />
                       </div>
                     </div>
                     <div className="flex space-x-3 pt-2">
@@ -943,12 +1037,16 @@ export default function AdminPage() {
                   {/* Filter Dropdown */}
                   <select
                     value={filterBy}
-                    onChange={(e) => setFilterBy(e.target.value as 'all' | 'adel' | 'eko')}
+                    onChange={(e) => setFilterBy(e.target.value)}
                     className="px-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100 transition-all duration-300 text-sm"
                   >
                     <option value="all">All Guests</option>
-                    <option value="adel">👰 Adel</option>
-                    <option value="eko">🤵 Eko</option>
+                    {fromSideOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.value.toLowerCase() === 'adel' ? '👰' :
+                         option.value.toLowerCase() === 'eko' ? '🤵' : '👥'} {option.value} ({option.count})
+                      </option>
+                    ))}
                   </select>
 
                   {/* Sort Dropdown */}
@@ -1045,11 +1143,14 @@ export default function AdminPage() {
                           </td>
                           <td className="px-4 py-3">
                             <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                              guest.from_side === 'adel'
+                              guest.from_side.toLowerCase() === 'adel'
                                 ? 'bg-rose-100 text-rose-700'
-                                : 'bg-blue-100 text-blue-700'
+                                : guest.from_side.toLowerCase() === 'eko'
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-purple-100 text-purple-700'
                             }`}>
-                              {guest.from_side === 'adel' ? '👰 Adel' : '🤵 Eko'}
+                              {guest.from_side.toLowerCase() === 'adel' ? '👰' :
+                               guest.from_side.toLowerCase() === 'eko' ? '🤵' : '👥'} {guest.from_side}
                             </span>
                           </td>
                           <td className="px-4 py-3">
@@ -1064,6 +1165,13 @@ export default function AdminPage() {
                                 title="Copy WhatsApp Message"
                               >
                                 💬
+                              </button>
+                              <button
+                                onClick={() => handleEditGuest(guest)}
+                                className="bg-blue-500 text-white px-2 py-1 rounded-lg text-xs font-medium hover:bg-blue-600 transition-all duration-300"
+                                title="Edit Guest"
+                              >
+                                ✏️
                               </button>
                               <button
                                 onClick={() => handleDelete(guest.id)}
@@ -2271,6 +2379,115 @@ export default function AdminPage() {
                     className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
                   >
                     Tambah
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Guest Modal */}
+        {showEditModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center">
+                      <span className="text-blue-600">✏️</span>
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-700">Edit Guest</h3>
+                  </div>
+                  <button
+                    onClick={() => setShowEditModal(false)}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors text-gray-500"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+              <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    👤 Nama Tamu *
+                  </label>
+                  <input
+                    type="text"
+                    value={editFormData.name}
+                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-300 focus:bg-white transition-all duration-300 text-sm"
+                    placeholder="Budi Santoso"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    💕 Pasangan
+                  </label>
+                  <input
+                    type="text"
+                    value={editFormData.partner}
+                    onChange={(e) => setEditFormData({ ...editFormData, partner: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-300 focus:bg-white transition-all duration-300 text-sm"
+                    placeholder="Siti Rahayu"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    📱 Phone
+                  </label>
+                  <input
+                    type="text"
+                    value={editFormData.phone}
+                    onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-300 focus:bg-white transition-all duration-300 text-sm"
+                    placeholder="081234567890"
+                  />
+                </div>
+                <div className="relative">
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    🎭 Tamu dari *
+                  </label>
+                  <input
+                    type="text"
+                    value={fromSideInput}
+                    onChange={(e) => handleFromSideInputChange(e.target.value)}
+                    onFocus={() => setShowFromSideSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowFromSideSuggestions(false), 200)}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-300 focus:bg-white transition-all duration-300 text-sm"
+                    placeholder="adel, eko, mamak adel, mbah epi..."
+                    required
+                  />
+                  {showFromSideSuggestions && filteredFromSideSuggestions.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-40 overflow-y-auto">
+                      {filteredFromSideSuggestions.map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => selectFromSideSuggestion(option.value)}
+                          className="w-full px-3 py-2 text-left hover:bg-gray-50 transition-colors text-sm flex justify-between items-center"
+                        >
+                          <span>{option.value}</span>
+                          <span className="text-xs text-gray-500">({option.count} guests)</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="flex space-x-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowEditModal(false)}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 disabled:opacity-50 transition-colors"
+                  >
+                    {isSubmitting ? 'Saving...' : 'Save Changes'}
                   </button>
                 </div>
               </form>

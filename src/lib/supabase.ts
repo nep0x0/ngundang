@@ -11,7 +11,7 @@ export interface Guest {
   name: string
   partner?: string
   phone?: string
-  from_side: 'adel' | 'eko'
+  from_side: string // Changed from 'adel' | 'eko' to string for flexibility
   invitation_link: string
   whatsapp_message: string
   created_at: string
@@ -72,8 +72,29 @@ export const guestService = {
       .from('guests')
       .delete()
       .eq('id', id)
-    
+
     if (error) throw error
+  },
+
+  // Get unique from_side values for suggestions
+  async getFromSideOptions(): Promise<{ value: string; count: number }[]> {
+    const { data, error } = await supabase
+      .from('guests')
+      .select('from_side')
+
+    if (error) throw error
+
+    // Count occurrences of each from_side value
+    const counts: { [key: string]: number } = {}
+    data?.forEach(guest => {
+      const normalized = guest.from_side.toLowerCase().trim()
+      counts[normalized] = (counts[normalized] || 0) + 1
+    })
+
+    // Convert to array and sort by count (descending)
+    return Object.entries(counts)
+      .map(([value, count]) => ({ value, count }))
+      .sort((a, b) => b.count - a.count)
   }
 }
 
