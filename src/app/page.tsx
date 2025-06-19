@@ -163,7 +163,7 @@ function HomeContent() {
         address: weddingInfo.akad_venue_address
       },
       resepsi: {
-        title: "Resepsi",
+        title: "Semi Resepsi",
         date: formatWeddingDate(weddingInfo.resepsi_date),
         time: formatTime(weddingInfo.resepsi_time),
         location: weddingInfo.resepsi_venue_name,
@@ -224,7 +224,7 @@ function HomeContent() {
         address: "Jl. Dr. Sumbiyono RT 11 NO. 35 Kelurahan Jelutung Kecamatan Jelutung, Kota Jambi"
       },
       resepsi: {
-        title: "Resepsi",
+        title: "Semi Resepsi",
         date: "Jumat, 19 Desember 2025",
         time: "13:30 - 16:00 WIB",
         location: "Kediaman Mempelai Wanita",
