@@ -116,7 +116,7 @@ export default function Cover({
           priority
         />
         {/* Blue Overlay */}
-        <div className="absolute inset-0 bg-blue-900/50"></div>
+        <div className="absolute inset-0 bg-sky-900/40"></div>
       </div>
 
 
@@ -171,25 +171,25 @@ export default function Cover({
         <button
           ref={buttonRef}
           onClick={onOpenInvitation}
-          className="group relative px-6 sm:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white rounded-full hover:from-blue-700 hover:via-blue-800 hover:to-blue-900 active:from-blue-800 active:via-blue-900 active:to-blue-950 transition-all duration-700 shadow-lg hover:shadow-xl border border-blue-400/30 hover:border-blue-300/50 backdrop-blur-sm transform hover:scale-102 active:scale-98 flex items-center justify-center mx-auto text-sm sm:text-base font-light tracking-[0.15em] uppercase overflow-hidden"
+          className="group relative px-8 sm:px-10 py-3 sm:py-4 text-white rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center mx-auto text-sm sm:text-base font-medium tracking-wide backdrop-blur-md border border-white/20 hover:border-white/30"
           style={{
-            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.95) 50%, rgba(29, 78, 216, 1) 100%)',
-            boxShadow: '0 8px 32px rgba(59, 130, 246, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+            background: 'rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
           }}
         >
-          {/* Shimmer effect */}
-          <div className="absolute inset-0 -top-2 -bottom-2 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-1000"></div>
+          {/* Glass reflection */}
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-50"></div>
 
           {/* Content */}
           <span className="relative z-10 flex items-center">
             Buka Undangan
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-4 sm:w-4 ml-2 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-3 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
           </span>
 
-          {/* Glow effect */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/0 via-blue-300/20 to-blue-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          {/* Hover glow */}
+          <div className="absolute inset-0 rounded-2xl bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </button>
       </div>
     </div>
