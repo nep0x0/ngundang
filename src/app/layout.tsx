@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Montserrat } from "next/font/google";
+import { Playfair_Display, Montserrat, Tangerine } from "next/font/google";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -11,6 +11,13 @@ const playfair = Playfair_Display({
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const tangerine = Tangerine({
+  variable: "--font-tangerine",
+  subsets: ["latin"],
+  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -36,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="id" className="overflow-x-hidden">
       <body
-        className={`${playfair.variable} ${montserrat.variable} antialiased w-full overflow-x-hidden`}
+        className={`${playfair.variable} ${montserrat.variable} ${tangerine.variable} antialiased w-full overflow-x-hidden`}
       >
         <div className="max-w-[100vw] overflow-x-hidden">
           {children}

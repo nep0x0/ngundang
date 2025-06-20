@@ -91,7 +91,7 @@ export default function Cover({
   return (
     <div
       ref={coverRef}
-      className="fixed inset-0 bg-gradient-to-br from-slate-100 via-blue-50 to-slate-200 flex items-center justify-center z-40 w-full h-full overflow-hidden"
+      className="fixed inset-0 flex items-center justify-center z-40 w-full h-full overflow-hidden"
       style={{
         position: 'fixed',
         top: 0,
@@ -102,55 +102,23 @@ export default function Cover({
         touchAction: 'none'
       }}
     >
-      {/* Background dengan Gradasi dan Motif */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-slate-100 to-blue-100"></div>
-
-      {/* Layer Gradasi Tambahan */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-blue-200/20 via-transparent to-blue-300/20"></div>
-
-      {/* Motif Jawa dengan CSS */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.3) 2px, transparent 2px),
-            radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.3) 2px, transparent 2px),
-            radial-gradient(circle at 40% 60%, rgba(59, 130, 246, 0.2) 1px, transparent 1px),
-            radial-gradient(circle at 60% 40%, rgba(59, 130, 246, 0.2) 1px, transparent 1px)
-          `,
-          backgroundSize: '60px 60px, 80px 80px, 40px 40px, 50px 50px',
-          backgroundPosition: '0 0, 30px 30px, 10px 10px, 25px 25px'
-        }}></div>
+      {/* Background Image with Blur and Blue Overlay */}
+      <div className="absolute inset-0 w-full h-full">
+        <Image
+          src="/images/swahaxadel-508.jpg"
+          alt="Wedding Background"
+          fill
+          className="object-cover"
+          style={{
+            transform: 'scale(1.3) translateX(-5%)',
+            transformOrigin: 'center center'
+          }}
+          priority
+        />
+        {/* Blue Overlay */}
+        <div className="absolute inset-0 bg-blue-900/50"></div>
       </div>
 
-      {/* Motif Bunga dengan CSS */}
-      <div className="absolute inset-0 opacity-8">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            radial-gradient(ellipse 8px 12px at center, rgba(59, 130, 246, 0.15) 40%, transparent 50%),
-            radial-gradient(ellipse 12px 8px at center, rgba(59, 130, 246, 0.15) 40%, transparent 50%),
-            radial-gradient(ellipse 6px 10px at center, rgba(59, 130, 246, 0.1) 40%, transparent 50%)
-          `,
-          backgroundSize: '100px 100px, 120px 120px, 80px 80px',
-          backgroundPosition: '0 0, 50px 50px, 25px 25px'
-        }}></div>
-      </div>
-
-      {/* Pattern Batik Sederhana */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            linear-gradient(45deg, rgba(59, 130, 246, 0.1) 25%, transparent 25%),
-            linear-gradient(-45deg, rgba(59, 130, 246, 0.1) 25%, transparent 25%),
-            linear-gradient(45deg, transparent 75%, rgba(59, 130, 246, 0.1) 75%),
-            linear-gradient(-45deg, transparent 75%, rgba(59, 130, 246, 0.1) 75%)
-          `,
-          backgroundSize: '20px 20px',
-          backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
-        }}></div>
-      </div>
-
-      {/* Overlay Gradasi Halus */}
-      <div className="absolute inset-0 bg-gradient-radial from-transparent via-blue-50/30 to-blue-100/40"></div>
 
       {/* Bunga1 - Pojok Kiri Atas */}
       <div
@@ -184,20 +152,20 @@ export default function Cover({
         className="relative z-20 w-full max-w-md sm:max-w-lg md:max-w-xl mx-auto text-center px-6 sm:px-8"
       >
         <div className="mb-12 sm:mb-16 md:mb-20">
-          <p className="text-base sm:text-lg md:text-xl uppercase tracking-[0.4em] text-blue-600 mb-8 sm:mb-12 md:mb-16 font-light">
+          <p className="text-base sm:text-lg md:text-xl uppercase tracking-[0.4em] text-white mb-8 sm:mb-12 md:mb-16 font-light drop-shadow-lg">
             THE WEDDING OF
           </p>
 
-          <h1 ref={nameRef} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-serif mb-6 sm:mb-8 md:mb-12 text-blue-700 leading-tight font-normal">
-            <span className="font-light italic">{brideNames.bride}</span>
-            <span className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-blue-400 font-extralight my-2 sm:my-3 md:my-4">&</span>
-            <span className="font-light italic">{brideNames.groom}</span>
+          <h1 ref={nameRef} className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-tangerine mb-6 sm:mb-8 md:mb-12 text-white leading-tight font-bold drop-shadow-xl">
+            <span className="">{brideNames.bride}</span>
+            <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-blue-100 font-normal my-2 sm:my-3 md:my-4 drop-shadow-lg">&</span>
+            <span className="">{brideNames.groom}</span>
           </h1>
         </div>
 
         <div ref={recipientRef} className="mb-10 sm:mb-12 md:mb-16">
-          <p className="text-blue-600 mb-3 text-sm sm:text-base md:text-lg font-light tracking-wide uppercase">Kepada YTH:</p>
-          <p className="text-2xl sm:text-3xl md:text-4xl font-light text-blue-700 font-serif italic">{recipientName}</p>
+          <p className="text-white mb-3 text-sm sm:text-base md:text-lg font-light tracking-wide uppercase drop-shadow-lg">Kepada YTH:</p>
+          <p className="text-2xl sm:text-3xl md:text-4xl font-light text-white font-serif italic drop-shadow-xl">{recipientName}</p>
         </div>
 
         <button

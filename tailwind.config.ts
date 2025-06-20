@@ -29,6 +29,7 @@ export default {
       fontFamily: {
         serif: ["var(--font-playfair)", "serif"],
         sans: ["var(--font-montserrat)", "sans-serif"],
+        tangerine: ["var(--font-tangerine)", "cursive"],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
