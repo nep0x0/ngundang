@@ -823,7 +823,7 @@ export default function AdminPage() {
             </div>
             <div>
               <h1 className="text-lg font-semibold text-slate-700 group-hover:text-rose-600 transition-colors">Wedding Admin</h1>
-              <p className="text-xs text-slate-500 group-hover:text-rose-500 transition-colors">Adelita & Ansyah</p>
+              <p className="text-xs text-slate-500 group-hover:text-rose-500 transition-colors font-tangerine font-bold">Adelita & Ansyah</p>
             </div>
           </Link>
           <button

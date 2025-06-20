@@ -124,8 +124,8 @@ export default function Bottom({ brideNames, weddingDate, thankYouMessage }: Bot
             <div className="w-16 h-px bg-blue-300"></div>
           </div>
 
-          <h3 className="text-3xl sm:text-4xl md:text-5xl font-serif font-light text-blue-700 mb-4">
-            {brideNames.bride} <span className="text-blue-400 font-extralight">&</span> {brideNames.groom}
+          <h3 className="text-4xl sm:text-5xl md:text-6xl font-tangerine font-bold text-blue-700 mb-4">
+            {brideNames.bride} <span className="text-blue-400 font-normal">&</span> {brideNames.groom}
           </h3>
 
           <p className="text-base sm:text-lg md:text-xl text-slate-600 font-light">

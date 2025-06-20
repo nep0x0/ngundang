@@ -31,7 +31,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "Undangan Pernikahan Adelita & Ansyah",
-  description: "Undangan pernikahan Adelita & Ansyah - Sabtu, 15 Juni 2024",
+  description: "Undangan pernikahan Adelita & Ansyah - Jumat, 19 Desember 2025",
   keywords: "undangan pernikahan, wedding invitation, Adelita, Ansyah",
 };
 

@@ -107,7 +107,7 @@ export default function CoupleInfo({ bride, groom }: CoupleInfoProps) {
                 </div>
               )}
             </div>
-            <h3 className="text-xl sm:text-2xl font-serif mb-1 sm:mb-2 text-blue-700">{bride.name}</h3>
+            <h3 className="text-2xl sm:text-3xl font-tangerine mb-1 sm:mb-2 text-blue-700 font-bold">{bride.name}</h3>
             <p className="text-base sm:text-lg text-blue-600 mb-2 sm:mb-4">{bride.fullName}</p>
             <p className="text-sm sm:text-base text-blue-500">{bride.description}</p>
           </div>
@@ -137,7 +137,7 @@ export default function CoupleInfo({ bride, groom }: CoupleInfoProps) {
                 </div>
               )}
             </div>
-            <h3 className="text-xl sm:text-2xl font-serif mb-1 sm:mb-2 text-blue-700">{groom.name}</h3>
+            <h3 className="text-2xl sm:text-3xl font-tangerine mb-1 sm:mb-2 text-blue-700 font-bold">{groom.name}</h3>
             <p className="text-base sm:text-lg text-blue-600 mb-2 sm:mb-4">{groom.fullName}</p>
             <p className="text-sm sm:text-base text-blue-500">{groom.description}</p>
           </div>

@@ -101,8 +101,8 @@ export default function Header({ brideNames, weddingDate }: HeaderProps) {
         </div>
 
         {/* Names and Date */}
-        < h1 ref={titleRef} className="text-3xl sm:text-4xl md:text-6xl font-serif mb-4 md:mb-6 leading-tight text-blue-700" >
-          {brideNames.bride} <span className="font-light text-blue-500" >&</span > {brideNames.groom}
+        < h1 ref={titleRef} className="text-4xl sm:text-5xl md:text-7xl font-tangerine mb-4 md:mb-6 leading-tight text-blue-700 font-bold" >
+          {brideNames.bride} <span className="font-normal text-blue-500" >&</span > {brideNames.groom}
         </h1 >
         {false && (
           <p ref={dateRef}>
