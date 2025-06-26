@@ -1294,7 +1294,7 @@ export default function AdminPage() {
                 <>
                   {/* Mobile Card View */}
                   <div className="block md:hidden space-y-3 p-4">
-                    {filteredAndSortedGuests.map((guest, index) => (
+                    {filteredAndSortedGuests.map((guest) => (
                       <div
                         key={guest.id}
                         className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow"
