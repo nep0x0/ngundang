@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS guests (
     partner TEXT,
     phone TEXT,
     from_side TEXT NOT NULL CHECK (from_side IN ('adel', 'eko')) DEFAULT 'adel',
+    invitation_type TEXT NOT NULL CHECK (invitation_type IN ('digital', 'fisik')) DEFAULT 'digital',
     invitation_link TEXT NOT NULL,
     whatsapp_message TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

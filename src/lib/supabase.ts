@@ -48,6 +48,7 @@ export interface Guest {
   phone?: string
   from_side: string // Changed from 'adel' | 'eko' to string for flexibility
   category?: string // New field for guest category (teman/keluarga/etc)
+  invitation_type: 'digital' | 'fisik' // Type of invitation: digital or physical
   invitation_code: string // 5-character unique code for personalized invitations
   invitation_link: string
   whatsapp_message: string

@@ -47,7 +47,8 @@ export default function AdminPage() {
     partner: '',
     phone: '',
     from_side: 'adel',
-    category: 'keluarga'
+    category: 'keluarga',
+    invitation_type: 'digital' as 'digital' | 'fisik'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -59,7 +60,8 @@ export default function AdminPage() {
     partner: '',
     phone: '',
     from_side: '',
-    category: ''
+    category: '',
+    invitation_type: 'digital' as 'digital' | 'fisik'
   });
   const [fromSideOptions, setFromSideOptions] = useState<{ value: string; count: number }[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<{ value: string; count: number }[]>([]);
@@ -403,11 +405,12 @@ export default function AdminPage() {
         partner: formData.partner.trim() || undefined,
         phone: formData.phone.trim() || undefined,
         from_side: formData.from_side.toLowerCase().trim(),
-        category: formData.category.toLowerCase().trim()
+        category: formData.category.toLowerCase().trim(),
+        invitation_type: formData.invitation_type
       }, baseUrl);
 
       setGuests([newGuest, ...guests]);
-      setFormData({ name: '', partner: '', phone: '', from_side: 'adel', category: 'keluarga' });
+      setFormData({ name: '', partner: '', phone: '', from_side: 'adel', category: 'keluarga', invitation_type: 'digital' });
       setShowAddForm(false); // Close form after successful submission
       // Reload stats after adding guest
       loadData();
@@ -475,7 +478,8 @@ export default function AdminPage() {
       partner: guest.partner || '',
       phone: guest.phone || '',
       from_side: guest.from_side,
-      category: guest.category || ''
+      category: guest.category || '',
+      invitation_type: guest.invitation_type || 'digital'
     });
     setShowEditModal(true);
   };
@@ -500,7 +504,8 @@ export default function AdminPage() {
         partner: editFormData.partner.trim() || undefined,
         phone: editFormData.phone.trim() || undefined,
         from_side: normalizedFromSide,
-        category: editFormData.category.toLowerCase().trim() || undefined
+        category: editFormData.category.toLowerCase().trim() || undefined,
+        invitation_type: editFormData.invitation_type
       };
 
       if (nameChanged || partnerChanged) {
@@ -990,7 +995,7 @@ export default function AdminPage() {
                     </button>
                   </div>
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-6 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-slate-600 mb-1">
                           👤 Nama Tamu *
@@ -1141,6 +1146,20 @@ export default function AdminPage() {
                           </div>
                         )}
                       </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-600 mb-1">
+                          📧 Jenis Undangan *
+                        </label>
+                        <select
+                          value={formData.invitation_type}
+                          onChange={(e) => setFormData({ ...formData, invitation_type: e.target.value as 'digital' | 'fisik' })}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-rose-300 focus:bg-white transition-all duration-300 text-sm"
+                          required
+                        >
+                          <option value="digital">📱 Digital</option>
+                          <option value="fisik">📮 Fisik</option>
+                        </select>
+                      </div>
                     </div>
                     <div className="flex space-x-3 pt-2">
                       <button
@@ -1272,18 +1291,117 @@ export default function AdminPage() {
                   </p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-slate-50 border-b border-slate-200">
-                      <tr>
-                        <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Guest</th>
-                        <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 hidden md:table-cell">Partner</th>
-                        <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 hidden lg:table-cell">Phone</th>
-                        <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">From</th>
-                        <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 hidden xl:table-cell">Category</th>
-                        <th className="text-right px-4 py-3 text-sm font-medium text-slate-600">Actions</th>
-                      </tr>
-                    </thead>
+                <>
+                  {/* Mobile Card View */}
+                  <div className="block md:hidden space-y-3 p-4">
+                    {filteredAndSortedGuests.map((guest, index) => (
+                      <div
+                        key={guest.id}
+                        className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-slate-800 text-lg">{guest.name}</h4>
+                            {guest.partner && (
+                              <p className="text-slate-600 text-sm">💕 {guest.partner}</p>
+                            )}
+                          </div>
+                          <div className="flex space-x-1">
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                copyToClipboard(guest.whatsapp_message, 'WhatsApp Message');
+                              }}
+                              className="bg-emerald-500 text-white p-2 rounded-lg text-sm hover:bg-emerald-600 transition-colors"
+                              title="Copy WhatsApp Message"
+                            >
+                              💬
+                            </button>
+                            <button
+                              onClick={() => handleEditGuest(guest)}
+                              className="bg-blue-500 text-white p-2 rounded-lg text-sm hover:bg-blue-600 transition-colors"
+                              title="Edit Guest"
+                            >
+                              ✏️
+                            </button>
+                            <button
+                              onClick={() => handleDelete(guest.id)}
+                              className="bg-rose-500 text-white p-2 rounded-lg text-sm hover:bg-rose-600 transition-colors"
+                              title="Delete Guest"
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          {guest.phone && (
+                            <div className="flex items-center space-x-2">
+                              <span className="text-slate-500">📱</span>
+                              <span className="text-slate-700">{guest.phone}</span>
+                            </div>
+                          )}
+                          <div className="flex items-center space-x-2">
+                            <span className="text-slate-500">🎭</span>
+                            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                              guest.from_side.toLowerCase() === 'adel'
+                                ? 'bg-rose-100 text-rose-700'
+                                : guest.from_side.toLowerCase() === 'eko'
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-purple-100 text-purple-700'
+                            }`}>
+                              {guest.from_side.toLowerCase() === 'adel' ? '👰' :
+                               guest.from_side.toLowerCase() === 'eko' ? '🤵' : '👥'} {guest.from_side}
+                            </span>
+                          </div>
+                          {guest.category && (
+                            <div className="flex items-center space-x-2">
+                              <span className="text-slate-500">🏷️</span>
+                              <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                                guest.category.toLowerCase() === 'keluarga'
+                                  ? 'bg-green-100 text-green-700'
+                                  : guest.category.toLowerCase() === 'teman'
+                                  ? 'bg-blue-100 text-blue-700'
+                                  : guest.category.toLowerCase() === 'kolega'
+                                  ? 'bg-orange-100 text-orange-700'
+                                  : 'bg-gray-100 text-gray-700'
+                              }`}>
+                                {guest.category.toLowerCase() === 'keluarga' ? '👨‍👩‍👧‍👦' :
+                                 guest.category.toLowerCase() === 'teman' ? '👫' :
+                                 guest.category.toLowerCase() === 'kolega' ? '👔' : '🏷️'} {guest.category}
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex items-center space-x-2">
+                            <span className="text-slate-500">📧</span>
+                            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                              guest.invitation_type === 'digital'
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-amber-100 text-amber-700'
+                            }`}>
+                              {guest.invitation_type === 'digital' ? '📱' : '📮'} {guest.invitation_type}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Desktop Table View */}
+                  <div className="hidden md:block overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-slate-50 border-b border-slate-200">
+                        <tr>
+                          <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Guest</th>
+                          <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 hidden md:table-cell">Partner</th>
+                          <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 hidden lg:table-cell">Phone</th>
+                          <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">From</th>
+                          <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 hidden xl:table-cell">Category</th>
+                          <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 hidden md:table-cell">Jenis Undangan</th>
+                          <th className="text-right px-4 py-3 text-sm font-medium text-slate-600">Actions</th>
+                        </tr>
+                      </thead>
                     <tbody className="divide-y divide-slate-100">
                       {filteredAndSortedGuests.map((guest, index) => (
                         <tr
@@ -1294,14 +1412,7 @@ export default function AdminPage() {
                           style={index % 2 !== 0 ? { backgroundColor: '#fef7f7' } : {}}
                         >
                           <td className="px-4 py-3">
-                            <div>
-                              <div className="font-medium text-slate-800">{guest.name}</div>
-                              <div className="md:hidden text-xs text-slate-500 mt-1">
-                                {guest.partner && <div>💕 {guest.partner}</div>}
-                                {guest.phone && <div className="lg:hidden">📱 {guest.phone}</div>}
-                                {guest.category && <div className="xl:hidden">🏷️ {guest.category}</div>}
-                              </div>
-                            </div>
+                            <div className="font-medium text-slate-800">{guest.name}</div>
                           </td>
                           <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell">
                             {guest.partner || '-'}
@@ -1338,6 +1449,15 @@ export default function AdminPage() {
                               </span>
                             ) : '-'}
                           </td>
+                          <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell">
+                            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                              guest.invitation_type === 'digital'
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-amber-100 text-amber-700'
+                            }`}>
+                              {guest.invitation_type === 'digital' ? '📱' : '📮'} {guest.invitation_type}
+                            </span>
+                          </td>
                           <td className="px-4 py-3">
                             <div className="flex justify-end space-x-2">
                               <button
@@ -1369,9 +1489,10 @@ export default function AdminPage() {
                           </td>
                         </tr>
                       ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
             </div>
           </div>
@@ -2911,6 +3032,20 @@ export default function AdminPage() {
                       </div>
                     </div>
                   )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                    📧 Jenis Undangan *
+                  </label>
+                  <select
+                    value={editFormData.invitation_type}
+                    onChange={(e) => setEditFormData({ ...editFormData, invitation_type: e.target.value as 'digital' | 'fisik' })}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-blue-300 focus:bg-white transition-all duration-300 text-sm"
+                    required
+                  >
+                    <option value="digital">📱 Digital</option>
+                    <option value="fisik">📮 Fisik</option>
+                  </select>
                 </div>
                 <div className="flex space-x-3 pt-4">
                   <button
