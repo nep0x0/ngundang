@@ -31,8 +31,34 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "Undangan Pernikahan Adelita & Ansyah",
-  description: "Undangan pernikahan Adelita & Ansyah - Jumat, 19 Desember 2025",
+  description: "Undangan Pernikahan Adelita & Ansyah",
   keywords: "undangan pernikahan, wedding invitation, Adelita, Ansyah",
+  openGraph: {
+    title: "Undangan Pernikahan Adelita & Ansyah",
+    description: "Undangan Pernikahan Adelita & Ansyah",
+    images: [
+      {
+        url: "/images/swahaxadel-508.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Undangan Pernikahan Adelita & Ansyah",
+      }
+    ],
+    url: "https://ngundang-psi.vercel.app",
+    siteName: "Undangan Pernikahan Adelita & Ansyah",
+    type: "website",
+    locale: "id_ID",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Undangan Pernikahan Adelita & Ansyah",
+    description: "Undangan Pernikahan Adelita & Ansyah",
+    images: ["/images/swahaxadel-508.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
