@@ -34,8 +34,8 @@ export const metadata: Metadata = {
   description: "Undangan Pernikahan Adelita & Ansyah",
   keywords: "undangan pernikahan, wedding invitation, Adelita, Ansyah",
   openGraph: {
-    title: "Undangan Pernikahan Adelita & Ansyah",
-    description: "Undangan Pernikahan Adelita & Ansyah",
+    title: "Undangan Pernikahan",
+    description: "Adelita & Ansyah",
     images: [
       {
         url: "/images/swahaxadel-508.jpg",
@@ -51,8 +51,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Undangan Pernikahan Adelita & Ansyah",
-    description: "Undangan Pernikahan Adelita & Ansyah",
+    title: "Undangan Pernikahan",
+    description: "Adelita & Ansyah",
     images: ["/images/swahaxadel-508.jpg"],
   },
   robots: {
