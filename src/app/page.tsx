@@ -333,12 +333,15 @@ function HomeContent() {
         <meta property="og:url" content={dynamicUrl} />
         <meta property="og:title" content="Undangan Pernikahan" />
         <meta property="og:description" content="Adelita & Ansyah" />
-        <meta property="og:image" content="https://ngundang-psi.vercel.app/images/swahaxadel-508.jpg" />
+        <meta property="og:image" content="https://ngundang-psi.vercel.app/images/thumbnail.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Undangan Pernikahan" />
         <meta name="twitter:description" content="Adelita & Ansyah" />
-        <meta name="twitter:image" content="https://ngundang-psi.vercel.app/images/swahaxadel-508.jpg" />
+        <meta name="twitter:image" content="https://ngundang-psi.vercel.app/images/thumbnail.png" />
       </Head>
       {/* Loading Screen */}
       {(isLoading || weddingLoading) && (

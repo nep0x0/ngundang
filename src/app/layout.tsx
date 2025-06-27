@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     description: "Adelita & Ansyah",
     images: [
       {
-        url: "/images/swahaxadel-508.jpg",
+        url: "/images/thumbnail.png",
         width: 1200,
         height: 630,
         alt: "Undangan Pernikahan Adelita & Ansyah",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Undangan Pernikahan",
     description: "Adelita & Ansyah",
-    images: ["/images/swahaxadel-508.jpg"],
+    images: ["/images/thumbnail.png"],
   },
   robots: {
     index: true,
