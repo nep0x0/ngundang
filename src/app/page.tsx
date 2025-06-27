@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, Suspense } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import gsap from 'gsap';
 import { useSearchParams } from 'next/navigation';
+import Head from 'next/head';
 
 gsap.registerPlugin(ScrollTrigger);
 import Header from "@/components/Header";
@@ -320,8 +321,25 @@ function HomeContent() {
     };
   }, [showCover]);
 
+  // Dynamic OG tags based on invitation code
+  const dynamicUrl = invitationCode
+    ? `https://ngundang-psi.vercel.app/${invitationCode}`
+    : 'https://ngundang-psi.vercel.app';
+
   return (
     <div className="font-sans w-full overflow-x-hidden">
+      {/* Dynamic Head for OG tags */}
+      <Head>
+        <meta property="og:url" content={dynamicUrl} />
+        <meta property="og:title" content="Undangan Pernikahan" />
+        <meta property="og:description" content="Adelita & Ansyah" />
+        <meta property="og:image" content="https://ngundang-psi.vercel.app/images/swahaxadel-508.jpg" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Undangan Pernikahan" />
+        <meta name="twitter:description" content="Adelita & Ansyah" />
+        <meta name="twitter:image" content="https://ngundang-psi.vercel.app/images/swahaxadel-508.jpg" />
+      </Head>
       {/* Loading Screen */}
       {(isLoading || weddingLoading) && (
         <Loading onLoadingComplete={handleLoadingComplete} />
