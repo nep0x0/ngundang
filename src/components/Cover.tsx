@@ -153,7 +153,7 @@ export default function Cover({
       >
         <div className="mb-12 sm:mb-16 md:mb-20">
           <p className="text-base sm:text-lg md:text-xl uppercase tracking-[0.4em] text-white mb-8 sm:mb-12 md:mb-16 font-light drop-shadow-lg">
-            THE WEDDING OF
+            INTIMATE WEDDING OF
           </p>
 
           <h1 ref={nameRef} className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-tangerine mb-6 sm:mb-8 md:mb-12 text-white leading-tight font-bold drop-shadow-xl">
