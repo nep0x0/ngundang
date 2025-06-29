@@ -33,6 +33,16 @@ export const metadata: Metadata = {
   title: "Undangan Pernikahan Adelita & Ansyah",
   description: "Undangan Pernikahan Adelita & Ansyah",
   keywords: "undangan pernikahan, wedding invitation, Adelita, Ansyah",
+  icons: {
+    icon: [
+      {
+        url: "/ring-favicon.svg",
+        type: "image/svg+xml",
+      },
+    ],
+    shortcut: "/ring-favicon.svg",
+    apple: "/ring-favicon.svg",
+  },
   openGraph: {
     title: "Undangan Pernikahan",
     description: "Adelita & Ansyah",
